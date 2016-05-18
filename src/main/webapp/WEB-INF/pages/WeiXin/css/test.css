@@ -1,0 +1,203 @@
+@charset "UTF-8";
+
+/**
+ * 
+ @authors zhangyizhi (zhangyizhi95@sina.com)
+ @date    2016-05-15 21:46:47
+
+ */
+
+.pg3 {
+    background: url(../img/bg-03.png) center center fixed;
+    -webkit-background-size: 100% auto;
+    background-size: 100% auto;
+}
+
+.bg-wrapper {
+    text-align: center;
+    min-height: 100%;
+    padding-top: 10%;
+    padding-bottom: 10%;
+}
+
+.qblock {
+    background: #fff;
+    border-radius: 0px 0px 12px 12px;
+    border: 2px solid red;
+    margin: 0 10%;
+    margin-bottom: 10%;
+    text-align: left;
+    padding: 10px;
+}
+
+.captain {
+	padding: 15px;
+	 margin: 0 10%;
+	   border: 2px solid red;
+	   border-bottom: 0;
+	border-radius: 12px 12px 0px 0px;
+	background: #fd7676;
+	color: #fff;
+	text-align: left;
+	font-size: 18px;
+}
+
+input[type="radio"]{
+margin:10px 0;
+	margin-right: 10px
+}
+input[type="text"]{
+	padding-right: 3px;
+	display: inline-block;
+	margin:10px 0;
+	border: 1px solid red;
+	width: 65%;
+
+}
+
+select{
+	text-align: center;
+	display: inline-block;
+	margin:10px 0;
+	border: 1px solid red;
+	width: 65%;
+
+}
+
+::-webkit-input-placeholder { /* WebKit browsers */ direction: rtl;}
+::-moz-placeholder { /* Mozilla Firefox 4 to 18 */ direction: rtl;}
+::-moz-placeholder { /* Mozilla Firefox 19+ but I'm not sure about working */ direction: rtl;}
+::-ms-input-placeholder { /* Internet Explorer 10+ */ direction: rtl;}
+
+label{
+	display: inline-block;
+	width: 30%;
+
+}
+hr{
+
+	border: 1px solid red;
+	border-bottom: none;
+	width: 100%;
+}
+.multi-header{
+	color: red;
+	font-size: 16px;
+}
+.multi-qblock {
+    background: #fff;
+    border-radius: 12px 12px;
+    border: 2px solid red;
+    margin: 0 10%;
+    margin-bottom: 10%;
+    text-align: left;
+    padding: 10px;
+}
+.wd4{
+	text-align: center;
+	padding: 13px 0;
+
+}
+.wd4 img{
+	width: 80%;
+	margin-bottom: 10px;
+}
+input[type="checkbox"]{
+	margin:10px 0;
+	margin-right: 10px
+}
+.shadow-qblock {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0px 5px 2px #e39c9c;
+    margin: 0 10%;
+    margin-bottom: 10%;
+    text-align: left;
+    padding: 15px;
+    padding-left: 20px;
+    line-height: 1.8;
+}
+.shadow-qblock p{
+	margin: 0;
+	text-indent: 2em;
+}
+.txt-red{
+	color: red;
+}
+.lp{
+	padding-bottom: 10%;
+	text-align: center;
+	border-radius: 12px;
+	background: #fff;
+	margin: 10%;
+}
+.lp img{
+	position: relative;
+	left: -10%;
+	
+	width:120%;
+	
+}
+.wd5,.wd6{
+    background-color: #fff;
+    margin: 0 10%;
+    padding: 15px;
+    border-radius: 12px 12px 0 0;
+    box-shadow: 0px 5px 2px #e39c9c;
+    z-index: 2;
+}
+.wd7,.wd8{
+	 margin: 0 10%;
+    padding: 15px;
+
+}
+.myinfo table {
+	width: 100%;
+	text-align: left;
+	color: #fff;
+	margin: 4px;
+
+}
+.myinfo tr{
+	width: 100%;
+}
+.myinfo td{
+	width: 50%;
+} 
+.myinfo{
+	background-color: rgb(253,170,168);
+	margin: 0 10%;
+    margin-bottom: 10%;
+    text-align: left;
+   	padding: 5%;
+    line-height: 2;
+
+}
+.biocode{
+	
+	text-align: center;
+
+}
+.square{
+	background: #fff;
+	margin: 5% 20%;
+}
+.square img{
+	width: 100%;
+}
+.users table {
+	width: 100%;
+	text-align: center;
+	color: #000;
+	font-size: 0.8em;
+	margin: 4px;
+	line-height: 1.6;
+
+}
+.users tr{
+
+	width: 100%;
+}
+.users td{
+	width: 50%;
+} 

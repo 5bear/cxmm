@@ -1,0 +1,137 @@
+@charset "UTF-8";
+
+/**
+ * 
+ * @authors zhangyizhi (zhangyizhi95@sina.com)
+ * @date    2016-05-15 19:23:57;
+ */
+ 
+ body,html{
+    font-family: "Microsoft Yahei";
+    height: 100%;
+ }
+ img{
+    vertical-align: bottom;
+ }
+ a{
+    text-decoration: none;
+ }
+ .pg1{
+    background: url(../img/bg-01.png) center center fixed;
+    -webkit-background-size: 100% auto;
+    background-size: 100% auto;
+ }
+ .pg2{
+    background: url(../img/bg-02.png) center center fixed;
+    -webkit-background-size: 100% auto;
+    background-size: 100% auto;
+ }
+  .pg3{
+    background: url(../img/bg-03.png) center center fixed;
+    -webkit-background-size: 100% auto;
+    background-size: 100% auto;
+ }
+  .pg9{
+    background: url(../img/bg-09.png) center center fixed;
+    -webkit-background-size: 100% auto;
+    background-size: 100% auto;
+ }
+
+
+.bg-wrapper{
+    text-align: center;    
+    min-height: 100%;
+
+}
+.back{
+   
+    padding-top: 10%;
+    display: block;
+    text-align: center;
+
+}
+.back img{
+     display: none;
+    width: 60%;
+    max-width: 300px;
+     mix-blend-mode: darken;
+
+}
+.slogan{
+
+    margin-top: 10%;
+    display: block;
+    text-align: center;
+
+}
+.slogan img{
+     display: none;
+    width: 60%;
+    max-width: 300px;
+}
+.wd2{
+    padding-top: 10%;
+    display: block;
+    text-align: center;
+    margin-bottom: 10%;
+}
+.wd2 img{
+     display: none;
+    width: 60%;
+    max-width: 300px;
+}
+.wd3{
+    padding-top: 10%;
+    display: block;
+    text-align: center;
+    margin-bottom: 10%;
+}
+.wd3 img{
+     display: none;
+    width: 30%;
+    max-width: 300px;
+}
+.zhentu{
+    text-align: center;
+}
+.zhentu img{
+     display: none;
+    width: 50%;
+}
+.ctct{
+    padding-top: 25%;
+}
+.ctct img{
+    display: none;
+}
+.hdp{
+    margin-top: -10%;
+
+}
+.hdp img{
+    width: 100%;
+}
+.btn{
+    display: inline-block;
+    width: auto;
+    cursor:pointer;
+    color:#fff;
+    background: #fd7676;
+    border-radius: 25px;
+    padding: 10px 25px;
+    border: 2px solid red;
+    margin-top: 5%;
+
+}
+.total{
+    text-align: right;
+}
+.price{
+    display: inline-block;
+    font-weight: bold;
+}
+
+.user-num{
+    color: #fd7676;
+    font-weight: bold;
+}

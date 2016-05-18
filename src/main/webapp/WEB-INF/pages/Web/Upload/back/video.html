@@ -1,0 +1,142 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="">
+    <meta name="author" content="">
+
+    <title>上海市快速路养护监管系统</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="css/bootstrap.css" rel="stylesheet">
+
+    <!-- Add custom CSS here -->
+    <link href="css/sb-admin.css" rel="stylesheet">
+    <link rel="stylesheet" href="font-awesome/css/font-awesome.min.css">
+  </head>
+
+  <body>
+
+    <div id="wrapper">
+
+      <!-- Sidebar -->
+      <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <!-- Brand and toggle get grouped for better mobile display -->
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="index.html">上海市快速路养护监管系统</a>
+        </div>
+
+        <!-- Collect the nav links, forms, and other content for toggling -->
+        <div class="collapse navbar-collapse navbar-ex1-collapse">
+          <ul class="nav navbar-nav side-nav">
+            <li><a href="index.html"><i class="fa fa-dashboard"></i> 首页</a></li>
+            <li class="dropdown">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-bar-chart-o"></i> 基础数据 <b class="caret"></b></a>
+			    <ul class="dropdown-menu">
+                <li><a href="parking.html">停车场管理(demo)</a></li>
+                <li><a href="#">车辆管理</a></li>
+                <li><a href="#">RFID监测点管理</a></li>
+                <li><a href="#">包件信息管理</a></li>
+                <li><a href="#">电子围栏管理</a></li>
+                <li><a href="#">监管规则管理</a></li>
+				</ul>
+			 </li>
+			 
+			   <li class="dropdown">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-table"></i> 计划管理 <b class="caret"></b></a>
+			    <ul class="dropdown-menu">
+                <li><a href="#">养护作业计划</a></li>
+                <li><a href="#">作业线路管理</a></li>
+                <li><a href="#">布点计划</a></li>
+				</ul>
+			 </li>
+			 
+			   <li class="dropdown">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-edit"></i> 进度管理 <b class="caret"></b></a>
+			    <ul class="dropdown-menu">
+                <li><a href="#">养护进度监控</a></li>
+                <li><a href="#">实时监控</a></li>
+                <li><a href="#">养护日志管理</a></li>
+				</ul>
+			 </li>
+			 
+			 <li class="dropdown">
+			    <a  href="#" class="dropdown-toggle" id="history" data-toggle="dropdown"><i class="fa fa-font"></i> 历史数据 <b class="caret"></b></a>
+			    <ul class="dropdown-menu">
+                <li><a href="#">历史轨迹查询</a></li>
+                <li  class="active"><a href="video.html">历史视频查询(demo)</a></li>
+                <li><a href="#">异常查询</a></li>
+				</ul>
+			 </li>
+			 
+			 <li class="dropdown">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-desktop"></i> 报表查询 <b class="caret"></b></a>
+			    <ul class="dropdown-menu">
+                <li><a href="chart1.html">牵引车辆位置报表(demo)</a></li>
+                <li><a href="#">养护车辆作业区域</a></li>
+                <li><a href="#">养护车辆作业情况</a></li>
+                <li><a href="#">养护车辆超速</a></li>
+				</ul>
+			 </li>
+			 
+			  		 	   <li class="dropdown">
+			<a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-wrench"></i>系统管理 <b class="caret"></b></a>
+			    <ul class="dropdown-menu">
+                <li><a href="#">用户管理</a></li>
+                <li><a href="#">权限管理</a></li>
+                <li><a href="#">网络状态图</a></li>
+				</ul>
+			 </li>
+			
+          </ul>
+
+          <ul class="nav navbar-nav navbar-right navbar-user">
+          <li class="dropdown user-dropdown">
+              <a href="#" class="dropdown-toggle" data-toggle="dropdown">欢迎， 领导 <b class="caret"></b></a>
+              <ul class="dropdown-menu">
+                <li><a href="#"><i class="fa fa-user"></i> Profile</a></li>
+                <li><a href="#"><i class="fa fa-envelope"></i> Inbox <span class="badge">7</span></a></li>
+                <li><a href="#"><i class="fa fa-gear"></i> Settings</a></li>
+                <li class="divider"></li>
+                <li><a href="#"><i class="fa fa-power-off"></i> Log Out</a></li>
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </nav>
+
+      <div id="page-wrapper">
+
+        <div class="row">
+          <div class="col-lg-12">
+            <ol class="breadcrumb">
+              <li><a href="index.html"><i class="icon-dashboard"></i> 历史数据</a></li>
+         <li class="active"><i class="icon-file-alt"></i> 历史视频查询</li>
+            </ol>
+          </div>
+		  <div class="pic">
+		  <img src="images/video.jpg" width="100%"/>
+		  </div>
+        </div><!-- /.row -->
+
+      </div><!-- /#page-wrapper -->
+
+    </div><!-- /#wrapper -->
+
+    <!-- JavaScript -->
+    <script src="js/jquery-1.10.2.js"></script>
+    <script src="js/bootstrap.js"></script>
+<script>
+   $(function(){
+      $("#history").dropdown('toggle');
+      }); 
+</script>
+  </body>
+</html>

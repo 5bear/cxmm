@@ -1,0 +1,10 @@
+<component name="libraryTable">
+  <library name="nu.xom:com.springsource.nu.xom:1.2.5" type="repository">
+    <properties maven-id="nu.xom:com.springsource.nu.xom:1.2.5" />
+    <CLASSES>
+      <root url="jar://$MAVEN_REPOSITORY$/nu/xom/com.springsource.nu.xom/1.2.5/com.springsource.nu.xom-1.2.5.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

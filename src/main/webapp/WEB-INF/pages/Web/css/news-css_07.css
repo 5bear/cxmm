@@ -1,0 +1,267 @@
+/*
+头部通用css
+更新时间:2014-02-11
+版本:css0.0.1
+作者:ryanguo
+*/
+body{font-family:宋体,Arial, Helvetica, sans-serif; font-size:12px;-webkit-text-size-adjust:none;}
+a{text-decoration:none; color:#333;}
+a:hover{text-decoration:underline; color:#1a9ea6;}
+h2,h3{font-weight:normal;}
+/* Clear Fix */ 
+.cl{zoom:1;}
+.cl:after{content:"　";display:block;clear:both;height:0;}
+
+.hei,.hei a{color:#000; text-decoration:none;}
+.hei a:hover{color:#1a9ea6; text-decoration:underline;}
+.bai,.bai a{color:#fff; text-decoration:none;}
+.bai a:hover{color:#fff; text-decoration:underline;}
+.lv,.lv a{color:#4ac6cd; text-decoration:none;}
+.lv a:hover{color:#1a9ea6; text-decoration:underline;}
+.fen,.fen a{color:#ec008c; text-decoration:none;}
+.fen a:hover{color:#1a9ea6; text-decoration:underline;}
+.lan,.lan a{color:#3655a3; text-decoration:none;}
+.lan a:hover{color:#1a9ea6; text-decoration:underline;}
+.hui,.hui a{color:#a4a4a4; text-decoration:none;}
+.hui a:hover{color:#1a9ea6; text-decoration:underline;}
+
+h1,h2,h3,.ft_wryh{font-family:"微软雅黑"; font-weight:normal;}
+
+.Q-tList{margin:0;}
+.lh15{height:15px; line-height:15px; overflow:hidden;}
+.lh10{height:10px; line-height:10px; overflow:hidden;}
+.lh23{height:23px; line-height:10px; overflow:hidden;}
+
+.line_b1{border-bottom:1px dotted #c5c5c5;}
+
+.mininav{width:100%; height:30px;}
+
+.footer{height:200px;}
+
+.content{width:1000px; margin: 20px auto 0;}
+.content .focus_box{width:680px; float:left;}
+.content .sub_box{width:298px; border:1px solid #9de0e4; float: right;}
+.ad_1000{width:1000px; height:90px; margin: 20px auto 0;}
+/*焦点图*/
+.focus_box .focus{width:680px;height:330px;overflow:hidden; zoom: 1;position: relative; }
+.focus_box ul{width:680px;height:330px;overflow:hidden;position:relative; }
+.focus_box li{width:680px;height:330px;float:left;position:relative;}
+.focus_box li a{display:block;cursor:pointer;}
+.focus_box .tit{width:520px;height:30px; line-height:30px;position:absolute;left:18px;bottom:0;z-index:1;}
+.focus_box .tit a{color:#fff;}
+.focus_box .tit a:hover{text-decoration:none;}
+.focus_box .bg{width:680px;height:30px;position:absolute;left:0;bottom:0;background:#000;opacity:0.7;filter:alpha(opacity=70);}
+.focus_box .foucsTit{width:143px;height:21px;right:0;position:absolute;bottom:3px;text-align:center;}
+.focus_box .foucsTit span{display:inline-block;width:7px;height:7px;margin: 0 5px;line-height:0;font-size:0;background:url(http://mat1.gtimg.com/health/images/index2014/icons_01.png) -20px -53px no-repeat;cursor:pointer;overflow:hidden;}
+.focus_box .foucsTit span.on{background:url(http://mat1.gtimg.com/health/images/index2014/icons_01.png) 0 -53px no-repeat;}
+.focus_box .focusBtnL,
+.focus_box .focusBtnR{width:40px;height:56px;padding:7px;margin-top:-150px;position:relative;z-index:1;background:#000;opacity:0.7;filter:alpha(opacity=70);}
+.focus_box .focusBtnL{float:left;}
+.focus_box .focusBtnR{float:right;}
+.focus_box .focusBtnL img{float:right;}
+.focus_box .focusBtnL img,
+.focus_box .focusBtnR img{display:none;cursor:pointer;}
+.focus_box .focusBtnL span,
+.focus_box .focusBtnR span{display:inline;width:23px;height:45px;margin:7px 5px 0;cursor:pointer;overflow:hidden;background:url(http://mat1.gtimg.com/health/images/index2014/icons_01.png) 0 0 no-repeat;}
+/*.focus_box .focusBtnR span{*_margin:-7px 5px 0; _margin:-7px 5px 0;}*/
+.focus_box .focusBtnL span{float:left;background-position:0 0;}
+.focus_box .focusBtnR span{float:right;background-position:-37px 0;}
+.focus_box .focusBtnLHover span{background-position:0 0;}
+.focus_box .focusBtnRHover span{background-position:-37px 0;}
+.focus_box .focusBtnLHover,
+.focus_box .focusBtnRHover{width:146px;overflow:hidden;background:#000; opacity:0.8;filter:alpha(opacity=80);}
+.focus_box .focusBtnLHover img,
+.focus_box .focusBtnRHover img{display:inline;background:#000; opacity:1.0;filter:alpha(opacity=100); position: absolute;}
+/*专家在线问答*/
+#zjzxwd{background:url(http://mat1.gtimg.com/health/images/index2014/zjzxwd_bg_01.jpg) top right no-repeat;}
+#zjzxwd .hd{height:52px; padding-left:14px;}
+#zjzxwd .hd h2{font-size:24px; line-height:52px;}
+#zjzxwd .bd{width:272px; margin: 0 auto; padding-bottom:20px;}
+#zjzxwd .bd .pti .pic{width:112px; float: left;}
+#zjzxwd .bd .pti .ti{width:160px; float: left;}
+#zjzxwd .bd .pti .ti h3{font-size:16px; line-height:24px;}
+#zjzxwd .bd .pti .ti b{font-style: normal; font-size: 12px; line-height:24px;}
+#zjzxwd .bd .pti .ti p{color: #8c8c8c;}
+#zjzxwd .bd .pti .ti .qa{display: block; width:64px; height:19px; text-align: center; line-height:19px; background: url(http://mat1.gtimg.com/health/images/index2014/zjzxwd_bg_02.jpg) no-repeat; margin-top:4px;}
+#zjzxwd .ft{width:272px; margin: 0 auto; padding-bottom:11px;}
+#zjzxwd .ft .qa_box{padding-top:12px; _padding-top:9px; line-height:22px; clear:both; overflow: hidden;}
+/*今日热点*/
+#hotspot{width:680px; float: left;}
+#hotspot .hd{width:680px; height:35px; background: url(http://mat1.gtimg.com/health/images/index2014/tit_bg_01.jpg);}
+#hotspot .hd h2{display:none;}
+#hotspot .bd{width:664px;}
+#hotspot .bd .hot_box{padding:26px 0; clear: both; overflow: hidden;}
+#hotspot .bd .hot_box .pic{display: block; width:155px; height:115px; float: left;}
+#hotspot .bd .hot_box .ti{width:484px; float: right;}
+#hotspot .bd .hot_box .ti h3{font-size:24px; line-height:42px; margin-top:-8px;}
+#hotspot .bd .hot_box .ti p{margin-top:12px;}
+/*腾讯健康出品*/
+#txjkcp .hd{padding:0 20px 0 13px; height:38px; overflow: hidden;}
+#txjkcp .hd h2{line-height:48px; font-size:18px;}
+#txjkcp .hd .fr{line-height:20px; margin-top:18px;}
+#txjkcp .bd .pti{width:270px; padding:13px 0 6px; margin:0 auto;}
+#txjkcp .bd .pti .pic{display:block; width:270px; height:100px; position: relative;}
+#txjkcp .bd .pti .pic b,
+#txjkcp .bd .pti .pic i{display:block;width:270px; height:32px; position: absolute; bottom:0; left:0; line-height:32px;}
+#txjkcp .bd .pti .pic b{background:#000; opacity:0.7;filter:alpha(opacity=70);}
+#txjkcp .bd .pti .pic i{padding-left:18px; width:252px; font-style:normal;}
+#txjkcp .bd .pti .pic span{margin-right:6px;}
+#txjkcp .bd .pti p{margin:4px 0 0;}
+/*呼吸月 推荐专家*/
+#hxytjzj{width:1000px; margin: 0 auto;}
+#hxytjzj .hd{height:34px; background:url(http://mat1.gtimg.com/health/images/index2014/tit_bg_02.jpg) left bottom no-repeat;}
+#hxytjzj .hd h2{font-size:18px;}
+#hxytjzj .bd{width:1000px; padding-top:14px; overflow: hidden;}
+#hxytjzj .bd ul{width:1014px;}
+#hxytjzj .bd li{width:169px; float: left;}
+#hxytjzj .bd .pti{width:155px;}
+#hxytjzj .bd .pti i{font-style: normal; font-weight: bold; display: block; margin-top: 4px;}
+
+.con_box{width:1000px; margin: 40px auto 0;}
+.con_box .left{width:680px; float: left;}
+.con_box .right{width:300px; float: right;}
+.con_box .left .l_con_box{width:664px;}
+.con_box .left .l_con_box .hd{height:72px; background: url(http://mat1.gtimg.com/health/images/index2014/tit_bg_ico_01_01.png) no-repeat;}
+.con_box .left .l_con_box .hd .fr{margin-top: 20px;}
+.con_box .left .l_con_box .bd{padding-bottom:18px;}
+.con_box .left .l_con_box .bd .f_pti{width:412px; border-right:1px dotted #c5c5c5; float: left;}
+.con_box .left .l_con_box .bd .f_pti .ti{display: block; line-height:36px;}
+.con_box .left .l_con_box .bd .f_pti .ti .tit{display:block; font-style:normal; float: left; margin-right:6px; text-align: center; width:85px; height:37px; background:url(http://mat1.gtimg.com/health/images/index2014/ico_tit_bg_01.jpg);}
+.con_box .left .l_con_box .bd .pti{width:234px; float: right;}
+.con_box .left .l_con_box .bd .pti em{display: block; height:40px;}
+.con_box .left .l_con_box .bd .pti p{margin-top:10px;}
+.con_box .left .l_con_box .ft{padding-top:18px; border-top:1px dotted #c5c5c5;}
+.con_box .left .l_con_box .ft .pti{width:412px; border-right:1px dotted #c5c5c5; float: left;}
+.con_box .left .l_con_box .ft .pti .pic{width:155px; float: left;}
+.con_box .left .l_con_box .ft .pti .ti{width:226px; padding-right:16px; float:right;}
+.con_box .left .l_con_box .ft .list{width:238px; float: right;}
+.con_box .left .l_con_box .ft .list li{background:url(http://mat1.gtimg.com/health/images/index2014/ico_dian_01.jpg) 0 -17px no-repeat; padding-left:14px;}
+.con_box .left .l_con_box .ft .list .one{background:url(http://mat1.gtimg.com/health/images/index2014/ico_dian_01.jpg) 0 12px no-repeat;}
+#news_box .hd{background-position:0 0;}
+#yjdt{border: 1px solid #9de0e4; border-bottom:0;}
+#yjdt .hd{height:50px; padding:0 20px 0 14px;}
+#yjdt .hd h2{line-height:38px;}
+#yjdt .hd .fr{line-height:44px}
+#yjdt .bd{width:268px; margin: 0 auto;}
+#yjdt .bd .pti{padding-bottom:12px; border-bottom: 1px dotted #c5c5c5;}
+#yjdt .bd .pti .pic{width:120px; float: left;}
+#yjdt .bd .pti .ti{width:130px; float: right;}
+#yjdt .bd .pti .ti em{display: inline-block;}
+#yjdt .bd .list{padding:12px 0;}
+/*疾病医疗*/
+#mingyi{margin-top:20px;}
+#diagnosis_box .hd{background-position:0 -92px;}
+#diagnosis_box{padding-top:25px;}
+#myt .hd{height:34px; background:url(http://mat1.gtimg.com/health/images/index2014/tit_bg_03.jpg);}
+#myt .hd h2{display: none;}
+#myt .bd{border-right:1px solid #38c0c8;}
+.con_box .right .v_pti{width:274px; padding:16px 0; border-bottom:1px dotted #c5c5c5;}
+.con_box .right .v_pti .pic{width:120px; height:80px; position: relative;}
+.con_box .right .v_pti .pic b{display: block; width:20px; height:20px; position: absolute; top:56px; left:10px;background: url(http://mat1.gtimg.com/health/images/index2014/ico_v_01.png) no-repeat !important; background: none; filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://mat1.gtimg.com/health/images/index2014/ico_v_01.png', sizingMethod='scale');}
+.con_box .right .v_pti .ti{width:144px;}
+.con_box .right .v_pti .ti p{margin-top: 6px;}
+.con_box .right .v_pti .ti em{background:url(http://mat1.gtimg.com/health/images/index2014/ico_v_02.jpg) 0 5px no-repeat; padding-left:20px;}
+#myt .bd .v_pti .pic{float: left;}
+#myt .bd .v_pti .ti{float: right;}
+#rmks{height:209px; background:url(http://mat1.gtimg.com/health/images/index2014/tit_bg_04.jpg) no-repeat;}
+#rmks .hd{height:66px;}
+#rmks .hd h2{display:none;}
+#rmks .bd{padding-left:10px;}
+#rmks .bd li{width:66px; height:26px; float: left;}
+#rmks .bd a{padding:2px 4px; color: #fff;}
+#rmks .bd a:hover{color:#38c0c8; background:#defeff; text-decoration: none;}
+.ScA3{width:666px; padding-left:16px;position:relative }  
+.ScA3 .scwr{position:relative; top:0px; left:0; overflow: hidden; zoom: 1; width: 656px; height:80px; } /*可视宽度width,height必须设置 */     
+.ScA3 .split{ float:left; width:222px;}   
+.ScA3 .prev, .ScA3 .next{ width:7px; height:142px; display:block; position:absolute; top: -44px; cursor:pointer }  
+.ScA3 .prev{ background:url(http://mat1.gtimg.com/health/images/index2014/gd_l_01.jpg) no-repeat; left:0}    
+.ScA3 .next{ background:url(http://mat1.gtimg.com/health/images/index2014/gd_r_01.jpg) no-repeat; right:0}     
+.ScA3 a:hover.prev{width:30px;background: url(http://mat1.gtimg.com/health/images/index2014/gd_l_02.png) no-repeat !important; background: none; filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://mat1.gtimg.com/health/images/index2014/gd_l_02.png', sizingMethod='scale');}  /*鼠标划过状态*/  
+.ScA3 a:hover.next{width:30px;background: url(http://mat1.gtimg.com/health/images/index2014/gd_r_02.png) no-repeat !important; background: none; filter:progid:DXImageTransform.Microsoft.AlphaImageLoader(src='http://mat1.gtimg.com/health/images/index2014/gd_r_02.png', sizingMethod='scale');}    /*鼠标划过状态*/  
+.ScA3 .prevStopClass{display: none;}  /*鼠标停滞状态*/  
+.ScA3 .nextStopClass{display: none;}   /*鼠标停滞状态*/  
+#myzx{height:142px; background: #fbfbfb; border-top:1px dotted #c5c5c5; margin-top:30px;}
+#myzx .hd{height:44px; padding-left:14px; line-height:44px;}
+#myzx .pti{width:194px; height:80px; padding-right:28px;}
+#myzx .pti .pic{width:80px; float: left;}
+#myzx .pti .ti{width:106px; float: right;}
+#myzx .pti .ti i{font-style: normal;}
+/*生活养生*/
+#life_box .hd{background-position:0 -185px;}
+#jkmj{background:#fbfbfb;border-right:1px solid #38c0c8;}
+#jkmj .hd{height:34px; border-top:2px solid #38c0c8;}
+#jkmj .hd h2{line-height:34px; padding-left:14px;}
+#jkmj .bd .v_pti{margin: 0 auto;}
+#jkmj .bd .v_pti .pic{float: right;}
+#jkmj .bd .v_pti .ti{float: left;}
+#ypx{border-right:1px solid #38c0c8;}
+#ypx .hd{height:34px;}
+#ypx .hd h2{line-height:34px; padding-left:14px;}
+#ypx .bd{width:276px; margin: 0 auto; padding-bottom:18px;}
+#ypx .bd .list{width:156px; float: left;}
+#ypx .bd .list li{background: url(http://mat1.gtimg.com/health/images/index2014/ico_dian_02.jpg) 0 12px no-repeat; padding-left:8px;}
+#ypx .bd .pic{width:120px; float: right;}
+#zjts{height:174px; background: #fbfbfb; border-top:1px dotted #c5c5c5; margin-top:12px;}
+#zjts .hd{height:36px; line-height:36px; padding-left:22px;}
+#zjts .bd{padding-left:20px; padding-top:8px;}
+#zjts .bd .pti{width:200px; padding-right:20px; float: left;}
+#zjts .bd .pti .pic{width:80px; float: left;}
+#zjts .bd .pti .pic em{display: block; width:54px; height:20px; line-height:20px; padding-left:26px; background:url(http://mat1.gtimg.com/health/images/index2014/ico_wb_01.jpg);}
+#zjts .bd .pti .ti{width:110px; float: right;}
+#zjts .bd .pti .ti i{font-style: normal;}
+/*图说健康*/
+#tsjk{width:1000px; margin: 40px auto 0; overflow: hidden;}
+#tsjk .hd{height:49px; background: url(http://mat1.gtimg.com/health/images/index2014/tit_bg_05.jpg);}
+#tsjk .hd h2{display: none;}
+#tsjk .bd{width:1032px; padding-top:20px;}
+#tsjk .bd li{margin:0 16px 18px 0; position: relative; float: left; overflow: hidden;}
+#tsjk .bd ul{width:1032px;}
+#tsjk .bd li.current .txt{bottom:0px; _bottom:-1px;}
+#tsjk .bd .txt .tit_box{width:100%; position: relative; cursor: pointer;}
+#tsjk .bd .txt b{display: block; width:100%;height:100%; background:#000;opacity:0.7;filter:alpha(opacity=70); position:absolute; top:0; left:0;}
+#tsjk .bd .txt .tit_box .bai{position: absolute; top:0; left:0;}
+#tsjk .bd .txt .tit_box h3{line-height:30px; font-size: 20px;}
+#tsjk .bd .txt .tit_box p{line-height:24px;}
+#tsjk .bd .p_01{width:359px; height:539px;}
+#tsjk .bd .p_01 .txt{width:359px; height:102px; position: absolute; left:0px; bottom:-102px; _bottom:-103px;z-index:99;}
+#tsjk .bd .p_01 .txt .tit_box{height:102px;}
+#tsjk .bd .p_01 .txt .tit_box .bai{padding:12px 10px;}
+#tsjk .bd .p_02{width:625px; height:351px;}
+#tsjk .bd .p_02 .txt{width:380px; height:102px; position: absolute; left:0px; bottom:-102px; _bottom:-103px;z-index:99;}
+#tsjk .bd .p_02 .txt .tit_box{height:102px;}
+#tsjk .bd .p_02 .txt .tit_box .bai{padding:12px 14px;}
+#tsjk .bd .p_03{width:305px; height:170px;}
+#tsjk .bd .p_03 .txt,
+#tsjk .bd .p_04 .txt,
+#tsjk .bd .p_05 .txt,
+#tsjk .bd .p_06 .txt,
+#tsjk .bd .p_07 .txt{width:305px; height:30px; position: absolute; left:0px; bottom:-30px; _bottom:-31px;z-index:99;}
+#tsjk .bd .p_03 .txt .tit_box,
+#tsjk .bd .p_04 .txt .tit_box,
+#tsjk .bd .p_05 .txt .tit_box,
+#tsjk .bd .p_06 .txt .tit_box,
+#tsjk .bd .p_07 .txt .tit_box{height:30px;}
+#tsjk .bd .p_03 .txt .tit_box .bai,
+#tsjk .bd .p_04 .txt .tit_box .bai,
+#tsjk .bd .p_05 .txt .tit_box .bai,
+#tsjk .bd .p_06 .txt .tit_box .bai,
+#tsjk .bd .p_07 .txt .tit_box .bai{padding-left:10px;}
+#tsjk .bd .p_04{width:305px; height:170px;}
+#tsjk .bd .p_05{width:359px; height:170px;}
+#tsjk .bd .p_05 .txt{width:359px;}
+#tsjk .bd .p_06{width:305px; height:170px;}
+#tsjk .bd .p_07{width:305px; height:170px;}
+/*合作伙伴*/
+.pa_box{width:100%; background: #f8f8f8;border-top:1px solid #cdcdcd; padding:20px 0; margin-top:40px;}
+#partners{width:1000px; margin: 0 auto;}
+#partners .hd{height:74px; padding-left:184px; background: url(http://mat1.gtimg.com/health/images/index2014/ico_pa_01.png) 0 8px no-repeat;}
+#partners .hd li{width:152px; float: left;}
+#partners .bd{padding-bottom:20px; line-height:32px;}
+#partners .ft{height:38px; line-height:38px;}
+#partners .ft li{width:268px; float: left;}
+#partners .ft .mail{background: url(http://mat1.gtimg.com/health/images/index2014/ico_pa_01.png) 0 -125px no-repeat; padding-left:30px;}
+#partners .ft .tel{background: url(http://mat1.gtimg.com/health/images/index2014/ico_pa_01.png) 0 -153px no-repeat; padding-left:34px;}
+/*回到顶部*/
+#upBtn{width:58px;height:58px;position:fixed;bottom:50px;right:25px;display:none;}
+#upBtn a{display:block;width:58px;height:58px; background:url(http://mat1.gtimg.com/tech/2012/2012keji/bg.png) 0px -190px;}
+#upBtn a:hover{background:url(http://mat1.gtimg.com/tech/2012/2012keji/bg.png) -58px -190px;}/*  |xGv00|5077e6ebe826a7d6d58f828c2343574d */

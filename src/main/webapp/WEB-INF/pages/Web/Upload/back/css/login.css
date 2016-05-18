@@ -1,0 +1,53 @@
+/* 
+Author: Start Bootstrap - http://startbootstrap.com
+'SB Admin' HTML Template by Start Bootstrap
+
+All Start Bootstrap themes are licensed under Apache 2.0. 
+For more info and more free Bootstrap 3 HTML themes, visit http://startbootstrap.com!
+*/
+
+/* ATTN: This is mobile first CSS - to update 786px and up screen width use the media query near the bottom of the document! */
+
+/* Global Styles */
+
+
+
+body {
+  font-family: 'Î¢ÈíÑÅºÚ', Microsoft YaHei,STHeiti;
+  background-image: url("../images/login-bg.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+  
+}
+
+.login-box {
+  background-image: url("../images/login.png");
+    background-repeat: no-repeat;
+	width: 424px;
+	height: 329px;
+	margin: 15% auto;
+	position: relative;
+}
+
+.user {
+    position: absolute;
+    top: 137px;
+    right: 68px;
+    width: 227px;
+}
+
+.pwd {
+    position: absolute;
+    top: 202px;
+    right: 68px;
+    width: 227px;
+}
+
+.submit{
+    position: absolute;
+    top: 246px;
+    right: 160px;
+    background-image: url("../images/btn-login.png");
+    background-repeat: no-repeat;
+    width: 101px;
+}

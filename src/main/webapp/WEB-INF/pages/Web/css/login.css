@@ -1,0 +1,78 @@
+body {
+  font-family: '΢���ź�', Microsoft YaHei,STHeiti;
+  background-image: url("../images/login-bg.jpg");
+  background-size: cover;
+  background-repeat: no-repeat;
+
+}
+
+.alert-red {
+    color: red;
+}
+
+.login-div {
+    width: 400px;
+    margin: 15% auto;
+    position: relative;
+}
+
+.panel-login {
+    display: inline-block;
+    box-shadow: 3px 3px 15px #373737;
+}
+
+.panel > div.login-heading {
+    background-color: #F2F2F2;
+    letter-spacing: 4px;
+    color: #797979;
+}
+
+.left, .right {
+    float: left;
+}
+
+.left {
+    width: 100px;
+    text-align: center;
+}
+
+.clearboth {
+    clear: both;
+}
+
+.panel-row img {
+    width: 15px;
+    height: 15px;
+    position: relative;
+    bottom: 10px;
+}
+
+.panel-row p {
+    color: #A0A0A0;
+    font-weight: bold;
+}
+
+.panel-row input {
+    width: 250px;
+    position: relative;
+    top: 10px;
+}
+
+.btn-default, .btn-default:focus {
+    background-color: #00608B;
+    color: white;
+    font-size: 14px;
+    padding: 2px 25px;
+    line-height: 22px;
+    outline: none;
+}
+
+.btn-default:hover {
+    background-color: #005C95;
+    color: white;
+}
+
+.login-title {
+    font-size: 20px;
+    margin-bottom: 30px;
+}
