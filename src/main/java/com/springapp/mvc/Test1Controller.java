@@ -251,7 +251,7 @@ public class Test1Controller extends BaseController {
     @RequestMapping(value = "/ensure",method = RequestMethod.POST)
     @ResponseBody
     public String ensure(HttpServletRequest request,HttpServletResponse response,HttpSession session,@RequestParam(value = "canheNum")int canheNum,@RequestParam(value = "canceNum")int canceNum) throws IOException, NoSuchAlgorithmException {
-        int price=canceNum*98+canheNum*2098;
+        int price=canceNum*1+canheNum*1;
         String openid = (String) session.getAttribute("openid");
         System.out.print("openid"+openid);
         if (openid == null) {

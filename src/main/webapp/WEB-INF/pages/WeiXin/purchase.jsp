@@ -78,7 +78,6 @@
           "signType":"MD5",
           "paySign":data.paySign
         }, function (res) {
-          alert(res.err_msg)
           if(res.err_msg=="get_brand_wcpay_request:ok"){
             submitForm();
           }
