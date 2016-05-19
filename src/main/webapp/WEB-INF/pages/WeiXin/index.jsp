@@ -20,7 +20,7 @@
 
 <body data-role="page">
 <div class="bg-wrapper pg1">
-  <div class="back" ><img width="60%" src="img/back.png" alt=""></div>
+  <div class="back" ><img width="60%" src="img/back.png" alt="" onclick="javascript:location.href='test'"></div>
   <div class="slogan"><img  src="img/word-01.png" alt="">  </div>
 </div>
 <script src="js/jquery-1.9.0.js"></script>

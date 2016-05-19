@@ -15,9 +15,9 @@
     <title>月子餐</title>
     <meta name="viewport"
           content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
-    <link href="css/style.css" rel="stylesheet">
-    <link href="css/normalize.css" rel="stylesheet">
-    <link href="css/test.css" rel="stylesheet">
+    <link href="<%=application.getContextPath()%>/WeiXin/css/style.css" rel="stylesheet">
+    <link href="<%=application.getContextPath()%>/WeiXin/css/normalize.css" rel="stylesheet">
+    <link href="<%=application.getContextPath()%>/WeiXin/css/test.css" rel="stylesheet">
 </head>
 
 <body data-role="page">
@@ -34,7 +34,7 @@
         <input type="submit" class="btn" value="点击申请">
     </form>
 </div>
-<script src="js/jquery-1.9.0.js"></script>
+<script src="<%=application.getContextPath()%>/WeiXin/js/jquery-1.9.0.js"></script>
 </body>
 
 </html>

@@ -33,7 +33,7 @@ public class Test2Controller extends BaseController{
         if (openid == null) {
             response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
         }
-        List<Question2> question2=test2Dao.getList();//得到对应的多选题
+        List<Question2> question2=test2Dao.getList(openid);//得到对应的多选题
         modelAndView.addObject("Question2List", question2);
         modelAndView.addObject("openID", openid);//微信用户账号
         return modelAndView;

@@ -135,3 +135,6 @@
     color: #fd7676;
     font-weight: bold;
 }
+.laydate_box > *{
+   zoom:1;
+}

@@ -2,14 +2,13 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%
-    Admin admin= (Admin) session.getAttribute("admin");
-    if(admin==null)
-    {
+    Admin admin = (Admin) session.getAttribute("admin");
+    if (admin == null) {
         response.sendRedirect("login");
         return;
     }
-    int totalPage= (Integer) request.getAttribute("totalPage");
-    int currentPage= (Integer) request.getAttribute("totalPage");
+    int totalPage = (Integer) request.getAttribute("totalPage");
+    int currentPage = (Integer) request.getAttribute("totalPage");
 %>
 <!DOCTYPE html>
 <html lang="zh" class="no-js demo1">
@@ -126,11 +125,11 @@
                             <td>${agent.userNum}</td>
                             <td>${agent.buyNum}</td>
                             <td><label data-toggle="modal" data-target="#CommentModal"><a
-                                    onclick="setImgpath('${agent.qrcode}')">查看</a></label></td>
+                                    onclick="setImgpath('${agent.id}')">查看</a></label></td>
                             <td>${agent.status}</td>
-                            <td><label data-toggle="modal" data-target="#EditModal"><a
+                            <%--<td><label data-toggle="modal" data-target="#EditModal"><a
                                     onclick="setEditid('${agent.id}','${agent.agent}','${agent.phoneNum}','${agent.email}','${agent.account}','${agent.password}','${agent.qrcode}','${agent.status}')">修改</a></label>
-                            </td>
+                            </td>--%>
                         </tr>
                     </c:forEach>
                     </tbody>
@@ -232,7 +231,8 @@
                             <div class="form-group">
                                 <label class="control-label col-md-3">代理点名称</label>
                                 <div class="col-md-5">
-                                    <input type="text" id="findAgent" name="phonenumber" class="form-control" placeholder="代理点"/>
+                                    <input type="text" id="findAgent" name="phonenumber" class="form-control"
+                                           placeholder="代理点"/>
                                 </div>
                             </div>
                             <div class="form-group">
@@ -265,38 +265,46 @@
                         aria-hidden="true">&times;</span></button>
                 <h4 class="modal-title" id="BalanceModalLabel">结算</h4>
             </div>
-            <form:form class="form-horizontal" id="banlance" novalidate="novalidate">
+            <div class="form-horizontal" >
                 <div class="modal-body">
                     <div class="form-wizard">
                         <div class="form-body">
                             <div class="form-group">
+                                <label class="control-label col-md-3">代理点</label>
+                                <div class="col-md-3">
+                                  <select class="form-control" id="agentId">
+                                     <c:forEach items="${list}" var="agent">
+                                         <option value="${agent.id}">${agent.agent}</option>
+                                     </c:forEach>
+                                  </select>
+                                </div>
                                 <label class="control-label col-md-3">书提成比例</label>
                                 <div class="col-md-3">
-                                    <input type="text" class="form-control" value="0.2">
+                                    <input type="text"  id="canceRate" class="form-control" value="0.2">
                                 </div>
                                 <label class="control-label col-md-3">盒提成比例</label>
                                 <div class="col-md-3">
-                                    <input type="text" class="form-control" value="0.3">
+                                    <input type="text" id="canheRate" class="form-control" value="0.3">
                                 </div>
                             </div>
                             <div class="form-group">
                                 <label class="control-label col-md-3">开始月</label>
                                 <div class="col-md-3">
-                                    <input type="text" class="form-control" placeholder="年/月">
+                                    <input type="text" id="startDate" class="form-control" placeholder="年/月">
                                 </div>
                                 <label class="control-label col-md-3">结束月</label>
                                 <div class="col-md-3">
-                                    <input type="text" class="form-control" placeholder="年/月">
+                                    <input type="text" id="endDate" class="form-control" placeholder="年/月">
                                 </div>
                             </div>
                             <div class="modal-footer">
                                 <input type="submit" class="btn btn-success" value="结算"
-                                       onclick=alert('1月份　卖了10书，20盒，获得提成2030元。'+'\n'+'2月份　卖了10书，20盒，获得提成2030元。'+'\n'+'总计：卖了10书，20盒，获得提成2030元。')/>
+                                       onclick="balance()"/>
                             </div>
                         </div>
                     </div>
                 </div>
-            </form:form>
+            </div>
         </div>
     </div>
 </div>
@@ -401,39 +409,49 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/eModal.js"></script>
 <script type="text/javascript">
-    function findRecord(){
-        var club=$("#findAgent").val();
-        var status=$("#findStatus").val();
+
+    function balance(){
+        var agentId=$("#agentId").val();
+        var canheRate=$("#canheRate").val();
+        var canceRate=$("#canceRate").val();
+        var startDate=$("#startDate").val();
+        var endDate=$("#endDate").val();
+       window.open("Agency/balance?agentId="+agentId+"&canheRate="+canheRate+"&canceRate="+canceRate+"&startDate="+startDate+"&endDate="+endDate);
+    }
+
+    function findRecord() {
+        var club = $("#findAgent").val();
+        var status = $("#findStatus").val();
         $.ajax({
-            url:"<%=request.getContextPath()%>/Agency/find",
-            type:"post",
-            data:{club:club,status:status},
-            dataType:"json",
+            url: "<%=request.getContextPath()%>/Agency/find",
+            type: "post",
+            data: {club: club, status: status},
+            dataType: "json",
             success: function (data) {
-                var result="";
+                var result = "";
                 $(data).each(function (index, item) {
-                    result+="<tr> " +
-                    "<td class='checkbox-column'><input type='checkbox' class='uniform' name='subBox'></td> " +
-                    "<td>"+item.id+"</td>"+
-                    "<td>"+item.agent+"</td>"+
-                    "<td>"+item.account+"</td>"+
-                    "<td>"+item.password+"</td>"+
-                    "<td>"+item.phoneNum+"</td>"+
-                    "<td>"+item.email+"</td>"+
-                    "<td>"+item.userNum+"</td>"+
-                    "<td>"+item.buyNum+"</td>"+
-                    "<td><label data-toggle='modal' data-target='#CommentModal'><a onclick='setImgpath('"+item.qrcode+"')'>查看</a></label></td>"+
-                    "<td>"+item.status+"</td>"+
-                    "<td><label data-toggle='modal' data-target='#EditModal'><a"+
-                    "onclick='setEditid('"+item.id+"','"+item.agent+"','"+item.phoneNum+"','"+item.email+"','"+item.account+"','"+item.password+"','"+item.qrcode+"','"+item.status+"')'>" +
-                    "修改</a></label>"+ "</td></tr>"
+                    result += "<tr> " +
+                            "<td class='checkbox-column'><input type='checkbox' class='uniform' name='subBox'></td> " +
+                            "<td>" + item.id + "</td>" +
+                            "<td>" + item.agent + "</td>" +
+                            "<td>" + item.account + "</td>" +
+                            "<td>" + item.password + "</td>" +
+                            "<td>" + item.phoneNum + "</td>" +
+                            "<td>" + item.email + "</td>" +
+                            "<td>" + item.userNum + "</td>" +
+                            "<td>" + item.buyNum + "</td>" +
+                            "<td><label data-toggle='modal' data-target='#CommentModal'><a onclick='setImgpath('" + item.id + "')'>查看</a></label></td>" +
+                            "<td>" + item.status + "</td>" +
+                            "<td><label data-toggle='modal' data-target='#EditModal'><a" +
+                            "onclick='setEditid('" + item.id + "','" + item.agent + "','" + item.phoneNum + "','" + item.email + "','" + item.account + "','" + item.password + "','" + item.qrcode + "','" + item.status + "')'>" +
+                            "修改</a></label>" + "</td></tr>"
                 })
                 $("#myTbody").html(result)
             }
         })
     }
 
-    function setEditid(id, agent,account,password, phoneNum, email, images, status) {
+    function setEditid(id, agent, account, password, phoneNum, email, images, status) {
         $("[name='id']").val(id);
         $("#agent").val(agent);
         $("#account").val(account);
@@ -446,7 +464,7 @@
 
     function setImgpath(path) {
         console.log(path)
-        $('#qrcode').attr('src', "<%=request.getContextPath()%>/Web/Upload/qrcode/" + path)
+        $('#qrcode').attr('src', "<%=request.getContextPath()%>/WeiXin/AgentQRCode/" + path + ".jpg")
     }
     $(function () {
         $("#checkAll").click(function () {
@@ -508,7 +526,7 @@
                     if (result == "success") {
                         $(idList).each(function (index, data) {
                             if (data.checked) {
-                                $(data).parent().parent().find('td:eq(8)').html("失效");
+                                $(data).parent().parent().find('td:eq(8)').html("可用");
                             }
                         });
                         $("input[name='subBox']").removeAttr("checked");
@@ -541,7 +559,7 @@
                     if (result == "success") {
                         $(idList).each(function (index, data) {
                             if (data.checked) {
-                                $(data).parent().parent().find('td:eq(8)').html("可用");
+                                $(data).parent().parent().find('td:eq(8)').html("失效");
                             }
                         });
                         $("input[name='subBox']").removeAttr("checked");

@@ -71,6 +71,8 @@
           <element id="library" level="project" name="Maven: org.apache.ant:ant:1.8.1" />
           <element id="library" level="project" name="Maven: org.apache.ant:ant-launcher:1.8.1" />
           <element id="library" level="project" name="Maven: org.eclipse.birt.runtime.3_7_1:com.lowagie.text:2.1.7" />
+          <element id="library" level="project" name="Maven: org.apache.poi:poi:3.9" />
+          <element id="library" level="project" name="Maven: commons-codec:commons-codec:1.5" />
         </element>
       </element>
       <element id="directory" name="META-INF">

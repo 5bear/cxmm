@@ -1,7 +1,6 @@
 package com.springapp.entity;
 
 import javax.persistence.*;
-import java.util.Date;
 
 /**
  * Created by ZhanShaoxiong on 2016/5/8.
@@ -9,7 +8,7 @@ import java.util.Date;
 @Entity
 public class WxOrderinfo {
     private int id;
-    private Date date;
+    private String date;
     private String name;
     private int canceNum;//餐册
     private int canheNum;//餐盒数
@@ -18,15 +17,43 @@ public class WxOrderinfo {
     private WxUser uid;
     private String payType;
     private String result;
-    private String order;//订单号
+    private String orderNum;//订单号
+    private String deliverStatus;//发货状态
+    private String express;//快递公司
+    private String expressNum;//快递编号
 
     @Column
-    public String getOrder() {
-        return order;
+    public String getDeliverStatus() {
+        return deliverStatus;
     }
 
-    public void setOrder(String order) {
-        this.order = order;
+    public void setDeliverStatus(String deliverStatus) {
+        this.deliverStatus = deliverStatus;
+    }
+    @Column
+    public String getExpress() {
+        return express;
+    }
+
+    public void setExpress(String express) {
+        this.express = express;
+    }
+    @Column
+    public String getExpressNum() {
+        return expressNum;
+    }
+
+    public void setExpressNum(String expressNum) {
+        this.expressNum = expressNum;
+    }
+
+    @Column
+    public String getOrderNum() {
+        return orderNum;
+    }
+
+    public void setOrderNum(String order) {
+        this.orderNum = order;
     }
 
     @Column(length = 45)
@@ -82,11 +109,11 @@ public class WxOrderinfo {
     }
 
     @Column()
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

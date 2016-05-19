@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
   Created by IntelliJ IDEA.
   User: ZhanShaoxiong
@@ -53,52 +54,54 @@
   <div class="wd5"><img width="40%" src="img/word-05.png" alt=""></div>
   <div class="myinfo">
 
+  <c:forEach items="${list}" var="order">
     <table>
       <tr>
         <td>订单号</td>
-        <td>1234567890</td>
+        <td>${order.orderNum}</td>
       </tr>
       <tr>
         <td>购买时间</td>
-        <td>2016-5-16</td>
+        <td>${order.date}</td>
       </tr>
       <tr>
-        <td>商品名称</td>
-        <td>月子餐</td>
+        <td>餐册</td>
+        <td>${order.canceNum}</td>
       </tr>
       <tr>
-        <td>数量</td>
-        <td>1</td>
+        <td>餐盒</td>
+        <td>${order.canheNum}</td>
       </tr>
       <tr>
         <td>价格</td>
-        <td>100元</td>
+        <td>${order.canceNum*98+order.canheNum*2980}</td>
       </tr>
       <tr>
         <td>收货人姓名</td>
-        <td>鲍鱼</td>
+        <td>${order.name}</td>
       </tr>
       <tr>
         <td>收货地址</td>
-        <td>华东师范大学把喇叭哇空间打开了是的</td>
+        <td>${order.address}</td>
       </tr>
       <tr>
         <td>手机</td>
-        <td>1234567891</td>
+        <td>${order.phoneNum}</td>
       </tr>
       <tr>
         <td>发货状态</td>
-        <td>已发货</td>
+        <td>${order.deliverStatus}</td>
       </tr>
       <tr>
         <td>快递公司</td>
-        <td>顺丰快递</td>
+        <td>${order.express}</td>
       </tr>
       <tr>
         <td>快递编号</td>
-        <td>E156425as6546a</td>
+        <td>${order.expressNum}</td>
       </tr>
     </table>
+  </c:forEach>
 
 
 
@@ -106,6 +109,7 @@
 
 
   </div>
+  <input type="button" style="display: ${wxEvaluation.evaluation_status.id<=2?"none":""}" onclick="javascript:location.href='<%=request.getContextPath()%>/WeiXin/purchase'" class="btn" value="继续购买">
 </div>
 <script src="js/jquery-1.9.0.js"></script>
 <script>

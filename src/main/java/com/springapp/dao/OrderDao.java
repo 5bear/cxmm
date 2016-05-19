@@ -9,8 +9,13 @@ import java.util.List;
  * Created by ZhanShaoxiong on 2016/5/15.
  */
 @Repository
-public class OrderDao extends BaseDao{
-    public List<WxOrderinfo> getByOpenid(String openid){
-        return this.findAll("from WxOrderinfo where uid.openid=?",WxOrderinfo.class,new Object[]{openid});
+public class OrderDao extends BaseDao {
+    public List<WxOrderinfo> getByOpenid(String openid) {
+        return this.findAll("from WxOrderinfo where uid.openid=?", WxOrderinfo.class, new Object[]{openid});
+    }
+
+    public List<WxOrderinfo> getByAgentid(Long agentid) {
+        return this.findAll("from WxOrderinfo where uid.aid=?", WxOrderinfo.class, agentid);
     }
 }
+

@@ -1,6 +1,8 @@
 package com.springapp.mvc;
 
 import com.springapp.entity.Agent;
+import com.springapp.entity.WxOrderinfo;
+import com.springapp.entity.WxUser;
 import com.springapp.helper.SHA1;
 import net.sf.json.JSONObject;
 import org.dom4j.Document;
@@ -38,11 +40,24 @@ public class WxController extends BaseController {
         Agent isAgent = agentDao.isAgent(openid);
         if (isAgent != null) {
             if (isAgent.getStatus().equals("可用")) {
-                //返回二维码
+                //返回二维码等
+                ModelAndView modelAndView = new ModelAndView("WeiXin/biocode");
+                List<WxUser> wxUsersByAgentid = userDao.getByAgentid(isAgent.getId());
+                List<WxOrderinfo> wxOrderinfoByAgentid = orderDao.getByAgentid(isAgent.getId());
+                modelAndView.addObject("qrcodepath", request.getContextPath() + "/WeiXin/AgentQRCode/" + isAgent.getId().toString() + ".jpg");
+                modelAndView.addObject("userscount", wxUsersByAgentid.size());
+                modelAndView.addObject("orderinfocount", wxOrderinfoByAgentid.size());
+                return modelAndView;
             } else if (isAgent.getStatus().equals("正在审核")) {
                 //正在审核
+                ModelAndView modelAndView = new ModelAndView("WeiXin/applied");
+                modelAndView.addObject("status", "正在审核");
+                return modelAndView;
             } else if (isAgent.getStatus().equals("失效")) {
                 //失效
+                ModelAndView modelAndView = new ModelAndView("WeiXin/applied");
+                modelAndView.addObject("status", "已经失效");
+                return modelAndView;
             } else {
                 throw new Exception("这个状态是不可能的。");
             }
@@ -61,11 +76,70 @@ public class WxController extends BaseController {
         agent.setStatus("正在审核");
         agentDao.save(agent);
         String url = getQC(agent.getId().toString());
-        FileWriter fileWriter = new FileWriter("C:\\Users\\Administrator\\Desktop\\Result.txt", true);
-        fileWriter.write(url);
-        fileWriter.flush();
-        fileWriter.close();
+        String realPath = session.getServletContext().getRealPath("/WEB-INF/pages/WeiXin/AgentQRCode/");
+        downLoadFromUrl(url, agent.getId().toString() + ".jpg", realPath);
+//        FileWriter fileWriter = new FileWriter("C:\\Users\\Administrator\\Desktop\\Result.txt", true);
+//        fileWriter.write(url);
+//        fileWriter.flush();
+//        fileWriter.close();
         return "redirect:/Wx/Apply";
+    }
+
+    /**
+     * 从网络Url中下载文件
+     *
+     * @param urlStr
+     * @param fileName
+     * @param savePath
+     * @throws IOException
+     */
+    public static void downLoadFromUrl(String urlStr, String fileName, String savePath) throws IOException {
+        URL url = new URL(urlStr);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        //设置超时间为3秒
+        conn.setConnectTimeout(3 * 1000);
+        //防止屏蔽程序抓取而返回403错误
+        conn.setRequestProperty("User-Agent", "Mozilla/4.0 (compatible; MSIE 5.0; Windows NT; DigExt)");
+
+        //得到输入流
+        InputStream inputStream = conn.getInputStream();
+        //获取字节数组
+        byte[] getData = readInputStream(inputStream);
+
+        //文件保存位置
+        File saveDir = new File(savePath);
+        if (!saveDir.exists()) {
+            saveDir.mkdir();
+        }
+        File file = new File(saveDir + File.separator + fileName);
+        FileOutputStream fos = new FileOutputStream(file);
+        fos.write(getData);
+        if (fos != null) {
+            fos.close();
+        }
+        if (inputStream != null) {
+            inputStream.close();
+        }
+        conn.disconnect();
+        System.out.println("info:" + url + " download success");
+    }
+
+    /**
+     * 从输入流中获取字节数组
+     *
+     * @param inputStream
+     * @return
+     * @throws IOException
+     */
+    public static byte[] readInputStream(InputStream inputStream) throws IOException {
+        byte[] buffer = new byte[1024];
+        int len = 0;
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        while ((len = inputStream.read(buffer)) != -1) {
+            bos.write(buffer, 0, len);
+        }
+        bos.close();
+        return bos.toByteArray();
     }
 
     @RequestMapping(value = "/Wx/GetOpenId")
@@ -342,8 +416,15 @@ public class WxController extends BaseController {
             String eventKey = root.elementText("EventKey");//扫二维码关注：qrscene_
             String ticket = root.elementText("Ticket");//扫二维码关注
             if (msgType.equals("event") && event.equals("subscribe") && eventKey.startsWith("qrscene_")) {
-                this.print(response, fromUsername);
-                this.print(response, eventKey.substring(8));
+                WxUser userbyOpenid = userDao.getByOpenid(fromUsername);
+                if (userbyOpenid == null) {
+                    WxUser wxUser = new WxUser();
+                    wxUser.setOpenid(fromUsername);
+                    wxUser.setAid(Long.parseLong(eventKey.substring(8)));
+                    userDao.save(wxUser);
+                }
+                //this.print(response, fromUsername);
+                //this.print(response, eventKey.substring(8));
             }
 //            String time = new Date().getTime() + "";
 //            String textTpl = "<xml>" +
@@ -449,7 +530,7 @@ public class WxController extends BaseController {
         Map firstBtn = new HashMap();
         firstBtn.put("type", "view");
         firstBtn.put("name", "体质评估");
-        firstBtn.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxde1edf21c395f90f&redirect_uri=http%3a%2f%2fcx.ecnucpp.com%2ftest1minute%2f&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
+        firstBtn.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxde1edf21c395f90f&redirect_uri=http%3A%2F%2Fcx.ecnucpp.com%2Fcxmm%2FWeiXin%2Findex&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
         menus.add(firstBtn);
 
         //第二个菜单
@@ -461,18 +542,13 @@ public class WxController extends BaseController {
         Map myBtn = new HashMap();
         myBtn.put("type", "view");
         myBtn.put("name", "订单信息");
-        myBtn.put("url", "http://cxmm.ecnucpp.com:8080/web/info.html#rd?nsukey=DnPkRwzLRP0hqwlZ9RDNO%2BVCvhVACGS9f1hXxYOZ2hY2%2FtA7KjGhi%2B%2Bhk7MwT%2FjYoq20NfgLMvfb4%2FLeKsc0SQ%3D%3D");
+        myBtn.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxde1edf21c395f90f&redirect_uri=http%3A%2F%2Fcx.ecnucpp.com%2Fcxmm%2FWeiXin%2Finfo&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
         secondSubBtn.add(myBtn);
         Map myTest = new HashMap();
         myTest.put("type", "view");
         myTest.put("name", "疑问解答");
         myTest.put("url", "http://cxmm.ecnucpp.com:8080/web/result.html#rd?nsukey=QaM%2B9o09ye8S8BKC9nW0AVl%2FodduOpmyfov2wnEJBhS%2FUnSJO9OlIz0I7SKiW1Rx%2BILfAM5LYeb1wdbhTcFrJw%3D%3D");
         secondSubBtn.add(myTest);
-        Map myShare = new HashMap();
-        myShare.put("type", "view");
-        myShare.put("name", "我的分享");
-        myShare.put("url", "http://cxmm.ecnucpp.com:8080/order/share.html#rd?nsukey=V9DHBC7nas75fC9RVychj%2BpcMPfn7%2FrRMlQUxTbqhLBSZUXJyFYzLiOZqIYgcgCiJKUGg6iqP5jTq0AavNLUGw%3D%3D");
-        secondSubBtn.add(myShare);
         secondBtn.put("sub_button", secondSubBtn);
         menus.add(secondBtn);
 
@@ -489,7 +565,7 @@ public class WxController extends BaseController {
         Map activityBtn = new HashMap();
         activityBtn.put("type", "view");
         activityBtn.put("name", "我的推广");
-        activityBtn.put("url", "http://cxmm.ecnucpp.com:8080/demo/activity_mobile.html#rd?nsukey=d6V6w5w984jU3yAuCijK9yQ2jYRwKMFix5Y5E3Ld%2BDA4jZcbll%2B%2F%2BY%2FyAQjY2dbZ%2BQKTKQWZQZAQyrCQaE2ZTQ%3D%3D");
+        activityBtn.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxde1edf21c395f90f&redirect_uri=http%3A%2F%2Fcx.ecnucpp.com%2Fcxmm%2FWx%2FApply&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
         thirdSubBtn.add(activityBtn);
         Map joinUsBtn = new HashMap();
         joinUsBtn.put("type", "view");
@@ -507,6 +583,8 @@ public class WxController extends BaseController {
         String s = postJSONString(url, jObject.toString());
         print(response, jsonString + "\r\n" + s);
     }
+
+
 
     public String payJSAPI(String nonce_str, String body, String out_trade_no, int total_fee, String spbill_create_ip, String openid) throws NoSuchAlgorithmException, IOException {
         StringBuilder urlBuilder = new StringBuilder();

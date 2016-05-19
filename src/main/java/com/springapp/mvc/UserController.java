@@ -1,5 +1,6 @@
 package com.springapp.mvc;
 
+import com.springapp.entity.WxEvaluation;
 import com.springapp.entity.WxOrderinfo;
 import com.springapp.entity.WxUser;
 import org.springframework.stereotype.Controller;
@@ -26,12 +27,14 @@ public class UserController extends BaseController {
         HttpSession session = request.getSession();
         String openid = (String) session.getAttribute("openid");
         if (openid == null) {
-            return new ModelAndView("redirect:" + request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
+            return new ModelAndView("redirect:" + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
         }
         WxUser wxUser = userDao.getByOpenid(openid);
         modelAndView.addObject("wxuser", wxUser);
         List<WxOrderinfo> wxOrderinfoList=orderDao.getByOpenid(openid);
         modelAndView.addObject("list",wxOrderinfoList);
+        WxEvaluation wxEvaluation=wxEvaluationDao.get(openid);
+        modelAndView.addObject("wxEvaluation",wxEvaluation);
         return modelAndView;
     }
 

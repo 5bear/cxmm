@@ -51,7 +51,7 @@ input[type="text"]{
 	display: inline-block;
 	margin:10px 0;
 	border: 1px solid red;
-	width: 65%;
+	width: 60%;
 
 }
 
@@ -60,7 +60,7 @@ select{
 	display: inline-block;
 	margin:10px 0;
 	border: 1px solid red;
-	width: 65%;
+	width: 60%;
 
 }
 

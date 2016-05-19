@@ -26,11 +26,11 @@
   <div class="qblock">
     <form:form name="myForm" action="" method="post" modelAttribute="order">
 
-      <label for="">姓名</label> <input name="name" type="text" value="${result}"><br>
+      <label for="">姓名</label> <input name="name" type="text" id="name" ><br>
       <hr>
-      <label for="">电话</label> <input name="phoneNum" type="text" value=""><br>
+      <label for="">电话</label> <input name="phoneNum" type="text" id="phoneNum" value=""><br>
       <hr>
-      <label for="">收货地址</label> <input name="address" type="text" value=""><br>
+      <label for="">收货地址</label> <input name="address" id="address" type="text" value=""><br>
       <hr>
       <label for="">餐册</label>
       <select name="canceNum" id="canceNum">
@@ -64,6 +64,21 @@
   function ensure(){
     var canceNum=$("#canceNum").val();
     var canheNum=$("#canheNum").val();
+    var name=$("#name").val();
+    var phoneNum=$("#phoneNum").val();
+    var address=$("#address").val();
+    if(name==null||name==""){
+      alert("姓名必填")
+      return true
+    }
+    if(phoneNum==null||phoneNum==""){
+      alert("手机号必填")
+      return true
+    }
+    if(address==null||address==""){
+      alert("地址必填")
+      return true
+    }
     $.ajax({
       url:"<%=request.getContextPath()%>/WeiXin/ensure",
       type:"post",

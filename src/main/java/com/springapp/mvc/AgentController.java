@@ -3,19 +3,19 @@ package com.springapp.mvc;
 import com.springapp.entity.Agent;
 import com.springapp.entity.WxEvaluation;
 import net.sf.json.JSONArray;
+import org.apache.poi.hssf.usermodel.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.File;
 import java.util.List;
-import java.util.UUID;
+import java.util.Map;
 
 /**
  * Created by ZhanShaoxiong on 2016/5/8.
@@ -184,4 +184,74 @@ public class AgentController extends BaseController {
         List<Agent> agentList = agentDao.findByCondition(club, status);
         return JSONArray.fromObject(agentList).toString();
     }
-}
+    @RequestMapping(value = "/balance", method = RequestMethod.GET)
+    public void balance(HttpServletRequest request,HttpServletResponse response,@RequestParam(value = "agentId") Long agentId, @RequestParam(value = "canceRate") float canceRate,@RequestParam(value = "canheRate") float canheRate,
+                          @RequestParam(value = "startDate") String startDate,@RequestParam(value = "endDate") float endDate) {
+        Map agent=agentDao.getAsMap(agentId,canceRate,canheRate);
+        List<Map>agentList=agentDao.getByRecommend((String) agent.get("name"),canceRate,canheRate);
+        agentList.add(0,agent);
+        try{
+            String[] titles = new String[]{"代理点", "手机号", "餐册数","餐册提成比例","餐盒数","餐盒提成比例","推荐人"};
+            String[] keys = new String[]{"name", "phoneNum", "canceNum","canceRate","canheNum","canheRate","recommend"};
+
+            HSSFWorkbook wb = new HSSFWorkbook();
+            // 在webbook中添加一个sheet,对应Excel文件中的sheet
+            HSSFSheet sheet = wb.createSheet("sheet1");
+            // 在sheet中添加表头第0行
+            HSSFRow row = sheet.createRow((int) 0);
+            // 创建单元格，并设置值表头 设置表头居中
+            HSSFCellStyle headStyle = wb.createCellStyle();
+            headStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+            headStyle.setBorderBottom((short) 1);
+            headStyle.setBorderLeft((short) 1);
+            headStyle.setBorderTop((short) 1);
+            headStyle.setBorderRight((short) 1);
+
+            HSSFRow firstRow = sheet.createRow((int) 0);
+            HSSFCell cell;
+            int i = 0;
+            for (String title : titles) {
+                cell = firstRow.createCell((short) i);
+                cell.setCellValue(title);
+                cell.setCellStyle(headStyle);
+                i++;
+            }
+            HSSFCellStyle style = wb.createCellStyle();
+            style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+            i = 1;
+
+
+
+            for (Map agent1 : agentList) {
+                row = sheet.createRow(i);
+
+                row.setRowStyle(style);
+                int j = 0;
+                //for(int n=0;i<enrollCodeList.size();n++)
+                for (String key : keys) {
+                    cell = row.createCell(j);
+                    cell.setCellValue(agent1.get(key)+"");
+                    cell.setCellStyle(style);
+                    j++;
+                }
+                i++;
+            }
+
+            response.reset();
+            // 设置response的Header
+            response.setHeader("pragma", "no-cache");
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Disposition", "attachment; filename="+agentId.toString()+".xls");
+            response.setContentType("application/*");
+            try {
+                wb.write(response.getOutputStream());
+                response.flushBuffer();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        catch (Exception e){
+            System.out.print("exception"+e);
+        }
+    }
+    }

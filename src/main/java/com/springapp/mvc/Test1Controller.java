@@ -41,6 +41,8 @@ public class Test1Controller extends BaseController {
     private static final String APP_SECRET = "Chanxinmama111111222222333333444";
     private static final String DOMAIN = "cx.ecnucpp.com";
     private static final String MCH_ID = "1336372301";
+    private static final int cancePrice=98;
+    private static final int canhePrice=2980;
     public ModelAndView home(){
         ModelAndView modelAndView=new ModelAndView("WeiXin/index");
         return modelAndView;
@@ -86,6 +88,7 @@ public class Test1Controller extends BaseController {
         }
         WxEvaluation wxEvaluation=new WxEvaluation();
         wxEvaluation.setUid(wxuser);
+        wxEvaluation.setTime(sdf.format(new Date()));
         wxEvaluation.setEvaluation_status(test1Dao.getEvaluationStatus(1));
         wxEvaluationDao.save(wxEvaluation);
         return "redirect:/WeiXin/complete";
@@ -188,11 +191,7 @@ public class Test1Controller extends BaseController {
                 String name = (String) array[1];
                 String tendency = (String) array[2];
                 Integer countNum = Integer.parseInt(array[3].toString()) ;
-                BodyCondition bodyCondition =new BodyCondition();
-                bodyCondition.setBCid(BCid);
-                bodyCondition.setName(name);
-                bodyCondition.setTendency(tendency);
-
+                BodyCondition bodyCondition =bodyconditionDao.get(BodyCondition.class,BCid);
                 SResult sResult=new SResult();
                 sResult.setBCid(bodyCondition);
                 sResult.setUid(wxUser);
@@ -257,7 +256,7 @@ public class Test1Controller extends BaseController {
         if (openid == null) {
             response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
         }
-        String body="test";
+        String body="chanxingouwu";
         Long timeStr=System.currentTimeMillis();
         String nonce_str=timeStr.toString();
         session.setAttribute("order",timeStr.toString());
@@ -285,12 +284,16 @@ public class Test1Controller extends BaseController {
             wxuser.setOpenid(openid);
             userDao.save(wxuser);
         }
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd hh:MM:ss");
         String orderNum= (String) session.getAttribute("order");
-        order.setDate(new java.sql.Date(System.currentTimeMillis()));
+        System.out.print(orderNum);
+        System.out.print(order.getName());
+        System.out.print(order.getAddress());
+        order.setDate(simpleDateFormat.format(new Date()));
         order.setResult("success");
         order.setUid(wxuser);
-        order.setOrder(orderNum);
-        baseDao.save(order);
+        order.setOrderNum(orderNum);
+        orderDao.save(order);
         WxEvaluation wxEvaluation=wxEvaluationDao.get(openid);
         wxEvaluation.setEvaluation_status(test1Dao.getEvaluationStatus(3));
         wxEvaluationDao.update(wxEvaluation);

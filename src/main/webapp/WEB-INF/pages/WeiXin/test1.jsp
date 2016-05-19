@@ -22,7 +22,7 @@
 
 <body data-role="page">
 <div class="bg-wrapper pg3">
-  <form action="" method="post">
+  <form action="" method="post" name="myForm">
     <c:forEach items="${list}" var="question1">
       <div class="captain"> 第${question1.id}题（单选题）</div>
       <div class="qblock">
@@ -52,6 +52,22 @@
 </div>
 <script src="js/jquery-1.9.0.js"></script>
 <script>
+  function check(){
+    for(var i=1;i<6;i++){
+      var flag=true
+      var names=document.getElementsByName("q"+i);
+      for(var j=0;j<names.length;j++){
+        if(names[j].checked==true)
+           flag=false
+      }
+      if(flag){
+        alert("问题"+j+"未填写");
+        return true;
+      }
+    }
+    var myForm=document.getElementsByName("myForm");
+    myForm[0].submit();
+  }
 </script>
 </body>
 

@@ -2,7 +2,6 @@ package com.springapp.entity;
 
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 /**
  * Created by ZhanShaoxiong on 2016/5/8.
@@ -15,14 +14,14 @@ public class WxEvaluation {
     private String phone;
     private String address;
     private EvaluationStatus evaluation_status;//外键2
-    private Timestamp time;//评估时间
+    private String time;//评估时间
 
     @Column
-    public Timestamp getTime() {
+    public String getTime() {
         return time;
     }
 
-    public void setTime(Timestamp time) {
+    public void setTime(String time) {
         this.time = time;
     }
     @Column(length =100)

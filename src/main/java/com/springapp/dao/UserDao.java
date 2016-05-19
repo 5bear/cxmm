@@ -11,10 +11,15 @@ import java.util.List;
  */
 @Repository
 public class UserDao extends BaseDao {
-    public WxUser getByOpenid(String openid){
-        return this.find("from WxUser where openid=?",WxUser.class,new Object[]{openid});
+    public WxUser getByOpenid(String openid) {
+        return this.find("from WxUser where openid=?", WxUser.class, new Object[]{openid});
     }
-    public List<WxOrderinfo>getOpenList(String openid){
-        return this.findAll("from WxOrderinfo where uid.openid=?",WxOrderinfo.class,new Object[]{openid});
+
+    public List<WxUser> getByAgentid(Long agentid) {
+        return this.findAll("from WxUser where aid=?", WxUser.class, agentid);
+    }
+
+    public List<WxOrderinfo> getOpenList(String openid) {
+        return this.findAll("from WxOrderinfo where uid.openid=?", WxOrderinfo.class, new Object[]{openid});
     }
 }
