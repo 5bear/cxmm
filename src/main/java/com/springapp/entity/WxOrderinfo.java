@@ -9,6 +9,7 @@ import javax.persistence.*;
 public class WxOrderinfo {
     private int id;
     private String date;
+    private Long dateTime;//时间戳
     private String name;
     private int canceNum;//餐册
     private int canheNum;//餐盒数
@@ -21,6 +22,15 @@ public class WxOrderinfo {
     private String deliverStatus;//发货状态
     private String express;//快递公司
     private String expressNum;//快递编号
+
+    @Column
+    public Long getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(Long dateTime) {
+        this.dateTime = dateTime;
+    }
 
     @Column
     public String getDeliverStatus() {

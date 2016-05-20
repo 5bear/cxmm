@@ -14,6 +14,8 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.List;
 import java.util.Map;
 
@@ -186,9 +188,12 @@ public class AgentController extends BaseController {
     }
     @RequestMapping(value = "/balance", method = RequestMethod.GET)
     public void balance(HttpServletRequest request,HttpServletResponse response,@RequestParam(value = "agentId") Long agentId, @RequestParam(value = "canceRate") float canceRate,@RequestParam(value = "canheRate") float canheRate,
-                          @RequestParam(value = "startDate") String startDate,@RequestParam(value = "endDate") float endDate) {
-        Map agent=agentDao.getAsMap(agentId,canceRate,canheRate);
-        List<Map>agentList=agentDao.getByRecommend((String) agent.get("name"),canceRate,canheRate);
+                          @RequestParam(value = "startDate") String startDate,@RequestParam(value = "endDate") String endDate) throws ParseException {
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy/MM");
+        Long timeStamp1=simpleDateFormat.parse(startDate).getTime();
+        Long timeStamp2=simpleDateFormat.parse(endDate).getTime();
+        Map agent=agentDao.getAsMap(agentId,canceRate,canheRate,timeStamp1,timeStamp2);
+        List<Map>agentList=agentDao.getByRecommend((String) agent.get("name"),canceRate,canheRate,timeStamp1,timeStamp2);
         agentList.add(0,agent);
         try{
             String[] titles = new String[]{"代理点", "手机号", "餐册数","餐册提成比例","餐盒数","餐盒提成比例","推荐人"};

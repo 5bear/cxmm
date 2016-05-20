@@ -26,8 +26,8 @@
     <!-- Add custom CSS here -->
     <link href="<%=request.getContextPath()%>/Web/Upload/back/css/sb-admin.css" rel="stylesheet">
     <link rel="stylesheet" href="<%=request.getContextPath()%>/Web/Upload/back/font-awesome/css/font-awesome.min.css">
-    <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/back/js/jquery.uniform.min.js">
-    </script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/back/js/jquery.uniform.min.js"></script>
+    <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/My97DatePicker4.7.2/WdatePicker.js"></script>
     <link rel="stylesheet" href="<%=request.getContextPath()%>/Web/Upload/back/css/style.css">
     <script language="javascript">
         function cli(Obj) {
@@ -108,9 +108,6 @@
                         </th>
                         <th>
                             状态
-                        </th>
-                        <th>
-                            操作
                         </th>
                     </tr>
                     </thead>
@@ -290,11 +287,11 @@
                             <div class="form-group">
                                 <label class="control-label col-md-3">开始月</label>
                                 <div class="col-md-3">
-                                    <input type="text" id="startDate" class="form-control" placeholder="年/月">
+                                    <input type="text" id="startDate" class="form-control" placeholder="年/月" onfocus="WdatePicker({dateFmt:'yyyy/MM'})">
                                 </div>
                                 <label class="control-label col-md-3">结束月</label>
                                 <div class="col-md-3">
-                                    <input type="text" id="endDate" class="form-control" placeholder="年/月">
+                                    <input type="text" id="endDate" class="form-control" placeholder="年/月" onfocus="WdatePicker({dateFmt:'yyyy/MM'})">
                                 </div>
                             </div>
                             <div class="modal-footer">
@@ -434,8 +431,6 @@
                             "<td class='checkbox-column'><input type='checkbox' class='uniform' name='subBox'></td> " +
                             "<td>" + item.id + "</td>" +
                             "<td>" + item.agent + "</td>" +
-                            "<td>" + item.account + "</td>" +
-                            "<td>" + item.password + "</td>" +
                             "<td>" + item.phoneNum + "</td>" +
                             "<td>" + item.email + "</td>" +
                             "<td>" + item.userNum + "</td>" +
@@ -451,11 +446,9 @@
         })
     }
 
-    function setEditid(id, agent, account, password, phoneNum, email, images, status) {
+    function setEditid(id, agent, phoneNum, email, images, status) {
         $("[name='id']").val(id);
         $("#agent").val(agent);
-        $("#account").val(account);
-        $("#password").val(password);
         $("#phoneNum").val(phoneNum);
         $("#email").val(email);
         $("#imgid").attr("src", "<%=request.getContextPath()%>/Web/Upload/qrcode/" + images);

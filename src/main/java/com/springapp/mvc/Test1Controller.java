@@ -284,12 +284,13 @@ public class Test1Controller extends BaseController {
             wxuser.setOpenid(openid);
             userDao.save(wxuser);
         }
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy-MM-dd hh:MM:ss");
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy/MM/dd hh:MM:ss");
         String orderNum= (String) session.getAttribute("order");
         System.out.print(orderNum);
         System.out.print(order.getName());
         System.out.print(order.getAddress());
         order.setDate(simpleDateFormat.format(new Date()));
+        order.setDateTime(System.currentTimeMillis());
         order.setResult("success");
         order.setUid(wxuser);
         order.setOrderNum(orderNum);
