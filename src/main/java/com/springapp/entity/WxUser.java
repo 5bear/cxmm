@@ -17,10 +17,10 @@ public class WxUser {
     private String age;
     private String ExpectingDate;
     private int PregnancyWeek;
-    private int Birthorder;
-    private int height;
-    private int AfterWeight;
-    private int Weight;
+    private String Birthorder;
+    private String height;
+    private String AfterWeight;
+    private String Weight;
     private int eutocia;
     private int feed;
 
@@ -111,35 +111,35 @@ public class WxUser {
         ExpectingDate = expectingDate;
     }
     @Column
-    public int getBirthorder() {
+    public String getBirthorder() {
         return Birthorder;
     }
 
-    public void setBirthorder(int birthorder) {
+    public void setBirthorder(String birthorder) {
         Birthorder = birthorder;
     }
     @Column
-    public int getHeight() {
+    public String getHeight() {
         return height;
     }
 
-    public void setHeight(int height) {
+    public void setHeight(String height) {
         this.height = height;
     }
     @Column
-    public int getAfterWeight() {
+    public String getAfterWeight() {
         return AfterWeight;
     }
 
-    public void setAfterWeight(int afterWeight) {
+    public void setAfterWeight(String afterWeight) {
         AfterWeight = afterWeight;
     }
     @Column
-    public int getWeight() {
+    public String getWeight() {
         return Weight;
     }
 
-    public void setWeight(int weight) {
+    public void setWeight(String weight) {
         Weight = weight;
     }
     @Column

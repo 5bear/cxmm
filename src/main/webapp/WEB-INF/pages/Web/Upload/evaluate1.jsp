@@ -120,11 +120,7 @@
         </div>
         <div class="modal-footer">
           <input type="button" class="btn btn-success" value="查找" onclick=""/>
-          <input type="button" class="btn btn-success" value="订单升级" onclick=""/>
           <input type="button" class="btn btn-success" value="生成文件" onclick=""/>
-          <button type="button" class="btn btn-success" data-toggle="modal" data-target="#AddModal">
-            添加物流信息
-          </button>
         </div>
       </form>
       <div class="col-md-12">
@@ -165,30 +161,6 @@
          <td><label data-toggle="modal" data-target="#CheckModal"><a>查看</a></label></td><td><a href="menu.html"> 添加</a></td>
        </tr>
      </c:forEach>
-          <tr>
-            <td class="checkbox-column">
-              <input type="checkbox" class="uniform" name="subBox">
-            </td>
-
-            <td>
-              001
-            </td>
-            <td>
-              李四
-            </td>
-            <td>
-              2016/3/29
-            </td>
-            <td>
-              已打印
-            </td>
-            <td>
-              <label data-toggle="modal" data-target="#CheckModal"><a>查看</a></label>
-            </td>
-            <td>
-              <a href="<%=request.getContextPath()%>/Upload/menu">添加</a>
-            </td>
-          </tr>
           </tbody>
         </table>
         <section class="archive-pages">

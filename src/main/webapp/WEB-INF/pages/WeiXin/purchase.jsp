@@ -13,7 +13,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>月子餐</title>
+  <title>禅心妈妈</title>
   <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <link href="css/style.css" rel="stylesheet">
   <link href="css/normalize.css" rel="stylesheet">
@@ -33,19 +33,15 @@
       <label for="">收货地址</label> <input name="address" id="address" type="text" value=""><br>
       <hr>
       <label for="">餐册</label>
-      <select name="canceNum" id="canceNum">
-        <option value="1">第一月</option>
-        <option value="2">第二月</option>
-        <option value="3">第三月</option>
-      </select>
+      <div class="tr"><input name="canceNums"  value="1" type="checkbox">第一月</div>
+      <div class="tr"><input name="canceNums"  value="2" type="checkbox">第二月</div>
+      <div class="tr"><input name="canceNums"  value="3" type="checkbox">第三月</div>
 
       <hr>
       <label for="">配套食材</label>
-      <select name="canheNum" id="canheNum">
-        <option value="1">第一月</option>
-        <option value="2">第二月</option>
-        <option value="3">第三月</option>
-      </select>
+      <div class="tr"><input name="canheNums"  value="1" type="checkbox">第一月</div>
+      <div class="tr"><input name="canheNums"  value="2" type="checkbox">第二月</div>
+      <div class="tr"><input name="canheNums"  value="3" type="checkbox">第三月</div>
 
       <hr>
 
@@ -62,8 +58,18 @@
 </body>
 <script>
   function ensure(){
-    var canceNum=$("#canceNum").val();
-    var canheNum=$("#canheNum").val();
+    var canceNum=0;
+    var cance=document.getElementsByName("canceNums");
+    for(var i=0;i<cance.length;i++){
+      if(cance[i].checked==true)
+      canceNum++;
+    }
+    var canheNum=0;
+    var canhe=document.getElementsByName("canheNums");
+    for(i=0;i<cance.length;i++){
+      if(canhe[i].checked==true)
+        canheNum++;
+    }
     var name=$("#name").val();
     var phoneNum=$("#phoneNum").val();
     var address=$("#address").val();

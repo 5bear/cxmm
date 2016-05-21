@@ -46,6 +46,7 @@ public class AgentController extends BaseController {
         request.setAttribute("totalPage", totalPage);
         List<Agent> myList = agentDao.getByPage(start, end);
         modelAndView.addObject("list", myList);
+        List<Agent>agentList1=agentDao.getListByStatus();
         return modelAndView;
     }
 

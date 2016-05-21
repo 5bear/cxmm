@@ -514,12 +514,12 @@
             $.ajax({
                 type: "post",
                 url: "Agency/changeStatus",
-                data: {infoList: infoList, type: 0},
+                data: {infoList: infoList, type: 1},
                 success: function (result) {
                     if (result == "success") {
                         $(idList).each(function (index, data) {
                             if (data.checked) {
-                                $(data).parent().parent().find('td:eq(8)').html("可用");
+                                $(data).parent().parent().find('td:eq(8)').html("失效");
                             }
                         });
                         $("input[name='subBox']").removeAttr("checked");
@@ -547,12 +547,12 @@
             $.ajax({
                 type: "post",
                 url: "Agency/changeStatus",
-                data: {infoList: infoList, type: 1},
+                data: {infoList: infoList, type: 0},
                 success: function (result) {
                     if (result == "success") {
                         $(idList).each(function (index, data) {
                             if (data.checked) {
-                                $(data).parent().parent().find('td:eq(8)').html("失效");
+                                $(data).parent().parent().find('td:eq(8)').html("可用");
                             }
                         });
                         $("input[name='subBox']").removeAttr("checked");

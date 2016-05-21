@@ -13,7 +13,10 @@ import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by ZhanShaoxiong on 2016/5/9.
@@ -32,7 +35,41 @@ public class UserController extends BaseController {
         WxUser wxUser = userDao.getByOpenid(openid);
         modelAndView.addObject("wxuser", wxUser);
         List<WxOrderinfo> wxOrderinfoList=orderDao.getByOpenid(openid);
-        modelAndView.addObject("list",wxOrderinfoList);
+        List<Map>mapList=new ArrayList<Map>();
+        for(WxOrderinfo wxOrderinfo:wxOrderinfoList){
+            Map map=new HashMap();
+            map.put("orderNum",wxOrderinfo.getOrderNum());
+            map.put("dateTime",wxOrderinfo.getDate());
+            String cance="";
+            String []cc=wxOrderinfo.getCanceNum().split(",");
+            for(int c=0;c<cc.length;c++){
+                if(c==0)
+                cance+="第"+cc[c]+"月";
+                else{
+                    cance+=",第"+cc[c]+"月";
+                }
+            }
+            map.put("cance",wxOrderinfo.getCanceNum());
+            String canhe="";
+            String []ch=wxOrderinfo.getCanheNum().split(",");
+            for(int c=0;c<ch.length;c++){
+                if(c==0)
+                    cance+="第"+ch[c]+"月";
+                else{
+                    cance+=",第"+ch[c]+"月";
+                }
+            }
+            map.put("canhe",wxOrderinfo.getCanheNum());
+            map.put("price",cc.length*98+ch.length*2980);
+            map.put("name",wxOrderinfo.getName());
+            map.put("address",wxOrderinfo.getAddress());
+            map.put("phoneNum",wxOrderinfo.getPhoneNum());
+            map.put("deliverStatus",wxOrderinfo.getDeliverStatus());
+            map.put("express",wxOrderinfo.getExpress());
+            map.put("expressNum",wxOrderinfo.getExpressNum());
+            mapList.add(map);
+        }
+        modelAndView.addObject("list",mapList);
         WxEvaluation wxEvaluation=wxEvaluationDao.get(openid);
         modelAndView.addObject("wxEvaluation",wxEvaluation);
         return modelAndView;

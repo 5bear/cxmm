@@ -100,6 +100,7 @@ public class Test1Controller extends BaseController {
     }
     @RequestMapping(value = "/complete",method = RequestMethod.POST)
     public String complete(HttpServletRequest request,HttpSession session,HttpServletResponse response) throws IOException {
+        request.setCharacterEncoding("utf-8");
         String openid = (String) session.getAttribute("openid");
         if (openid == null) {
             return "redirect:"+request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI());
@@ -110,7 +111,7 @@ public class Test1Controller extends BaseController {
          /*存储用户信息*/
         String Age = request.getParameter("Age");
         String ExpectingDate = request.getParameter("ExpectingDate");
-        String PregnancyWeek = request.getParameter("PregnancyWeek");
+       /* String PregnancyWeek = request.getParameter("PregnancyWeek");*/
         String Birthorder = request.getParameter("Birthorder");
         String Height = request.getParameter("Height");
         String AfterWeight = request.getParameter("AfterWeight");
@@ -124,11 +125,11 @@ public class Test1Controller extends BaseController {
             wxuser.setDateOfLogin(sdf.format(new Date()));
             wxuser.setAge(Age);
             wxuser.setExpectingDate(ExpectingDate);
-            wxuser.setPregnancyWeek(Integer.parseInt(PregnancyWeek));
-            wxuser.setBirthorder(Integer.parseInt(Birthorder));
-            wxuser.setHeight(Integer.parseInt(Height));
-            wxuser.setAfterWeight(Integer.parseInt(AfterWeight));
-            wxuser.setWeight(Integer.parseInt(Weight));
+         /*   wxuser.setPregnancyWeek(Integer.parseInt(PregnancyWeek));*/
+            wxuser.setBirthorder(Birthorder);
+            wxuser.setHeight(Height);
+            wxuser.setAfterWeight(AfterWeight);
+            wxuser.setWeight(Weight);
             if(eutocia!=null)
                 wxuser.setEutocia(Integer.parseInt(eutocia));
             if(feed!=null)
@@ -138,11 +139,11 @@ public class Test1Controller extends BaseController {
         wxuser.setDateOfLogin(sdf.format(new Date()));
         wxuser.setAge(Age);
         wxuser.setExpectingDate(ExpectingDate);
-        wxuser.setPregnancyWeek(Integer.parseInt(PregnancyWeek));
-        wxuser.setBirthorder(Integer.parseInt(Birthorder));
-        wxuser.setHeight(Integer.parseInt(Height));
-        wxuser.setAfterWeight(Integer.parseInt(AfterWeight));
-        wxuser.setWeight(Integer.parseInt(Weight));
+       /* wxuser.setPregnancyWeek(Integer.parseInt(PregnancyWeek));*/
+        wxuser.setBirthorder(Birthorder);
+        wxuser.setHeight(Height);
+        wxuser.setAfterWeight(AfterWeight);
+        wxuser.setWeight(Weight);
         if(eutocia!=null)
             wxuser.setEutocia(Integer.parseInt(eutocia));
         if(feed!=null)
@@ -285,10 +286,24 @@ public class Test1Controller extends BaseController {
             userDao.save(wxuser);
         }
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy/MM/dd hh:MM:ss");
+        String cance="";
+        for(int i=0;i<order.getCanceNums().length;i++){
+            if(i==0)
+                cance+=order.getCanceNums()[i];
+            else
+                cance+=","+order.getCanceNums()[i];
+        }
+        String canhe="";
+        for(int i=0;i<order.getCanheNums().length;i++){
+            if(i==0)
+                canhe+=order.getCanheNums()[i];
+            else
+                canhe+=","+order.getCanheNums()[i];
+        }
         String orderNum= (String) session.getAttribute("order");
-        System.out.print(orderNum);
-        System.out.print(order.getName());
-        System.out.print(order.getAddress());
+        order.setDeliverStatus("未发货");
+        order.setCanceNum(cance);
+        order.setCanheNum(canhe);
         order.setDate(simpleDateFormat.format(new Date()));
         order.setDateTime(System.currentTimeMillis());
         order.setResult("success");
@@ -452,6 +467,20 @@ public class Test1Controller extends BaseController {
         if (openid == null) {
             response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
         }
+        return modelAndView;
+    }
+    @RequestMapping(value = "/news")
+    public ModelAndView activity(HttpServletRequest request,HttpServletResponse response,HttpSession session) throws IOException {
+        ModelAndView modelAndView=new ModelAndView("WeiXin/news");
+       List<Activity>activityList=activityDao.getList();
+        modelAndView.addObject("list",activityList);
+        return modelAndView;
+    }
+    @RequestMapping(value = "/detail")
+    public ModelAndView showActivity(@RequestParam(value = "id")int id) throws IOException {
+        ModelAndView modelAndView=new ModelAndView("WeiXin/detail");
+        Activity activity=activityDao.get(Activity.class,id);
+        modelAndView.addObject("activity",activity);
         return modelAndView;
     }
 }

@@ -11,8 +11,8 @@ public class WxOrderinfo {
     private String date;
     private Long dateTime;//时间戳
     private String name;
-    private int canceNum;//餐册
-    private int canheNum;//餐盒数
+    private String canceNum;//餐册
+    private String canheNum;//餐盒数
     private String phoneNum;
     private String address;//收货地址
     private WxUser uid;
@@ -22,6 +22,25 @@ public class WxOrderinfo {
     private String deliverStatus;//发货状态
     private String express;//快递公司
     private String expressNum;//快递编号
+    private int[]canceNums;
+    private int[]canheNums;
+
+    @Transient
+    public int[] getCanceNums() {
+        return canceNums;
+    }
+
+    public void setCanceNums(int[] canceNums) {
+        this.canceNums = canceNums;
+    }
+    @Transient
+    public int[] getCanheNums() {
+        return canheNums;
+    }
+
+    public void setCanheNums(int[] canheNums) {
+        this.canheNums = canheNums;
+    }
 
     @Column
     public Long getDateTime() {
@@ -76,19 +95,19 @@ public class WxOrderinfo {
     }
 
     @Column
-    public int getCanceNum() {
+    public String getCanceNum() {
         return canceNum;
     }
 
-    public void setCanceNum(int canceNum) {
+    public void setCanceNum(String canceNum) {
         this.canceNum = canceNum;
     }
     @Column
-    public int getCanheNum() {
+    public String getCanheNum() {
         return canheNum;
     }
 
-    public void setCanheNum(int canheNum) {
+    public void setCanheNum(String canheNum) {
         this.canheNum = canheNum;
     }
     @Column(length = 45)

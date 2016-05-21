@@ -6,7 +6,7 @@
     Admin admin= (Admin) session.getAttribute("admin");
     if(admin==null)
     {
-        response.sendRedirect("login");
+        response.sendRedirect("/login");
         return;
     }
     int totalPage= (Integer) request.getAttribute("totalPage");
@@ -29,7 +29,7 @@
     <link href="<%=application.getContextPath()%>/Web/Upload/back/css/sb-admin.css" rel="stylesheet">
     <link rel="stylesheet" href="<%=application.getContextPath()%>/Web/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="<%=application.getContextPath()%>/Web/Upload/back/css/style.css">
-    <link href="../suyati-line-control/editor.css" type="text/css" rel="stylesheet"/>
+    <link href="<%=application.getContextPath()%>/Web/Upload/themes/default/default.css" type="text/css" rel="stylesheet"/>
 </head>
 
 <body>
@@ -83,7 +83,7 @@
                     </thead>
                     <tbody>
 
-                    <c:forEach items="${activityList}" var="news">
+                    <c:forEach items="${list}" var="news">
                         <tr>
                             <td class="checkbox-column">
                                 <input type="checkbox" class="uniform" name="subBox">
@@ -100,7 +100,9 @@
                             </td>
                             <td>
                                 <a href="Detail/${news.id}" target="_blank">查看</a>
-                                <a href="Edit/${news.id}">编辑</a>
+                                <button type="button" class="btn btn-success" onclick="setInfo('${news.id}','${news.title}','${news.newsStatusE}','${news.summary}','${news.content}')" data-toggle="modal" data-target="#EditModal">
+                                    修改
+                                </button>
                             </td>
                         </tr>
                     </c:forEach>
@@ -161,7 +163,8 @@
                 <h4 class="modal-title" id="AddModalLabel">添加</h4>
             </div>
             <form:form class="form-horizontal" id="add_admin" novalidate="novalidate" method="post" action="./Add"
-                       enctype="multipart/form-data" modelAttribute="news" accept-charset="utf-8">
+                       enctype="multipart/form-data" modelAttribute="news" accept-charset="utf-8"
+                       onsubmit="$('#txtEditor')[0].value = $('#txtEditor').Editor('getText')">
                 <div class="modal-body">
                     <div class="form-group">
                         <label class="control-label col-md-3">标题</label>
@@ -172,7 +175,7 @@
                     <div class="form-group">
                         <label class="control-label col-md-3">状态</label>
                         <div class="col-md-3">
-                            <select class="form-control" name="newsStatusE" id="newsStatus">
+                            <select class="form-control" name="newsStatus" id="newsStatusE">
                                 <option value="可用">可用</option>
                                 <option value="失效">失效</option>
                             </select>
@@ -191,9 +194,9 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-md-3">活动链接</label>
-                        <div class="col-md-5">
-                            <input type="text" name="url" class="form-control" placeholder="活动链接" id="link"/>
+                        <label class="control-label col-md-3">新闻内容</label><br>
+                        <div class="col-lg-12 nopadding">
+                                <textarea type="text" id="activity" name="content" style="width:550px;height:200px;"></textarea>
                         </div>
                     </div>
                 </div>
@@ -204,12 +207,64 @@
         </div>
     </div>
 </div>
-
+<!-- Edit Modal -->
+<div class="modal fade" id="EditModal" tabindex="-1" role="dialog" aria-labelledby="EditModal">
+    <div class="modal-dialog modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                        aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" >修改</h4>
+            </div>
+            <form:form class="form-horizontal" id="add_admin" novalidate="novalidate" method="post" action="./Edit"
+                       enctype="multipart/form-data" modelAttribute="news" accept-charset="utf-8">
+                <input id="id" value="" style="display: none">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label class="control-label col-md-3">标题</label>
+                        <div class="col-md-7">
+                            <input type="text" name="title" class="form-control" placeholder="标题" id="title1"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">状态</label>
+                        <div class="col-md-3">
+                            <select class="form-control" name="newsStatus" id="newsStatus1">
+                                <option value="可用">可用</option>
+                                <option value="失效">失效</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">上传图片</label>
+                        <div class="col-md-5">
+                            <input type="file" name="file"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">摘要</label>
+                        <div class="col-md-5">
+                            <input type="text" name="summary" class="form-control" placeholder="摘要" id="summary1"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">新闻内容</label><br>
+                        <div class="col-lg-12 nopadding">
+                            <input type="text" id="txtEditor1" name="content"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <input type="submit" class="btn btn-success" value="保存" onclick=""/>
+                </div>
+            </form:form>
+        </div>
+    </div>
+</div>
 <!-- JavaScript -->
 <script src="<%=application.getContextPath()%>/Web/jquery/jquery.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="<%=application.getContextPath()%>/Web/bootstrap/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="../jquery.uniform/jquery.uniform.min.js"></script>
-<script src="../suyati-line-control/editor.js"></script>
+<script type="text/javascript" src="<%=application.getContextPath()%>/Web/jquery.uniform/jquery.uniform.min.js"></script>
 <script language="javascript">
     function cli(Obj) {
         var collid = document.getElementById("all")
@@ -224,6 +279,15 @@
     }
 </script>
 <script type="text/javascript">
+
+    function setInfo(id,title,newsStatus,summary,content){
+        $("#id").val(id)
+        $("#title1").val(title)
+        $("#newsStatus1").val(newsStatus)
+        $("#summary1").val(summary)
+        $("#txtEditor1").html(content)
+    }
+
     $(function () {
         $("#checkAll").click(function () {
             // 	alert($("input[name='subBox']").length);

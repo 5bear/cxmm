@@ -168,9 +168,9 @@ public class WxController extends BaseController {
         //如果用户同意授权并且，用户session不存在，通过OAUTH接口调用获取用户信息
         if (isValidCode && session.getAttribute("openid") == null) {
             JSONObject obj = getAccessToken(APP_ID, APP_SECRET, code);
-            //String token = obj.getString("access_token");
+            String token = obj.getString("access_token");
             String openid = obj.getString("openid");
-            //JSONObject user = WxOAuthAPI.getUserInfo(token, openid);
+            JSONObject user = getUserInfo(token, openid);
             session.setAttribute("openid", openid);
             //return "redirect:https://www.baidu.com/s?wd=" + openid;
             response.sendRedirect(returnUrl);
@@ -417,8 +417,10 @@ public class WxController extends BaseController {
             String eventKey = root.elementText("EventKey");//扫二维码关注：qrscene_
             String ticket = root.elementText("Ticket");//扫二维码关注
 
-
-            if (eventKey.equals("questionKey")) {
+            String content = root.elementText("Content");
+            System.out.print("out******************************" + content + msgType);
+            if (eventKey!=null&&eventKey.equals("questionKey")) {
+                System.out.print("questionKey******************************" + content + msgType);
                 String time = new Date().getTime() + "";
                 String answerMsg = "<xml>" +
                         "<ToUserName><![CDATA[" + fromUsername + "]]></ToUserName>" +
@@ -436,8 +438,10 @@ public class WxController extends BaseController {
                         "【7】关于“高血糖”“高血压”等疾病]]></Content>" +
                         "</xml>";
                 this.print(response, answerMsg);
-            } else if (msgType.equals("text")) {
-                if (root.elementText("Content").equals("1") || root.elementText("Content").equals("一")) {
+            }
+            else if(msgType!=null&&msgType.equals("text")) {
+                if (content.equals("1") || content.equals("一")) {
+                    System.out.print("success******************************" + content + msgType);
                     String time = new Date().getTime() + "";
                     String answerMsg = "<xml>" +
                             "<ToUserName><![CDATA[" + fromUsername + "]]></ToUserName>" +
@@ -445,10 +449,10 @@ public class WxController extends BaseController {
                             "<CreateTime>" + time + "</CreateTime>" +
                             "<MsgType><![CDATA[text]]></MsgType>" +
                             "<Content><![CDATA[【1】禅心妈妈月子调养方案是依据您的体质，哺乳需求，生产方式，产后恢复需求等因素为您量身定制的。每个方案分为三个阶段，每个阶段以28天为一个周期。对于每一位孕产妈妈，我们会按照粥方，饭方，汤方，茶方，点心五个系列为您搭配每一天的调养餐普，每一天的餐普都有推荐适合您的食材，烹饪方法，详细克数及对应功效，同时明确提示您当天需要购买的生鲜食材。\n" +
-                            "关于食盒：为了避免孕妈妈们采购的繁琐和干货食材品质甄别等问题，禅心妈妈可以为需要的妈妈们一站式搭配好方案中所需的干货食材（包含101种药食同源的食材），妈妈们只需按照餐普提示购买当天所需的生鲜即可烹制出健康，美味，省心的月子餐了。\n]]></Content>" +
+                            "关于食盒：为了避免孕妈妈们采购的繁琐和干货食材品质甄别等问题，禅心妈妈可以为需要的妈妈们一站式搭配好方案中所需的干货食材（包含101种药食同源的食材），妈妈们只需按照餐普提示购买当天所需的生鲜即可烹制出健康，美味，省心的月子餐了。]]></Content>" +
                             "</xml>";
                     this.print(response, answerMsg);
-                } else if (root.elementText("Content").equals("2") || root.elementText("Content").equals("二")) {
+                } else if (content.equals("2") || content.equals("二")) {
                     String time = new Date().getTime() + "";
                     String answerMsg = "<xml>" +
                             "<ToUserName><![CDATA[" + fromUsername + "]]></ToUserName>" +
@@ -456,10 +460,10 @@ public class WxController extends BaseController {
                             "<CreateTime>" + time + "</CreateTime>" +
                             "<MsgType><![CDATA[text]]></MsgType>" +
                             "<Content><![CDATA[【2】禅心妈妈月子饮食调养方案为根据妈妈的体质和调理需求，结合妇产科学、中医学、营养学、食疗学、康复学、烹饪学的六个领域权威专家的经验，为每一位妈妈量身定制的。方案中的三大阶段，12周调理重点，84天、252餐饮均有相应的理论基础和实践验证。每周的调理顺序，调理理念，每一餐的功效均有不同。请参照此标准安排每天饮食，不要随意更改菜品顺序，添加或者删减食材内容，或改换为其他菜品，以免影响调养效果。如有疑问，请联系禅心妈妈微信公众号：chanxin51 \n" +
-                            "禅心妈妈月子调养食材盒是与每一位妈妈个性化的调养方案配套使用的，其中包含粥、饭、汤、茶、糊的所有核心配方食材，便于家人的操作。在使用过程中，粥、饭均只需将材料清洗后放入蒸锅中蒸熟即可；茶类则需要放入养生茶壶中烧开后，煮沸后继续沸腾10分钟即可，也可以放入保温杯中泡水；所有汤包都是先放入清水中煮20分钟后，取出汤包后留汤汁作为汤底使用。汤品中可以添加其他时蔬，选材请在配套餐册的《应季时蔬附录页》当中选取。\n项]]></Content>" +
+                            "禅心妈妈月子调养食材盒是与每一位妈妈个性化的调养方案配套使用的，其中包含粥、饭、汤、茶、糊的所有核心配方食材，便于家人的操作。在使用过程中，粥、饭均只需将材料清洗后放入蒸锅中蒸熟即可；茶类则需要放入养生茶壶中烧开后，煮沸后继续沸腾10分钟即可，也可以放入保温杯中泡水；所有汤包都是先放入清水中煮20分钟后，取出汤包后留汤汁作为汤底使用。汤品中可以添加其他时蔬，选材请在配套餐册的《应季时蔬附录页》当中选取项]]></Content>" +
                             "</xml>";
                     this.print(response, answerMsg);
-                } else if (root.elementText("Content").equals("3") || root.elementText("Content").equals("三")) {
+                } else if (content.equals("3") || content.equals("三")) {
                     String time = new Date().getTime() + "";
                     String answerMsg = "<xml>" +
                             "<ToUserName><![CDATA[" + fromUsername + "]]></ToUserName>" +
@@ -469,7 +473,7 @@ public class WxController extends BaseController {
                             "<Content><![CDATA[【3】很多妈妈吃我们的月子餐第一周和第二周跟我们反映说，奶水少，不足，比较着急，在这种情况下需要告诉宝妈，奶水的增加是一个循序渐进的过程，宝宝的胃口也是逐渐增大的，所以在第一周第二周宝宝不需要吃太多奶水，我们第一、第二周主要帮助妈妈们先排恶露，慢慢地把脾胃修复了以后，在第二周会适量添加一些助奶的汤方，所以妈妈在这个时候如果有缺乳的情况，请不要太过着急。调整好心态。如果第三周第四周奶水还是少的话，我们会推荐气血双补，调气生乳的经方来帮您调养。]]></Content>" +
                             "</xml>";
                     this.print(response, answerMsg);
-                } else if (root.elementText("Content").equals("4") || root.elementText("Content").equals("四")) {
+                } else if (content.equals("4") || content.equals("四")) {
                     String time = new Date().getTime() + "";
                     String answerMsg = "<xml>" +
                             "<ToUserName><![CDATA[" + fromUsername + "]]></ToUserName>" +
@@ -479,18 +483,18 @@ public class WxController extends BaseController {
                             "<Content><![CDATA[【4】分娩后，发生奶结的原因多是由于内分泌因素导致奶水减少，或者婴儿吸吮的次数不够，致使乳腺无法正常分泌乳汁，部分妈妈因肝气不畅导致乳头短小、凹陷，因喂奶造成乳头受伤造成奶量减少、奶水不足的情况，还有些妈妈因肝气郁结，乳房胀大，乳汁无法正常排出，出现这样的情况我们在第一周或者第二周先调补胃气，再疏肝理气。从饮食上开郁散结预防奶结的发生，您在平常的时候可以采用按摩+热敷的方法，并注意保持心情舒畅，保持乳房清洁如果还出现这样的情况，我们在第三周或者第四周向您推荐蒲公英散结茶或丝瓜络散结茶为您调理。]]></Content>" +
                             "</xml>";
                     this.print(response, answerMsg);
-                } else if (root.elementText("Content").equals("5") || root.elementText("Content").equals("五")) {
+                } else if (content.equals("5") || content.equals("五")) {
                     String time = new Date().getTime() + "";
                     String answerMsg = "<xml>" +
                             "<ToUserName><![CDATA[" + fromUsername + "]]></ToUserName>" +
                             "<FromUserName><![CDATA[" + toUsername + "]]></FromUserName>" +
                             "<CreateTime>" + time + "</CreateTime>" +
                             "<MsgType><![CDATA[text]]></MsgType>" +
-                            "<Content><![CDATA[【5】产后因为元气大伤，容易外感六邪，即风、寒、暑、湿、燥、火皆可侵袭而火化，产后五脏六腑处在较大的复旧过程中，其功能失调易引起内生之火，七情舒缓适当可致火由内生。阴液内耗，虚火内生，所以很容易出现：心烦意乱、眼干、眼痒、而且暴躁易冲动，经常发脾气，舌苔黄腻、口苦口干，口腔生疮，口臭、牙痛、牙龈红肿、牙根发炎等症状，另外，大便还会干燥。\n" +
+                            "<Content><![CDATA[【5】产后因为元气大伤，容易外感六邪，即风、寒、暑、湿、燥、火皆可侵袭而火化，产后五脏六腑处在较大的复旧过程中，其功能失调易引起内生之火，七情舒缓适当可致火由内生。阴液内耗，虚火内生，所以很容易出现：心烦意乱、眼干、眼痒、而且暴躁易冲动，经常发脾气，舌苔黄腻、口苦口干，口腔生疮，口臭、牙痛、牙龈红肿、牙根发炎等症状，另外，大便还会干燥。" +
                             "针对产后妈妈上火，我们建议是，防止外感，保持情绪稳定，多喝水。我们餐册第一周和第二周以补气健脾恢复体力排出恶露为主要目标，从第三周开始，逐渐加大滋阴生津的力度，另外，若上火情况严重，可以增加增液茶饮的服用量，对改善上火情况，都是十分有帮助的。\n]]></Content>" +
                             "</xml>";
                     this.print(response, answerMsg);
-                } else if (root.elementText("Content").equals("6") || root.elementText("Content").equals("六")) {
+                } else if (content.equals("6") || content.equals("六")) {
                     String time = new Date().getTime() + "";
                     String answerMsg = "<xml>" + "<ToUserName><![CDATA[" + fromUsername + "]]></ToUserName>" + "<FromUserName><![CDATA[" + toUsername + "]]></FromUserName>" +
                             "<CreateTime>" + time + "</CreateTime>" + "<MsgType><![CDATA[text]]></MsgType>" + "<Content><![CDATA[【6】妈妈过敏\n" +
@@ -499,35 +503,43 @@ public class WxController extends BaseController {
                             "宝宝过敏\n" +
                             "宝宝过敏体质与遗传有相当大的关系，父母双方过敏遗传机率高达80%以上。在出生后的最初六年都处于易感期，极容易造成宝宝对尘螨、花粉、牛奶等高蛋白质过敏。\n" +
                             "这段时间很多宝宝都会出现胃肠功能、免疫功能不完善，机体抵抗力较弱，消化功能紊乱，肠吸收不良容易出现皮肤湿疹、过敏性鼻炎、过敏性咳嗽哮喘以及反复呼吸道感染性疾病（支气管炎肺炎）等。\n" +
-                            "我们给妈妈的建议是：如果妈妈是特禀体质，请积极进行脱敏治疗，防止遗传给宝宝，最好进行母乳喂养，多晒太阳，多呼吸新鲜空气，避免花粉，烟尘等污染环境，及时接种疫苗对防止宝宝过敏也是十分重要的。\n]]></Content>" + "</xml>";
+                            "我们给妈妈的建议是：如果妈妈是特禀体质，请积极进行脱敏治疗，防止遗传给宝宝，最好进行母乳喂养，多晒太阳，多呼吸新鲜空气，避免花粉，烟尘等污染环境，及时接种疫苗对防止宝宝过敏也是十分重要的。]]></Content>" + "</xml>";
                     this.print(response, answerMsg);
-                }
-                else if (root.elementText("Content").equals("7") || root.elementText("Content").equals("七")) {
+                } else if (content.equals("7") || content.equals("七")) {
                     String time = new Date().getTime() + "";
                     String answerMsg = "<xml>" + "<ToUserName><![CDATA[" + fromUsername + "]]></ToUserName>" + "<FromUserName><![CDATA[" + toUsername + "]]></FromUserName>" +
-                            "<CreateTime>" + time + "</CreateTime>" + "<MsgType><![CDATA[text]]></MsgType>" + "<Content><![CDATA[【6】产后高血压\n" +
+                            "<CreateTime>" + time + "</CreateTime>" + "<MsgType><![CDATA[text]]></MsgType>" + "<Content><![CDATA[【7】产后高血压\n" +
                             "您妊娠期时候有过妊高征，产后很容易成为原发性高血压。您以前是否有过肾脏疾病，如果肾脏疾病治疗不及时，产后高血压的发病可能性很大。您产后如果长期精神紧张，肝气不舒，也很容易由于精神刺激诱发高血压。\n" +
                             "我们给您的建议是：积极调理心态，避免情绪波动，保持充足睡眠。低盐饮食（少于6g），要遵循少食多餐的饮食原则，多吃新鲜蔬菜和水果，一定要避免食用辛辣等刺激性食物，多吃含钾、钙丰富而含钠低的食品，如土豆、茄子、海带、莴笋。\n" +
                             "【注意】请在配餐之前与我们沟通，我们的餐册是荤素搭配的，通过我们的餐册和合理用药，对您的高血压是会有改善作用的。\n" +
                             "这种属于特殊疾病，食用我们的月子餐不会出大的偏差，但是我们不能治疗这些疾病。\n" +
-                            "\n" +
                             "高血糖\n" +
-                            "由于产后女性胰岛素分泌水平急剧变化，产后妈妈的血糖也会出现变化，一般比较常见的原因是妊娠糖尿病没有及时纠正所引起的，母乳喂养也可能会影响血糖水平的变化。出现这种情况，您平常是否有私自加餐的情况，是否摄入高糖的饮料或者水果，是否进食过多？\n]]></Content>" + "</xml>";
+                            "由于产后女性胰岛素分泌水平急剧变化，产后妈妈的血糖也会出现变化，一般比较常见的原因是妊娠糖尿病没有及时纠正所引起的，母乳喂养也可能会影响血糖水平的变化。出现这种情况，您平常是否有私自加餐的情况，是否摄入高糖的饮料或者水果，是否进食过多？]]></Content>" + "</xml>";
+                    this.print(response, answerMsg);
+                } else {
+                    String time = new Date().getTime() + "";
+                    String answerMsg = "<xml>" +
+                            "<ToUserName><![CDATA[" + fromUsername + "]]></ToUserName>" +
+                            "<FromUserName><![CDATA[" + toUsername + "]]></FromUserName>" +
+                            "<CreateTime>" + time + "</CreateTime>" +
+                            "<MsgType><![CDATA[text]]></MsgType>" +
+                            "<Content><![CDATA[]]></Content>" +
+                            "</xml>";
                     this.print(response, answerMsg);
                 }
-
             }
-                if (msgType.equals("event") && event.equals("subscribe") && eventKey.startsWith("qrscene_")) {
-                    WxUser userbyOpenid = userDao.getByOpenid(fromUsername);
-                    if (userbyOpenid == null) {
-                        WxUser wxUser = new WxUser();
-                        wxUser.setOpenid(fromUsername);
-                        wxUser.setAid(Long.parseLong(eventKey.substring(8)));
-                        userDao.save(wxUser);
-                    }
-                    //this.print(response, fromUsername);
-                    //this.print(response, eventKey.substring(8));
+            if (msgType.equals("event") && event.equals("subscribe") && eventKey.startsWith("qrscene_")) {
+                System.out.print("subscribe******************************" + content + msgType);
+                WxUser userbyOpenid = userDao.getByOpenid(fromUsername);
+                if (userbyOpenid == null) {
+                    WxUser wxUser = new WxUser();
+                    wxUser.setOpenid(fromUsername);
+                    wxUser.setAid(Long.parseLong(eventKey.substring(8)));
+                    userDao.save(wxUser);
                 }
+                //this.print(response, fromUsername);
+                //this.print(response, eventKey.substring(8));
+            }
 //            String time = new Date().getTime() + "";
 //            String textTpl = "<xml>" +
 //                    "<ToUserName><![CDATA[%1$s]]></ToUserName>" +
@@ -545,10 +557,11 @@ public class WxController extends BaseController {
 //            } else {
 //                this.print(response, "Input something...");
 //            }
-            } else {
-                this.print(response, "");
-            }
+        } else {
+            System.out.print("subscribe******************************nothing");
+            this.print(response, "");
         }
+    }
 
     //向请求端发送返回数据
     public void print(HttpServletResponse response, String content) throws IOException {
@@ -662,7 +675,7 @@ public class WxController extends BaseController {
         Map newsBtn = new HashMap();
         newsBtn.put("type", "view");
         newsBtn.put("name", "动态");
-        newsBtn.put("url", "http://cxmm.ecnucpp.com:8080/demo/news_mobile.html#rd?nsukey=f5X8KQpkxzQjBKR64M%2F1cdemk3t%2BQr%2BVf9NN9i%2B76hA2LLWUJ8LuIZ%2FaEqnFjk%2BdV86UN%2FxFcfP%2FL5YPQp9MxQ%3D%3D");
+        newsBtn.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxde1edf21c395f90f&redirect_uri=http%3A%2F%2Fcx.ecnucpp.com%2Fcxmm%2FWeiXin%2Factivity&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
         thirdSubBtn.add(newsBtn);
         Map activityBtn = new HashMap();
         activityBtn.put("type", "view");
@@ -685,7 +698,6 @@ public class WxController extends BaseController {
         String s = postJSONString(url, jObject.toString());
         print(response, jsonString + "\r\n" + s);
     }
-
 
 
     public String payJSAPI(String nonce_str, String body, String out_trade_no, int total_fee, String spbill_create_ip, String openid) throws NoSuchAlgorithmException, IOException {

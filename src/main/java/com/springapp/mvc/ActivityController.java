@@ -11,6 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.io.File;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -78,8 +79,42 @@ public class ActivityController extends BaseController{
         } else {
             activity.setShowPicture("");
         }
+        activity.setCreatetime(sdf.format(new Date()));
         activityDao.save(activity);
         return "redirect:/Activity/Management";
     }
+    @RequestMapping(value = "/Edit", method = RequestMethod.POST)
+    public String Edit(Activity activity, @RequestParam("file") MultipartFile file, HttpSession session) {
+        String realPath = session.getServletContext().getRealPath("/WEB-INF/pages/Web/UserFile/ActivityPicture/");
+        File mainFile=new File(realPath);
+        if(!mainFile.exists())
+            mainFile.mkdir();
+        // 获取文件类型
+        //System.out.println(file.getContentType());
+        // 获取文件大小
+        //System.out.println(file.getSize());
+        // 获取文件名称
+        //System.out.println(file.getOriginalFilename());
+
+        // 判断文件是否存在
+        if (!file.isEmpty() && file.getContentType().equals("image/jpeg")) {
+            UUID uuid = UUID.randomUUID();
+            String guid = uuid.toString().replaceAll("-", "");
+            String path = realPath + "/" + guid + ".jpg";
+            File localFile = new File(path);
+            try {
+                file.transferTo(localFile);
+                activity.setShowPicture(guid + ".jpg");
+            } catch (Exception e) {
+                e.printStackTrace();
+                activity.setShowPicture("");
+            }
+        } else {
+            activity.setShowPicture("");
+        }
+        activityDao.update(activity);
+        return "redirect:/Activity/Management";
+    }
+
 }
 

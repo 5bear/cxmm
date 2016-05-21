@@ -13,7 +13,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>月子餐</title>
+  <title>禅心妈妈</title>
   <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <link href="css/style.css" rel="stylesheet">
   <link href="css/test.css" rel="stylesheet">
@@ -58,47 +58,47 @@
     <table>
       <tr>
         <td>订单号</td>
-        <td>${order.orderNum}</td>
+        <td>${order.get("orderNum")}</td>
       </tr>
       <tr>
         <td>购买时间</td>
-        <td>${order.date}</td>
+        <td>${order.get("dateTime")}</td>
       </tr>
       <tr>
         <td>餐册</td>
-        <td>${order.canceNum}</td>
+        <td>"第"${order.get("cance")}"月"</td>
       </tr>
       <tr>
         <td>餐盒</td>
-        <td>${order.canheNum}</td>
+        <td>"第"${order.get("canhe")}"月"</td>
       </tr>
       <tr>
         <td>价格</td>
-        <td>${order.canceNum*98+order.canheNum*2980}</td>
+        <td>${order.get("price")}</td>
       </tr>
       <tr>
         <td>收货人姓名</td>
-        <td>${order.name}</td>
+        <td>${order.get("name")}</td>
       </tr>
       <tr>
         <td>收货地址</td>
-        <td>${order.address}</td>
+        <td>${order.get("address")}</td>
       </tr>
       <tr>
         <td>手机</td>
-        <td>${order.phoneNum}</td>
+        <td>${order.get("phoneNum")}</td>
       </tr>
       <tr>
         <td>发货状态</td>
-        <td>${order.deliverStatus}</td>
+        <td>${order.get("deliverStatus")}</td>
       </tr>
       <tr>
         <td>快递公司</td>
-        <td>${order.express}</td>
+        <td>${order.get("express")}</td>
       </tr>
       <tr>
         <td>快递编号</td>
-        <td>${order.expressNum}</td>
+        <td>${order.get("expressNum")}</td>
       </tr>
     </table>
   </c:forEach>
@@ -109,7 +109,7 @@
 
 
   </div>
-  <input type="button" style="display: ${wxEvaluation.evaluation_status.id<=2?"none":""}" onclick="javascript:location.href='<%=request.getContextPath()%>/WeiXin/purchase'" class="btn" value="继续购买">
+  <input type="button" style="display: ${wxEvaluation.evaluation_status.id<=2||wxEvaluation==null?"none":""}" onclick="javascript:location.href='<%=request.getContextPath()%>/WeiXin/purchase'" class="btn" value="继续购买">
 </div>
 <script src="js/jquery-1.9.0.js"></script>
 <script>

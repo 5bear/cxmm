@@ -14,7 +14,7 @@
 <head>
   <meta charset="utf-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-  <title>月子餐</title>
+  <title>禅心妈妈</title>
   <meta name="viewport" content="target-densitydpi=device-dpi, width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
   <link href="css/style.css" rel="stylesheet">
   <link href="css/normalize.css" rel="stylesheet">
@@ -29,8 +29,8 @@
     <form:form class="form-horizontal" role="form" modelAttribute="answers"
              name="myForm"  action="" method="post" novalidate="novalidate">
       <div class="wd4"><img src="img/word-04.png" alt=""><br><span>（多 选）</span></div>
-      <c:forEach items="${Question2List}" var="question2">
-        <input name="answers" type="checkbox" value="${question2.id}">${question2.id}.${question2.question}<hr>
+      <c:forEach items="${Question2List}" var="question2" varStatus="count">
+        <input name="answers" type="checkbox" value="${question2.id}">${count.count}.${question2.question}<hr>
       </c:forEach>
       <input name="openID" value="${openID}" style="display: none">
     </form:form>

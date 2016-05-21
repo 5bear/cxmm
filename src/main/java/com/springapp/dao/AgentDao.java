@@ -23,8 +23,10 @@ public class AgentDao extends BaseDao {
         List<WxOrderinfo>wxOrderinfoList=this.findAll("from WxOrderinfo where uid.openid =? and dateTime>=? and dateTime<=?",WxOrderinfo.class,new Object[]{agent.getOpenid(),startDate,endDate});
         int canheNum=0,canceNum=0;
         for(WxOrderinfo wxOrderinfo:wxOrderinfoList){
-            canceNum+=wxOrderinfo.getCanceNum();
-            canheNum+=wxOrderinfo.getCanheNum();
+            String[]canceNums=wxOrderinfo.getCanceNum().split(",");
+            String[]canheNums=wxOrderinfo.getCanheNum().split(",");
+            canceNum+=canceNums.length;
+            canheNum+=canheNums.length;
         }
         Map map=new HashMap();
         map.put("name",agent.getAgent());
@@ -39,6 +41,9 @@ public class AgentDao extends BaseDao {
     public List<Agent> getList(Long agent) {
         return this.findAll("from Agent where fromAgent=?", Agent.class, new Object[]{agent});
     }
+    public List<Agent> getListByStatus() {
+        return this.findAll("from Agent where status=?", Agent.class, new Object[]{"可用"});
+    }
 
     public List<Agent> getByPage(int start, int end) {
         return this.findByPage("from Agent", Agent.class, start, end);
@@ -51,8 +56,10 @@ public class AgentDao extends BaseDao {
             List<WxOrderinfo>wxOrderinfoList=this.findAll("from WxOrderinfo where uid.openid =? and dateTime>=? and dateTime<=?",WxOrderinfo.class,new Object[]{agent.getOpenid(),startDate,endDate});
             int canheNum=0,canceNum=0;
             for(WxOrderinfo wxOrderinfo:wxOrderinfoList){
-                canceNum+=wxOrderinfo.getCanceNum();
-                canheNum+=wxOrderinfo.getCanheNum();
+                String[]canceNums=wxOrderinfo.getCanceNum().split(",");
+                String[]canheNums=wxOrderinfo.getCanheNum().split(",");
+                canceNum+=canceNums.length;
+                canheNum+=canheNums.length;
             }
             Map map=new HashMap();
             map.put("name",agent.getAgent());

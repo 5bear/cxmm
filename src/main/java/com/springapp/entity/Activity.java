@@ -1,7 +1,6 @@
 package com.springapp.entity;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
 
 /**
  * Created by ZhanShaoxiong on 2016/5/11.
@@ -12,7 +11,7 @@ public class Activity {
     private String title;
     private String content;
     private String url;
-    private Timestamp createtime;
+    private String createtime;
     private String showPicture;
     private String summary;
     public String newsStatusE;
@@ -52,11 +51,11 @@ public class Activity {
         this.content = content;
     }
     @Column
-    public Timestamp getCreatetime() {
+    public String getCreatetime() {
         return createtime;
     }
 
-    public void setCreatetime(Timestamp createtime) {
+    public void setCreatetime(String createtime) {
         this.createtime = createtime;
     }
     @Column
