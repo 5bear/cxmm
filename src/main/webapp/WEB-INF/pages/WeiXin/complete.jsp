@@ -32,7 +32,7 @@
       <hr>
       <label for="">当前体重</label> <input style="width:45%" name="AfterWeight" id="AfterWeight" type="text" value=""><span>KG</span><br>
       <hr>
-      <label for="">身高</label> <input style="width:45%" name="Height" id="Height" type="text" value=""><span>KG</span><br>
+      <label for="">身高</label> <input style="width:45%" name="Height" id="Height" type="text" value=""><span>CM</span><br>
       <hr>
       <label for="">年龄</label> <input style="width:45%" name="Age" id="Age" type="text" value=""><span>周岁</span><br>
       <hr>
@@ -40,7 +40,7 @@
       <hr>
       <label for="">希望</label> <input name="eutocia" type="radio" value="1">顺产 <input name="eutocia" type="radio" value="2">剖产<br>
       <hr>
-      <label for="">希望</label> <input name="feed" type="radio" value="1">哺乳 <input name="feed" type="radio" value=2"">非哺乳<br>
+      <label for="">希望</label> <input name="feed" type="radio" value="1">哺乳 <input name="feed" type="radio" value="2">非哺乳<br>
   </div>
 
   <input type="submit" class="btn" value="开始提交">

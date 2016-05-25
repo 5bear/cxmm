@@ -29,7 +29,7 @@ public class ClubController extends BaseController {
         if(pn!=null&&!pn.equals(""))
             pageNum=Integer.parseInt(pn);
         start = (pageNum - 1) * 10;
-        end=start+9;
+        end=start+10;
         List<Club> clubList = clubDao.getList();
         int totalPage;
         if(clubList.size()%10==0)

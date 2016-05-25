@@ -68,14 +68,14 @@ public class MergePDF {
                             pageOfCurrentReaderPDF);
                     cb.addTemplate(page, 0, 0);
 
-                    // Code for pagination.
-                    if (paginate) {
-                        cb.beginText();
-                        cb.setFontAndSize(bf, 9);
-                        cb.showTextAligned(PdfContentByte.ALIGN_CENTER, "" + currentPageNumber + " of " + totalPages, 520,
-                                5, 0);
-                        cb.endText();
-                    }
+//                    // Code for pagination.
+//                    if (paginate) {
+//                        cb.beginText();
+//                        cb.setFontAndSize(bf, 9);
+//                        cb.showTextAligned(PdfContentByte.ALIGN_CENTER, "" + currentPageNumber + " of " + totalPages, 520,
+//                                5, 0);
+//                        cb.endText();
+//                    }
                 }
                 pageOfCurrentReaderPDF = 0;
             }

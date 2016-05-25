@@ -15,6 +15,16 @@ public class WxEvaluation {
     private String address;
     private EvaluationStatus evaluation_status;//外键2
     private String time;//评估时间
+    private Long timestamp;//用作比较
+
+    @Column
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
 
     @Column
     public String getTime() {

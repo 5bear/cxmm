@@ -32,30 +32,6 @@
         <!-- 二维码图片 -->
         <div class="square"><img src="${qrcodepath}" alt=""></div>
     </div>
-
-    <div class="wd8"><img width="50%" src="<%=application.getContextPath()%>/WeiXin/img/word-08.png" alt=""></div>
-    <div class="users">
-        <!-- 首次 提交申请-->
-
-        <!-- <a class="btn" href="apply.html">立即申请</a> -->
-        <!-- end -->
-        <div class="shadow-qblock">
-            <table>
-                <tr>
-                    <td><img src="<%=application.getContextPath()%>/WeiXin/img/pro1.png" width="100%" alt=""></td>
-                    <td><img src="<%=application.getContextPath()%>/WeiXin/img/pro2.png" width="100%" alt=""></td>
-                </tr>
-                <tr>
-                    <td><br>专属定制<br>月子餐手册</td>
-                    <td><br>禅心月子<br>调理餐食盒</td>
-                </tr>
-                <tr>
-                    <td class="user-num"><br><span>${userscount}</span>人</td>
-                    <td class="user-num"><br><span>${orderinfocount}</span>人</td>
-                </tr>
-            </table>
-        </div>
-    </div>
 </div>
 <script src="<%=application.getContextPath()%>/WeiXin/js/jquery-1.9.0.js"></script>
 <script>

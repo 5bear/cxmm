@@ -1,3 +1,4 @@
+<%@ page import="com.springapp.entity.Admin" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
@@ -8,6 +9,21 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+
+  String name= (String) request.getAttribute("name");
+  String fromDatetime= (String) request.getAttribute("fromDatetime");
+  String toDatetime= (String) request.getAttribute("toDatetime");
+  String status= (String) request.getAttribute("status");
+  Admin admin= (Admin) session.getAttribute("admin");
+  if(admin==null)
+  {
+    response.sendRedirect(request.getContextPath()+"/login");
+    return;
+  }
+  int totalPage= (Integer) request.getAttribute("totalPage");
+  int currentPage= (Integer) request.getAttribute("totalPage");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -56,23 +72,23 @@
               <div class="form-group">
                 <label class="control-label col-md-3">会员名</label>
                 <div class="col-md-7">
-                  <input type="text" name="username" class="form-control" placeholder="姓名" />
+                  <input type="text" name="username" id="name" class="form-control" placeholder="姓名" />
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-md-3">评估时间</label>
                 <div class="col-md-3">
-                  <input type="text" data-language="en" class="form-control datepicker-here" placeholder="年/月/日">
+                  <input type="text" data-language="en" id="fromDatetime" class="form-control datepicker-here" placeholder="年/月/日">
                 </div>
                 <label class="control-label col-md-1">到</label>
                 <div class="col-md-3">
-                  <input type="text" data-language="en" class="form-control datepicker-here" placeholder="年/月/日">
+                  <input type="text" data-language="en" id="toDatetime" class="form-control datepicker-here" placeholder="年/月/日">
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-md-3">状态</label>
                 <div class="col-md-2">
-                  <select class="form-control" name="state">
+                  <select class="form-control" name="state" id="status">
                     <c:forEach items="${evaluationStatuses}" var="item">
                       <option value='${item.id}'>${item.name}</option>
                     </c:forEach>
@@ -86,11 +102,6 @@
         </div>
         <div class="modal-footer">
           <input type="button" class="btn btn-success" value="查找" onclick=""/>
-          <input type="button" class="btn btn-success" value="订单升级" onclick=""/>
-          <input type="button" class="btn btn-success" value="生成文件" onclick=""/>
-          <button type="button" class="btn btn-success" data-toggle="modal" data-target="#AddModal">
-            添加物流信息
-          </button>
         </div>
       </form>
       <div class="col-md-12">
@@ -113,10 +124,10 @@
               状态
             </th>
             <th>
-              查看报告
+              一分钟评测结果
             </th>
             <th>
-              添加菜单
+              五分钟评测结果
             </th>
           </tr>
           </thead>
@@ -132,48 +143,17 @@
               <label data-toggle="modal" data-target="#CheckModal"><a>查看</a></label>
             </td>
             <td>
-              <a href="menu.html"> 添加</a>
+              <label data-toggle="modal" data-target="#CheckModal"><a>查看</a></label>
             </td>
           </tr>
         </c:forEach>
-          <tr>
-            <td class="checkbox-column">
-              <input type="checkbox" class="uniform" name="subBox">
-            </td>
-
-            <td>
-              001
-            </td>
-            <td>
-              李四
-            </td>
-            <td>
-              2016/3/29
-            </td>
-            <td>
-              已打印
-            </td>
-            <td>
-              <label data-toggle="modal" data-target="#CheckModal"><a>查看</a></label>
-            </td>
-            <td>
-              <a href="<%=request.getContextPath()%>/Upload/menu">添加</a>            </td>
-          </tr>
           </tbody>
         </table>
-        <section class="archive-pages">
-          <ul>
-            <li class="first"><a href="#" title="first page">first page</a></li>
-            <li class="previous"><a href="#" title="previous page">previous page</a></li>
-            <li class="selected">1</li>
-            <li><a href="#" title="Pagina 2">2</a></li>
-            <li><a href="#" title="Pagina 3">3</a></li>
-            <li><a href="#" title="Pagina 4">4</a></li>
-            <li><a href="#" title="Pagina 5">5</a></li>
-            <li class="next"><a href="#" title="next page">next page</a></li>
-            <li class="last"><a href="#" title="last page">last page</a></li>
-          </ul>
-        </section>
+        <jsp:include page="../Backstage/page.jsp" flush="true">
+          <jsp:param name="currentPage" value="<%=currentPage%>"></jsp:param>
+          <jsp:param name="totalPage" value="<%=totalPage%>"></jsp:param>
+          <jsp:param name="url" value="Evaluate/evaluate3?name=<%=name%>&fromDatetime=<%=fromDatetime%>&toDatetime=<%=toDatetime%>&status=<%=status%>"></jsp:param>
+        </jsp:include>
       </div>
     </div><!-- /.row -->
 
@@ -265,6 +245,14 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/eModal.js"></script>
 <script type="text/javascript">
+  function find(){
+    var name=$("#name").val()
+    var fromDatetime=$("#fromDatetime").val();
+    var toDatetime=$("#toDatetime").val();
+    var status=$("#status").val()
+    location.href="<%=request.getContextPath()%>/Evaluate/evaluate3?name="+name+"&fromDatetime="+fromDatetime+"&toDatetime="+toDatetime+"&status="+status+"&pn=<%=currentPage%>"
+  }
+
   $(function() {
     $("#checkAll").click(function() {
       // 	alert($("input[name='subBox']").length);

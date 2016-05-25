@@ -1,7 +1,5 @@
 package com.springapp.mvc;
 
-import com.springapp.entity.News;
-import com.springapp.entity.NewsStatus;
 import com.springapp.entity.Professor;
 import com.springapp.entity.ProfessorStatus;
 import org.springframework.stereotype.Controller;
@@ -98,8 +96,8 @@ public class ProfessorController extends BaseController {
             }
         }
         if (!isSaveFileSuccess) {
-            News oldNews = newsDao.get(News.class, professor.getId());
-            professor.setPicture(oldNews.getShowPicture());
+            Professor oldProfessor = professorDao.get(Professor.class, professor.getId());
+            professor.setPicture(oldProfessor.getPicture());
         }
         professorDao.update(professor);
         return "redirect:/Professor/Management";

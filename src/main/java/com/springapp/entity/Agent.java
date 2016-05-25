@@ -15,11 +15,29 @@ public class Agent {
     private String openid;//微信标识
     private String email;
     private int userNum;
-    private int buyNum;
+    private int canceNum;
+    private int canheNum;
     private String qrcode;//二维码地址
     private String status;// 审核可用 结算  失效
     private String account;//一级代理点登陆账号
     private String password;
+
+    @Column
+    public int getCanceNum() {
+        return canceNum;
+    }
+
+    public void setCanceNum(int canceNum) {
+        this.canceNum = canceNum;
+    }
+    @Column
+    public int getCanheNum() {
+        return canheNum;
+    }
+
+    public void setCanheNum(int canheNum) {
+        this.canheNum = canheNum;
+    }
 
     @Column(length = 45)
     public String getAccount() {
@@ -94,14 +112,6 @@ public class Agent {
         this.userNum = userNum;
     }
 
-    @Column
-    public int getBuyNum() {
-        return buyNum;
-    }
-
-    public void setBuyNum(int buyNum) {
-        this.buyNum = buyNum;
-    }
 
     @Column(length = 45)
     public String getQrcode() {

@@ -66,11 +66,11 @@
       </tr>
       <tr>
         <td>餐册</td>
-        <td>"第"${order.get("cance")}"月"</td>
+        <td>第${order.get("cance")}月</td>
       </tr>
       <tr>
         <td>餐盒</td>
-        <td>"第"${order.get("canhe")}"月"</td>
+        <td>第${order.get("canhe")}月</td>
       </tr>
       <tr>
         <td>价格</td>

@@ -44,6 +44,16 @@
 </body>
 <script>
   function submitForm(){
+    var count=0;
+    var answers=document.getElementsByName("answers")
+    for(var i=0;i<answers.length;i++){
+      if(answers[i].checked==true)
+      count++;
+    }
+    if(count==0){
+      alert("您未选择任何一项,请选择")
+      return true
+    }
     var myForm=document.getElementsByName("myForm")[0];
     myForm.submit();
   }

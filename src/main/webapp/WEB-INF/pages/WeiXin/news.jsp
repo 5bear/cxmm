@@ -67,7 +67,7 @@
         <div class="dt-pic"><img src="<%=request.getContextPath()%>/Web/UserFile/ActivityPicture/${activity.showPicture}"></div>
         <div class="dt-txt">
           <h1>${activity.title}</h1>
-          <a href="<%=request.getContextPath()%>/WeiXin/detail?id=${item.id}">${activity.summary}</a>
+          <a href="<%=request.getContextPath()%>/WeiXin/detail?id=${activity.id}">${activity.summary}</a>
         </div>
       </div>
 

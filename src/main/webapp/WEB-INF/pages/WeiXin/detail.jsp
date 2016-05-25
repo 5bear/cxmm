@@ -22,7 +22,7 @@
 <body data-role="page">
 <div class="container">
   <h1>${activity.title}</h1>
-  <div><span class="time">${activity.createtime}}</span><span class="author">admin</span></div>
+  <div><span class="time">${activity.createtime}</span><span class="author">admin</span></div>
   <hr>
   <div class="content">
     <div class="short">${activity.summary}</div>

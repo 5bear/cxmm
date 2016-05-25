@@ -2,6 +2,7 @@ package com.springapp.dao;
 
 import com.springapp.entity.Agent;
 import com.springapp.entity.WxOrderinfo;
+import com.springapp.entity.WxUser;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
@@ -46,7 +47,24 @@ public class AgentDao extends BaseDao {
     }
 
     public List<Agent> getByPage(int start, int end) {
-        return this.findByPage("from Agent", Agent.class, start, end);
+        List<Agent>agentList= this.findByPage("from Agent", Agent.class, start, end);
+        List<Agent>myList=new ArrayList<Agent>();
+        for(Agent agent:agentList){
+            List<WxUser>wxUserList=this.findAll("from WxUser where aid=?",WxUser.class,new Object[]{agent.getId()});
+            agent.setUserNum(wxUserList.size());
+            int canceNum=0,canheNum=0;
+            for(WxUser wxUser:wxUserList){
+                List<WxOrderinfo>wxOrderinfoList=this.findAll("from WxOrderinfo where uid.uid=?",WxOrderinfo.class,new Object[]{wxUser.getUid()});
+                for(WxOrderinfo wxOrderinfo:wxOrderinfoList){
+                    canceNum+=wxOrderinfo.getCanceNum().split(",").length;
+                    canheNum+=wxOrderinfo.getCanheNum().split(",").length;
+                }
+            }
+            agent.setCanceNum(canceNum);
+            agent.setCanheNum(canheNum);
+            myList.add(agent);
+        }
+        return myList;
     }
 
     public List<Map>getByRecommend(String recommend,float canheRate,float canceRate,Long startDate,Long endDate){

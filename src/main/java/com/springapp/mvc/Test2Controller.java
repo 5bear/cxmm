@@ -42,14 +42,16 @@ public class Test2Controller extends BaseController{
     public String test1(@RequestParam(value = "answers") String answers, @RequestParam(value = "openID") String openID) {
         String[] split = answers.split(",");
         List<LChoice> answersList = new ArrayList<LChoice>();
+        WxUser user=userDao.getByOpenid(openID);//获取当前用户
         for (String s : split) {
             LChoice answer2 = new LChoice();
             answer2.setTid(Integer.parseInt(s));
-            WxUser user=userDao.getByOpenid(openID);//获取当前用户
+
             answer2.setUid(user);
             answersList.add(answer2);
         }
         test2Dao.save(answersList);//存多选题已选项
+        test2Dao.setResult(user.getUid());
         WxEvaluation wxEvaluation=wxEvaluationDao.get(openID);
         EvaluationStatus evaluationStatus=test1Dao.getEvaluationStatus(4);
         wxEvaluation.setEvaluation_status(evaluationStatus);

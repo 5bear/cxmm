@@ -46,6 +46,9 @@
                     <li <%if(pageName.equals("evaluate3")){%>class="active"<%}else{%>class="dropdown"<%}%>><a href="<%=request.getContextPath()%>/Evaluate/evaluate3">会所评估</a></li>
                 </ul>
             </li>
+            <li <%if(pageName.equals("Order")){%>class="active"<%}else{%>class="dropdown"<%}%>>
+                <a href="<%=request.getContextPath()%>/Order"><i class="fa fa-bar-chart-o"></i> 订单管理</a>
+            </li>
             <li <%if(pageName.equals("certi")){%>class="active"<%}else{%>class="dropdown"<%}%>>
                 <a href="<%=request.getContextPath()%>/Train/certi"><i class="fa fa-bar-chart-o"></i> 证书管理</a>
             </li>
@@ -55,17 +58,17 @@
             <li <%if(pageName.equals("book")){%>class="active"<%}else{%>class="dropdown"<%}%>>
                 <a href="<%=request.getContextPath()%>/BookManage"><i class="fa fa-bar-chart-o"></i>书库管理</a>
             </li>
-            <li <%if(pageName.equals("News")){%>class="active"<%}else{%>class="dropdown"<%}%>>
+           <%-- <li <%if(pageName.equals("News")){%>class="active"<%}else{%>class="dropdown"<%}%>>
                 <a href="<%=request.getContextPath()%>/News/Management"><i class="fa fa-bar-chart-o"></i> 新闻管理</a>
-            </li>
+            </li>--%>
             <li <%if(pageName.equals("Activity")){%>class="active"<%}else{%>class="dropdown"<%}%>>
                 <a href="<%=request.getContextPath()%>/Activity/Management"><i class="fa fa-bar-chart-o"></i> 活动管理</a>
             </li>
             <li <%if(pageName.equals("changepwd")){%>class="active"<%}else{%>class="dropdown"<%}%>>
-                <a href="/changePassword"><i class="fa fa-bar-chart-o"></i> 修改密码</a>
+                <a href="<%=request.getContextPath()%>/changePassword"><i class="fa fa-bar-chart-o"></i> 修改密码</a>
             </li>
             <li class="dropdown">
-                <a href="/logout?role=admin"><i class="fa fa-bar-chart-o"></i> 注销</a>
+                <a href="<%=request.getContextPath()%>/logout?role=admin"><i class="fa fa-bar-chart-o"></i> 注销</a>
             </li>
         </ul>
 
@@ -75,7 +78,7 @@
                 <ul class="dropdown-menu">
                     <li><a href="#"><i class="fa fa-user"></i><%=admin.getAccount()%></a></li>
                     <li class="divider"></li>
-                    <li><a href="/logout?role=admin"><i class="fa fa-power-off"></i> 注销</a></li>
+                    <li><a href="<%=request.getContextPath()%>/logout?role=admin"><i class="fa fa-power-off"></i> 注销</a></li>
                 </ul>
             </li>
         </ul>

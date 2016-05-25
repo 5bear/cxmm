@@ -16,8 +16,18 @@ public class Train {
     private String remo;//自我介绍
     private String status;
     private String trainTime;
+    private Long timestamp;
     private String licenseTime;//发证时间
     private String licenseNum;//证书编号
+
+    @Column
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

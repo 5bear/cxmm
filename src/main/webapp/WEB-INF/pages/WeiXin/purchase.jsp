@@ -50,14 +50,14 @@
     </form:form>
   </div>
 
-  <input type="button" onclick="ensure()" class="btn" value="开始支付">
+  <input type="button" onclick="ensure(this)" class="btn" value="开始支付">
 </div>
 <script src="js/jquery-1.9.0.js"></script>
 <script>
 </script>
 </body>
 <script>
-  function ensure(){
+  function ensure(obj){
     var canceNum=0;
     var cance=document.getElementsByName("canceNums");
     for(var i=0;i<cance.length;i++){
@@ -85,6 +85,7 @@
       alert("地址必填")
       return true
     }
+    $(obj).attr("disabled",true)
     $.ajax({
       url:"<%=request.getContextPath()%>/WeiXin/ensure",
       type:"post",
@@ -99,6 +100,7 @@
           "signType":"MD5",
           "paySign":data.paySign
         }, function (res) {
+          $(obj).attr("disabled",false)
           if(res.err_msg=="get_brand_wcpay_request:ok"){
             submitForm();
           }

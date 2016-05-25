@@ -19,7 +19,7 @@ public class WxOrderinfo {
     private String payType;
     private String result;
     private String orderNum;//订单号
-    private String deliverStatus;//发货状态
+    private String deliverStatus;//发货状态：未发货 已发货 已收货
     private String express;//快递公司
     private String expressNum;//快递编号
     private int[]canceNums;

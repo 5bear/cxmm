@@ -8,7 +8,7 @@
         return;
     }
     int totalPage = (Integer) request.getAttribute("totalPage");
-    int currentPage = (Integer) request.getAttribute("totalPage");
+    int currentPage = (Integer) request.getAttribute("currentPage");
 %>
 <!DOCTYPE html>
 <html lang="zh" class="no-js demo1">
@@ -101,7 +101,10 @@
                             用户数量
                         </th>
                         <th>
-                            购买数量
+                            餐册购买数量
+                        </th>
+                        <th>
+                            餐盒购买数量
                         </th>
                         <th>
                             查看二维码
@@ -120,7 +123,8 @@
                             <td>${agent.phoneNum}</td>
                             <td>${agent.email}</td>
                             <td>${agent.userNum}</td>
-                            <td>${agent.buyNum}</td>
+                            <td>${agent.canceNum}</td>
+                            <td>${agent.canheNum}</td>
                             <td><label data-toggle="modal" data-target="#CommentModal"><a
                                     onclick="setImgpath('${agent.id}')">查看</a></label></td>
                             <td>${agent.status}</td>
@@ -434,12 +438,10 @@
                             "<td>" + item.phoneNum + "</td>" +
                             "<td>" + item.email + "</td>" +
                             "<td>" + item.userNum + "</td>" +
-                            "<td>" + item.buyNum + "</td>" +
+                            "<td>" + item.canceNum + "</td>" +
+                            "<td>" + item.canheNum + "</td>" +
                             "<td><label data-toggle='modal' data-target='#CommentModal'><a onclick='setImgpath('" + item.id + "')'>查看</a></label></td>" +
-                            "<td>" + item.status + "</td>" +
-                            "<td><label data-toggle='modal' data-target='#EditModal'><a" +
-                            "onclick='setEditid('" + item.id + "','" + item.agent + "','" + item.phoneNum + "','" + item.email + "','" + item.account + "','" + item.password + "','" + item.qrcode + "','" + item.status + "')'>" +
-                            "修改</a></label>" + "</td></tr>"
+                            "<td>" + item.status + "</td></tr>";
                 })
                 $("#myTbody").html(result)
             }
@@ -519,7 +521,7 @@
                     if (result == "success") {
                         $(idList).each(function (index, data) {
                             if (data.checked) {
-                                $(data).parent().parent().find('td:eq(8)').html("失效");
+                                $(data).parent().parent().find('td:eq(9)').html("失效");
                             }
                         });
                         $("input[name='subBox']").removeAttr("checked");
@@ -552,7 +554,7 @@
                     if (result == "success") {
                         $(idList).each(function (index, data) {
                             if (data.checked) {
-                                $(data).parent().parent().find('td:eq(8)').html("可用");
+                                $(data).parent().parent().find('td:eq(9)').html("可用");
                             }
                         });
                         $("input[name='subBox']").removeAttr("checked");

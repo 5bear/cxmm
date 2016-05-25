@@ -1,5 +1,7 @@
 package com.springapp.entity;
 
+import net.sf.json.JSON;
+
 import javax.persistence.*;
 
 /**
@@ -11,7 +13,14 @@ public class WxUser {
     private Long aid;//所属代理点0表示无代理点
     private String agent;//代理点名称
     private String openid;//微信标识
-    private String name;
+    private String nickname;
+    private int sex;
+    private String language;
+    private String city;
+    private String province;
+    private String country;
+    private String headimgurl;
+    private JSON[] privilege;
     private String phone;
     private String dateOfLogin;
     private String age;
@@ -23,6 +32,72 @@ public class WxUser {
     private String Weight;
     private int eutocia;
     private int feed;
+
+    @Column(length = 45)
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
+    @Column
+    public int getSex() {
+        return sex;
+    }
+
+    public void setSex(int sex) {
+        this.sex = sex;
+    }
+    @Column(length = 45)
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+    @Column(length = 45)
+    public String getCity() {
+        return city;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+    @Column(length = 45)
+    public String getProvince() {
+        return province;
+    }
+
+    public void setProvince(String province) {
+        this.province = province;
+    }
+    @Column(length = 45)
+    public String getCountry() {
+        return country;
+    }
+
+    public void setCountry(String country) {
+        this.country = country;
+    }
+    @Column(length = 45)
+    public String getHeadimgurl() {
+        return headimgurl;
+    }
+
+    public void setHeadimgurl(String headimgurl) {
+        this.headimgurl = headimgurl;
+    }
+    @Transient
+    public JSON[] getPrivilege() {
+        return privilege;
+    }
+
+    public void setPrivilege(JSON[] privilege) {
+        this.privilege = privilege;
+    }
 
     @Column(length = 45)
     public String getAgent() {
@@ -42,14 +117,6 @@ public class WxUser {
         this.aid = aid;
     }
 
-    @Column
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
     @Column
     public String getPhone() {
         return phone;

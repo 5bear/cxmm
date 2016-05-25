@@ -6,11 +6,11 @@
     Admin admin= (Admin) session.getAttribute("admin");
     if(admin==null)
     {
-        response.sendRedirect("/login");
+        response.sendRedirect(request.getContextPath()+"/login");
         return;
     }
     int totalPage= (Integer) request.getAttribute("totalPage");
-    int currentPage= (Integer) request.getAttribute("totalPage");
+    int currentPage= (Integer) request.getAttribute("currentPage");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -45,7 +45,7 @@
         <div class="row">
             <div class="col-lg-12">
                 <ol class="breadcrumb">
-                    <li><a href="newsm.html"><i class="icon-dashboard"></i>活动管理</a></li>
+                    <li><a href="#"><i class="icon-dashboard"></i>活动管理</a></li>
                 </ol>
             </div>
             <div class="col-lg-12">
@@ -55,7 +55,7 @@
                 <button type="button" class="btn btn-success" data-toggle="modal" data-target="#FindModal">
                     查找
                 </button>
-                <button type="button" class="btn btn-success">
+                <button type="button" class="btn btn-success" onclick="deleteChoose()">
                     删除
                 </button>
             </div>
@@ -68,13 +68,13 @@
                             <input type="checkbox" class="uniform" name="check" onclick="cli('check');" id="checkAll">
                         </th>
                         <th>
+                            编号
+                        </th>
+                        <th>
                             标题
                         </th>
                         <th>
                             状态
-                        </th>
-                        <th>
-                            链接
                         </th>
                         <th>
                             操作
@@ -88,21 +88,18 @@
                             <td class="checkbox-column">
                                 <input type="checkbox" class="uniform" name="subBox">
                             </td>
-
+                            <td>${news.id}</td>
                             <td>
                                     ${news.title}
                             </td>
                             <td>
                                     ${news.newsStatusE}
                             </td>
+
                             <td>
-                                ${news.url}
-                            </td>
-                            <td>
-                                <a href="Detail/${news.id}" target="_blank">查看</a>
-                                <button type="button" class="btn btn-success" onclick="setInfo('${news.id}','${news.title}','${news.newsStatusE}','${news.summary}','${news.content}')" data-toggle="modal" data-target="#EditModal">
-                                    修改
-                                </button>
+                                <a href="<%=request.getContextPath()%>/WeiXin/detail?id=${news.id}" target="_blank">查看</a>
+                                <a onclick="setInfo('${news.id}')" href="" data-toggle="modal" data-target="#AddModal">
+                                    修改</a>
                             </td>
                         </tr>
                     </c:forEach>
@@ -111,7 +108,7 @@
                 <jsp:include page="../Backstage/page.jsp" flush="true">
                     <jsp:param name="currentPage" value="<%=currentPage%>"></jsp:param>
                     <jsp:param name="totalPage" value="<%=totalPage%>"></jsp:param>
-                    <jsp:param name="url" value="ActivityManagement"></jsp:param>
+                    <jsp:param name="url" value="Management"></jsp:param>
                 </jsp:include>
             </div>
         </div><!-- /.row -->
@@ -142,11 +139,12 @@
                         <div class="col-md-3">
                             <select class="form-control" name="newsStatusE">
                                     <option value='可用'>可用</option>
+                                    <option value='失效'>失效</option>
                             </select>
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer"><input type="button" class="btn btn-success" value="查找" onclick=""/>
+                <div class="modal-footer"><input type="button" class="btn btn-success" value="查找" onclick="find()"/>
                 </div>
             </form>
         </div>
@@ -163,8 +161,8 @@
                 <h4 class="modal-title" id="AddModalLabel">添加</h4>
             </div>
             <form:form class="form-horizontal" id="add_admin" novalidate="novalidate" method="post" action="./Add"
-                       enctype="multipart/form-data" modelAttribute="news" accept-charset="utf-8"
-                       onsubmit="$('#txtEditor')[0].value = $('#txtEditor').Editor('getText')">
+                       enctype="multipart/form-data" modelAttribute="news" accept-charset="utf-8">
+                <input style="display:none;" id="id" name="id" value="0">
                 <div class="modal-body">
                     <div class="form-group">
                         <label class="control-label col-md-3">标题</label>
@@ -175,7 +173,7 @@
                     <div class="form-group">
                         <label class="control-label col-md-3">状态</label>
                         <div class="col-md-3">
-                            <select class="form-control" name="newsStatus" id="newsStatusE">
+                            <select class="form-control" name="newsStatusE" id="newsStatusE">
                                 <option value="可用">可用</option>
                                 <option value="失效">失效</option>
                             </select>
@@ -185,6 +183,7 @@
                         <label class="control-label col-md-3">上传图片</label>
                         <div class="col-md-5">
                             <input type="file" name="file"/>
+                            <img src="" id="myImg">
                         </div>
                     </div>
                     <div class="form-group">
@@ -196,66 +195,14 @@
                     <div class="form-group">
                         <label class="control-label col-md-3">新闻内容</label><br>
                         <div class="col-lg-12 nopadding">
-                                <textarea type="text" id="activity" name="content" style="width:550px;height:200px;"></textarea>
+                            <form name="news">
+                                <textarea type="text" id="content" name="content" style="width:550px;height:200px;"></textarea>
+                                </form>
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <input type="submit" class="btn btn-success" value="保存" onclick=""/>
-                </div>
-            </form:form>
-        </div>
-    </div>
-</div>
-<!-- Edit Modal -->
-<div class="modal fade" id="EditModal" tabindex="-1" role="dialog" aria-labelledby="EditModal">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" >修改</h4>
-            </div>
-            <form:form class="form-horizontal" id="add_admin" novalidate="novalidate" method="post" action="./Edit"
-                       enctype="multipart/form-data" modelAttribute="news" accept-charset="utf-8">
-                <input id="id" value="" style="display: none">
-                <div class="modal-body">
-                    <div class="form-group">
-                        <label class="control-label col-md-3">标题</label>
-                        <div class="col-md-7">
-                            <input type="text" name="title" class="form-control" placeholder="标题" id="title1"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label col-md-3">状态</label>
-                        <div class="col-md-3">
-                            <select class="form-control" name="newsStatus" id="newsStatus1">
-                                <option value="可用">可用</option>
-                                <option value="失效">失效</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label col-md-3">上传图片</label>
-                        <div class="col-md-5">
-                            <input type="file" name="file"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label col-md-3">摘要</label>
-                        <div class="col-md-5">
-                            <input type="text" name="summary" class="form-control" placeholder="摘要" id="summary1"/>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="control-label col-md-3">新闻内容</label><br>
-                        <div class="col-lg-12 nopadding">
-                            <input type="text" id="txtEditor1" name="content"/>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <input type="submit" class="btn btn-success" value="保存" onclick=""/>
+                    <input type="button" class="btn btn-success" value="保存" onclick="submitForm()"/>
                 </div>
             </form:form>
         </div>
@@ -265,8 +212,36 @@
 <script src="<%=application.getContextPath()%>/Web/jquery/jquery.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="<%=application.getContextPath()%>/Web/bootstrap/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<%=application.getContextPath()%>/Web/jquery.uniform/jquery.uniform.min.js"></script>
+<script type="text/javascript" src="<%=application.getContextPath()%>/Web/Upload/ke/kindeditor-all.js"></script>
+<script type="text/javascript" src="<%=application.getContextPath()%>/Web/Upload/ke/kindeditor-all-min.js"></script>
 <script language="javascript">
-    function cli(Obj) {
+    KindEditor.ready(function(K) {
+        var editor1 = K.create('textarea[name="content"]', {
+
+            uploadJson : '<%=request.getContextPath()%>/Activity/fileUpload',
+            fileManagerJson : '<%=request.getContextPath()%>/Activity/fileManager',
+            cssPath:'<%=request.getContextPath()%>/WeiXin/css/style.css',
+            allowFileManager : true,
+            afterCreate : function() {
+                var self = this;
+                K.ctrl(document, 13, function() {
+                    self.sync();
+                    document.forms['news'].submit();
+                });
+                K.ctrl(self.edit.doc, 13, function() {
+                    self.sync();
+                    document.forms['news'].submit();
+                });
+            },
+            afterBlur:function(){
+                this.sync();
+            }
+
+        });
+        // prettyPrint();
+    });
+
+function cli(Obj) {
         var collid = document.getElementById("all")
         var coll = document.getElementsByName(Obj)
         if (collid.checked) {
@@ -280,12 +255,34 @@
 </script>
 <script type="text/javascript">
 
-    function setInfo(id,title,newsStatus,summary,content){
-        $("#id").val(id)
-        $("#title1").val(title)
-        $("#newsStatus1").val(newsStatus)
-        $("#summary1").val(summary)
-        $("#txtEditor1").html(content)
+    function find(){
+        var title=$("#title").val();
+        var statusE=$("#statusE").val();
+        location.href="<%=request.getContextPath()%>/Activity/Manage?title="+title+"&status="+statusE+"&pn="+<%=currentPage+1>totalPage?currentPage+1:totalPage%>
+    }
+
+    function submitForm(){
+        var add_admin=document.getElementById("add_admin");
+        add_admin.submit();
+    }
+
+    function setInfo(id){
+        $.ajax({
+            url:"<%=request.getContextPath()%>/Activity/get",
+            type:"post",
+            data:{id:id},
+            dataType:"json",
+            success:function(data){
+                $("#id").val(data.id)
+                $("#title").val(data.title)
+                $("#newsStatusE").find("option[value="+data.newsStatusE+"]").attr("selected",true)
+                $("#summary").val(data.summary)
+                $("#myImg").attr("src","<%=request.getContextPath()%>/Web/UserFile/ActivityPicture/"+data.showPicture);
+                $("#content").html(data.content)
+                KindEditor.instances[0].html(data.content);
+            }
+        })
+
     }
 
     $(function () {
@@ -302,6 +299,31 @@
             $("#checkAll").prop("checked", $("input[name='subBox']").length == $("input[name='subBox']:checked").length ? true : false);
         });
     });
+    function deleteChoose() {
+        var idList = $("input[name='subBox']");
+        var infoList = "";
+        var count = 0;
+        $(idList).each(function (index, data) {
+            if (data.checked) {
+                if (count > 0)
+                    infoList += ",";
+                infoList += $(data).parent().parent().find('td:eq(1)').html();
+                count++;
+            }
+        });
+        if (infoList != "") {
+            $.ajax({
+                type: "post",
+                url: "<%=request.getContextPath()%>/Activity/delete",
+                data: {infoList: infoList, type: 0},
+                success: function (result) {
+                    if (result == "success") {
+                        location.reload(true)
+                    }
+                }
+            })
+        }
+    }
 </script>
 
 </body>

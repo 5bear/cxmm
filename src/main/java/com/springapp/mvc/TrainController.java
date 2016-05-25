@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import java.text.ParseException;
 import java.util.List;
 
 /**
@@ -25,10 +27,33 @@ public class TrainController extends BaseController{
         return modelAndView;
     }
     @RequestMapping(value = "/certi")
-    public ModelAndView certi(){
+    public ModelAndView certi(HttpServletRequest request) throws ParseException {
         ModelAndView modelAndView=new ModelAndView("Web/Upload/certi");
-        List<Train> trainList=trainDao.getList();
-        modelAndView.addObject("trainList",trainList);
+        String name=request.getParameter("name");
+        request.setAttribute("name",name);
+        String fromDatetime=request.getParameter("fromDatetime");
+        request.setAttribute("fromDatetime",fromDatetime);
+        String toDatetime=request.getParameter("toDatetime");
+        request.setAttribute("toDatetime",toDatetime);
+        String status=request.getParameter("status");
+        request.setAttribute("status",status);
+        /*分页，每页十项*/
+        String pn=request.getParameter("pn");
+        int pageNum=1,start=0,end=0;
+        if(pn!=null&&!pn.equals(""))
+            pageNum=Integer.parseInt(pn);
+        start = (pageNum - 1) * 10;
+        end=start+10;
+        List<Train> trainList = trainDao.getList(name, fromDatetime, toDatetime, status);
+        int totalPage;
+        if(trainList.size()%10==0)
+            totalPage=trainList.size()/10;
+        else
+            totalPage=trainList.size()/10+1;
+        request.setAttribute("currentPage",pageNum);
+        request.setAttribute("totalPage",totalPage);
+        List<Train>myList=trainDao.getListByPage(start, end, name, fromDatetime, toDatetime, status);
+        modelAndView.addObject("list", myList);
         return modelAndView;
     }
     @RequestMapping(value = "/sign")
@@ -48,6 +73,7 @@ public class TrainController extends BaseController{
     @RequestMapping(value = "/sign",method = RequestMethod.POST)
     public String sign(Train train){
         train.setStatus("已报名");
+        train.setTimestamp(System.currentTimeMillis());
         trainDao.save(train);
         return "redirect:sign";
     }

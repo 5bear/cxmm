@@ -18,9 +18,8 @@
   <ul>
     <li class="first"><a href="<%=url%>?pn=1" title="first page">first page</a></li>
     <li class="previous"><a href="<%=url%>?pn=<%=lastPage%>" title="previous page">previous page</a></li>
-    <li class="selected">1</li>
     <%
-      for(int i=1;i<totalPage;i++){
+      for(int i=1;i<=totalPage;i++){
     %>
     <li><a href="<%=url%>?pn=<%=i%>"><%=i%></a></li>
     <%

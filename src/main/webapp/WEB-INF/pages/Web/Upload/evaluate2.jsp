@@ -1,3 +1,4 @@
+<%@ page import="com.springapp.entity.Admin" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%--
@@ -8,6 +9,22 @@
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%
+
+  String name= (String) request.getAttribute("name");
+  String agent= (String) request.getAttribute("agent");
+  String fromDatetime= (String) request.getAttribute("fromDatetime");
+  String toDatetime= (String) request.getAttribute("toDatetime");
+  String status= (String) request.getAttribute("status");
+  Admin admin= (Admin) session.getAttribute("admin");
+  if(admin==null)
+  {
+    response.sendRedirect(request.getContextPath()+"/login");
+    return;
+  }
+  int totalPage= (Integer) request.getAttribute("totalPage");
+  int currentPage= (Integer) request.getAttribute("totalPage");
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -48,7 +65,7 @@
           <!--   <li class="active"><i class="icon-file-alt"></i> Blank Page</li> -->
         </ol>
       </div>
-      <form class="form-horizontal" id="add_admin" action=""  novalidate="novalidate">
+      <div class="form-horizontal">
         <div class="modal-body">
 
           <div class="form-wizard">
@@ -56,30 +73,30 @@
               <div class="form-group">
                 <label class="control-label col-md-3">会员名</label>
                 <div class="col-md-7">
-                  <input type="text" name="username" class="form-control" placeholder="姓名" />
+                  <input type="text" name="username" id="name" class="form-control" placeholder="姓名" />
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-md-3">代理点名称</label>
                 <div class="col-md-7">
-                  <input type="text" name="username" class="form-control" placeholder="代理点" />
+                  <input type="text" name="username" id="agent" class="form-control" placeholder="代理点" />
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-md-3">评估时间</label>
                 <div class="col-md-3">
-                  <input type="text" data-language="en" class="form-control datepicker-here" placeholder="年/月/日">
+                  <input type="text" data-language="en" id="fromDatetime" class="form-control datepicker-here" placeholder="年/月/日">
                 </div>
                 <label class="control-label col-md-1">到</label>
                 <div class="col-md-3">
-                  <input type="text" data-language="en" class="form-control datepicker-here" placeholder="年/月/日">
+                  <input type="text" data-language="en" id="toDatetime" class="form-control datepicker-here" placeholder="年/月/日">
                 </div>
 
               </div>
               <div class="form-group">
                 <label class="control-label col-md-3">状态</label>
                 <div class="col-md-2">
-                  <select class="form-control" name="state">
+                  <select class="form-control" name="status">
                     <c:forEach items="${evaluationStatuses}" var="item">
                       <option value='${item.id}'>${item.name}</option>
                     </c:forEach>
@@ -92,14 +109,10 @@
 
         </div>
         <div class="modal-footer">
-          <input type="button" class="btn btn-success" value="查找" onclick=""/>
-          <input type="button" class="btn btn-success" value="订单升级" onclick=""/>
-          <input type="button" class="btn btn-success" value="生成文件" onclick=""/>
-          <button type="button" class="btn btn-success" data-toggle="modal" data-target="#AddModal">
-            添加物流信息
-          </button>
+          <input type="button" class="btn btn-success" value="查找" onclick="find()"/>
+          <input type="button" class="btn btn-success" value="删除" onclick="deleteChoose()"/>
         </div>
-      </form>
+      </div>
       <div class="col-md-12">
         <table class="table table-striped table-bordered table-hover table-checkable" cellspacing="0" width="100%">
           <thead>
@@ -123,10 +136,10 @@
               状态
             </th>
             <th>
-              查看报告
+              一分钟评测结果
             </th>
             <th>
-              添加菜单
+              五分钟评测结果
             </th>
           </tr>
           </thead>
@@ -140,54 +153,20 @@
             <td>${evaluation.time}</td>
             <td>${evaluation.evaluation_status.name}</td>
             <td>
-              <label data-toggle="modal" data-target="#CheckModal"><a>查看</a></label>
+              <label data-toggle="modal" data-target="#Check1Modal"><a onclick="getResult(1,'${evaluation.uid.uid}')">查看</a></label>
             </td>
             <td>
-              <a href="menu.html"> 添加</a>
+              <label data-toggle="modal" data-target="#Check5Modal"><a onclick="getResult(5,'${evaluation.uid.uid}')">查看</a></label>
             </td>
           </tr>
         </c:forEach>
-          <tr>
-            <td class="checkbox-column">
-              <input type="checkbox" class="uniform" name="subBox">
-            </td>
-
-            <td>
-              001
-            </td>
-            <td>
-              李四
-            </td>
-            <td>
-              浦东区代理点
-            </td>
-            <td>
-              2016/3/29
-            </td>
-            <td>
-              已打印
-            </td>
-            <td>
-              <label data-toggle="modal" data-target="#CheckModal"><a>查看</a></label>
-            </td>
-            <td>
-              <a href="<%=request.getContextPath()%>/Upload/menu">添加</a>            </td>
-          </tr>
           </tbody>
         </table>
-        <section class="archive-pages">
-          <ul>
-            <li class="first"><a href="#" title="first page">first page</a></li>
-            <li class="previous"><a href="#" title="previous page">previous page</a></li>
-            <li class="selected">1</li>
-            <li><a href="#" title="Pagina 2">2</a></li>
-            <li><a href="#" title="Pagina 3">3</a></li>
-            <li><a href="#" title="Pagina 4">4</a></li>
-            <li><a href="#" title="Pagina 5">5</a></li>
-            <li class="next"><a href="#" title="next page">next page</a></li>
-            <li class="last"><a href="#" title="last page">last page</a></li>
-          </ul>
-        </section>
+        <jsp:include page="../Backstage/page.jsp" flush="true">
+          <jsp:param name="currentPage" value="<%=currentPage%>"></jsp:param>
+          <jsp:param name="totalPage" value="<%=totalPage%>"></jsp:param>
+          <jsp:param name="url" value="Evaluate/evaluate2?name=<%=name%>&agent=<%=agent%>&fromDatetime=<%=fromDatetime%>&toDatetime=<%=toDatetime%>&status=<%=status%>"></jsp:param>
+        </jsp:include>
       </div>
     </div><!-- /.row -->
 
@@ -245,6 +224,55 @@
     </div>
   </div>
 </div>
+<div class="modal fade" id="Check5Modal" tabindex="-1" role="dialog" aria-labelledby="FindModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="Check5ModalLabel">五分钟评测结果</h4>
+      </div>
+      <div class="form-horizontal">
+        <div class="form-group">
+          <label class="control-label col-md-3">您的体质是</label>
+          <label class="control-label col-md-3" id="bodyCondition2"></label>
+        </div>
+        <div id="check5">
+          <div class="form-group">
+            <label class="control-label col-md-3">这写个体质类型</label>
+            <label class="control-label col-md-3">得分</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Check Modal -->
+<div class="modal fade" id="Check1Modal" tabindex="-1" role="dialog" aria-labelledby="FindModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="Check1ModalLabel">一分钟评测结果</h4>
+      </div>
+      <div class="form-horizontal" >
+        <div class="form-group">
+          <label class="control-label col-md-3">您的体质是</label>
+          <label class="control-label col-md-3" id="bodyCondition"></label>
+        </div >
+        <div id="check1">
+          <div class="form-group">
+            <label class="control-label col-md-3">这写个体质类型</label>
+            <label class="control-label col-md-3">得分</label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
 <!-- Check Modal -->
 <div class="modal fade" id="CheckModal" tabindex="-1" role="dialog" aria-labelledby="FindModalLabel">
@@ -281,6 +309,49 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/eModal.js"></script>
 <script type="text/javascript">
+  function getResult(type,uid){
+    $.ajax({
+      url:"<%=request.getContextPath()%>/Evaluate/getResult",
+      type:"post",
+      data:{type:type,uid:uid},
+      dataType:"json",
+      success:function(data){
+        if(type==1){
+          $("#bodyCondition").html(data.result);
+          var result="";
+          $(data.resultList).each(function(index,element){
+            console.log(element.name)
+            result+=" <div class='form-group'> " +
+            "<label class='control-label col-md-3'>"+element.name+"</label> " +
+            "<label class='control-label col-md-3'>"+element.countNum+"</label> " +
+            "</div>"
+          })
+          $("#check1").html(result)
+        }else{
+          $("#bodyCondition2").html(data.result);
+          var result="";
+          $(data.resultList).each(function(index,element){
+            console.log(element.BCid.name)
+            result+=" <div class='form-group'> " +
+            "<label class='control-label col-md-3'>"+element.BCid.name+"</label> " +
+            "<label class='control-label col-md-3'>"+element.score+"</label> " +
+            "</div>"
+          })
+          $("#check5").html(result)
+        }
+      }
+    })
+  }
+  function find(){
+    var name=$("#name").val()
+    var fromDatetime=$("#fromDatetime").val();
+    var toDatetime=$("#toDatetime").val();
+    var status=$("#status").val()
+    var agent=$("#agent").val();
+    location.href="<%=request.getContextPath()%>/Evaluate/evaluate1?name="+name+"&agent="+agent+"&fromDatetime="+fromDatetime+"&toDatetime="+toDatetime+"&status="+status+"&pn=<%=currentPage%>"
+  }
+
+
   $(function() {
     $("#checkAll").click(function() {
       // 	alert($("input[name='subBox']").length);
@@ -296,6 +367,32 @@
       $("#checkAll").prop("checked",$("input[name='subBox']").length == $("input[name='subBox']:checked").length ? true : false);
     });
   });
+  function deleteChoose() {
+    var idList = $("input[name='subBox']");
+    var infoList = "";
+    var count = 0;
+    $(idList).each(function (index, data) {
+      if (data.checked) {
+        if (count > 0)
+          infoList += ",";
+        infoList += $(data).parent().parent().find('td:eq(1)').html();
+        count++;
+      }
+    });
+    if (infoList != "") {
+      $.ajax({
+        type: "post",
+        url: "<%=request.getContextPath()%>/Evaluate/delete",
+        data: {infoList: infoList},
+        success: function (result) {
+          if (result == "success") {
+            location.reload(true)
+          }
+        }
+      })
+    }
+    console.log(infoList);
+  }
 </script>
 </body>
 </html>

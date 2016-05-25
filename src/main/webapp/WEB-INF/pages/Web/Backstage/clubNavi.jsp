@@ -24,7 +24,7 @@
       <span class="icon-bar"></span>
       <span class="icon-bar"></span>
     </button>
-    <a class="navbar-brand" href="/Club/clubIndex">会所后台管理</a>
+    <a class="navbar-brand" href="#">会所后台管理</a>
   </div>
 
   <!-- Collect the nav links, forms, and other content for toggling -->

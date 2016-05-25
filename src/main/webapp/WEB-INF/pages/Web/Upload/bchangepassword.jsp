@@ -1,4 +1,14 @@
-﻿<!DOCTYPE html>
+﻿<%@ page import="com.springapp.entity.Admin" %><%
+    Admin admin= (Admin) session.getAttribute("admin");
+    if(admin==null)
+    {
+        response.sendRedirect(request.getContextPath()+"/login");
+        return;
+    }
+    int totalPage= (Integer) request.getAttribute("totalPage");
+    int currentPage= (Integer) request.getAttribute("totalPage");
+%>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="utf-8">
@@ -39,23 +49,23 @@
 		  <div class="form-group">
                           <label class="control-label col-md-3">旧密码</label>
                           <div class="col-md-7">
-                            <input type="text" name="opsw" class="form-control"/>
+                            <input type="text" id="oldPwd" name="opsw" class="form-control"/>
                           </div>
                       </div><br><br><br>
                       <div class="form-group">
                           <label class="control-label col-md-3">新密码</label>
                           <div class="col-md-7">
-                            <input type="text" name="npsw" class="form-control"/>
+                            <input type="text" id="newPwd" name="npsw" class="form-control"/>
                           </div>
                       </div><br><br>
                       <div class="form-group">
                           <label class="control-label col-md-3">重复新密码</label>
                           <div class="col-md-7">
-                            <input type="text" name="rppsw" class="form-control"/>
+                            <input type="text" id="newPwd2" name="rppsw" class="form-control"/>
                           </div>
                       </div><br><br>
                       <div class="modal-footer">
-              <input type="submit" class="btn btn-success" value="提交" onclick=""/>
+              <input type="button" class="btn btn-success" value="提交" onclick=""/>
             </div>
         </div><!-- /.row -->
 
@@ -67,6 +77,27 @@
     <script src="<%=request.getContextPath()%>/Web/Upload/back/js/jquery-1.10.2.js"></script>
     <script src="<%=request.getContextPath()%>/Web/Upload/back/js/bootstrap.js"></script>
     <script>
+        function changePwd(){
+            var oldPwd=$("#oldPwd").val();
+            var newPwd=$("#newPwd").val();
+            var newPwd2=$("#newPwd2").val();
+            if(newPwd!=newPwd2){
+                alert("两次密码输入不一致");
+                return true;
+            }
+            $.ajax({
+                url:"changePassword",
+                type:"post",
+                data:{oldPwd:oldPwd,newPwd:newPwd},
+                success:function(data){
+                    if(data=="fail")
+                    alert("旧密码输入错误")
+                    else
+                    location.reload(true)
+                }
+            })
+        }
+
    $(function(){
       $("#history").dropdown('toggle');
       }); 

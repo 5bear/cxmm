@@ -31,6 +31,9 @@ import java.util.*;
 /**
  * Created by ZhanShaoxiong on 2016/5/8.
  * 1min评测
+ *逻辑: 选项对应体质类型，选项的体质个数大于等于2 /如果没有，去面诊。
+ 五分钟评测选题，只要一分钟评测选择了就都有。
+ 五分结果显示体质得分top2
  */
 @Controller
 @RequestMapping(value = "/WeiXin")
@@ -89,6 +92,7 @@ public class Test1Controller extends BaseController {
         WxEvaluation wxEvaluation=new WxEvaluation();
         wxEvaluation.setUid(wxuser);
         wxEvaluation.setTime(sdf.format(new Date()));
+        wxEvaluation.setTimestamp(System.currentTimeMillis());
         wxEvaluation.setEvaluation_status(test1Dao.getEvaluationStatus(1));
         wxEvaluationDao.save(wxEvaluation);
         return "redirect:/WeiXin/complete";
@@ -105,9 +109,6 @@ public class Test1Controller extends BaseController {
         if (openid == null) {
             return "redirect:"+request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI());
         }
-        WxEvaluation wxEvaluation=wxEvaluationDao.get(openid);
-        wxEvaluation.setEvaluation_status(test1Dao.getEvaluationStatus(2));
-        wxEvaluationDao.update(wxEvaluation);
          /*存储用户信息*/
         String Age = request.getParameter("Age");
         String ExpectingDate = request.getParameter("ExpectingDate");
@@ -149,6 +150,10 @@ public class Test1Controller extends BaseController {
         if(feed!=null)
             wxuser.setFeed(Integer.parseInt(feed));
         baseDao.update(wxuser);
+        WxEvaluation wxEvaluation=wxEvaluationDao.get(openid);
+        wxEvaluation.setEvaluation_status(test1Dao.getEvaluationStatus(2));
+        wxEvaluation.setName(wxuser.getNickname());
+        wxEvaluationDao.update(wxEvaluation);
         return "redirect:/WeiXin/result";
     }
 
@@ -167,14 +172,16 @@ public class Test1Controller extends BaseController {
         }
         //取uid
         int uid=wxuser.getUid();
-        List result;
+        List<Map> result=new ArrayList<Map>();
+        String resultBodyCondition="";
+        String resultTendency="";
         result=test1Dao.getStatistics(uid);//降序得到1分钟评测的体质结果，未筛选出得分>=2的
         {
             //result 只显示前两项
             WxUser wxUser=new WxUser();
             wxUser=test1Dao.getUser(uid);
 
-            List<Object> resultTemp=new ArrayList<Object>();//用来存放得分大于2的体质结果
+           /* List<Object> resultTemp=new ArrayList<Object>();//用来存放得分大于2的体质结果
             for (Object item : result)
             {
                 Object[] array = (Object[]) item;
@@ -184,20 +191,23 @@ public class Test1Controller extends BaseController {
             }
             //若resultTemp仍为空，则说明是1+1+1+1+1的情况;否则resultTemp才是真正应该显示出来起来的结果
             if(resultTemp.size()!=0)
-                result=resultTemp;
+                result = resultTemp;*/
             //result为最终结果
-            for (Object item : result) {
-                Object[] array = (Object[]) item;
-                Integer BCid = (Integer) array[0];
-                String name = (String) array[1];
-                String tendency = (String) array[2];
-                Integer countNum = Integer.parseInt(array[3].toString()) ;
-                BodyCondition bodyCondition =bodyconditionDao.get(BodyCondition.class,BCid);
-                SResult sResult=new SResult();
-                sResult.setBCid(bodyCondition);
-                sResult.setUid(wxUser);
-                sResult.setCount(countNum);
-                baseDao.save(sResult);//存每个评测结果
+            int count=0;
+            for(Map map:result){
+                if(Integer.parseInt(map.get("countNum").toString())>=2) {
+                    if (count == 0) {
+                        resultBodyCondition += map.get("name");
+                    } else {
+                        resultBodyCondition += "," + map.get("name");
+                    }
+                    if(count==0){
+                        resultTendency+=map.get("tendency");
+                    }else{
+                        resultTendency+=","+map.get("tendency");
+                    }
+                    count++;
+                }
             }
             WxEvaluation wxEvaluation=wxEvaluationDao.get(openid);
             wxEvaluation.setUid(wxUser);
@@ -205,6 +215,12 @@ public class Test1Controller extends BaseController {
         }
 
         List<BodyCondition>bodyConditions=bodyconditionDao.getList();
+        String show="";
+        if(resultBodyCondition.equals(""))
+            show="您的体质比较复杂，请完成五分钟评测";
+        else
+            show=resultBodyCondition+";有偏向"+resultTendency+"的趋势";
+        modelAndView.addObject("show",show);
         request.setAttribute("bodyConditions",bodyConditions);
         request.setAttribute("result", result);
         request.setAttribute("uid", openid);
@@ -217,6 +233,7 @@ public class Test1Controller extends BaseController {
         if (openid == null) {
             response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
         }
+        String user= (String) session.getAttribute("user");
         WxEvaluation wxEvaluation=wxEvaluationDao.get(openid);
         if (wxEvaluation!=null) {
             if(wxEvaluation.getEvaluation_status().getId()==1)
@@ -285,7 +302,7 @@ public class Test1Controller extends BaseController {
             wxuser.setOpenid(openid);
             userDao.save(wxuser);
         }
-        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy/MM/dd hh:MM:ss");
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         String cance="";
         for(int i=0;i<order.getCanceNums().length;i++){
             if(i==0)
@@ -469,7 +486,7 @@ public class Test1Controller extends BaseController {
         }
         return modelAndView;
     }
-    @RequestMapping(value = "/news")
+    @RequestMapping(value = "/activity")
     public ModelAndView activity(HttpServletRequest request,HttpServletResponse response,HttpSession session) throws IOException {
         ModelAndView modelAndView=new ModelAndView("WeiXin/news");
        List<Activity>activityList=activityDao.getList();

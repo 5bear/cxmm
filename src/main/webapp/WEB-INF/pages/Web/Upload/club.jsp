@@ -5,11 +5,11 @@
     Admin admin= (Admin) session.getAttribute("admin");
     if(admin==null)
     {
-        response.sendRedirect("login");
+        response.sendRedirect(request.getContextPath()+"/login");
         return;
     }
     int totalPage= (Integer) request.getAttribute("totalPage");
-    int currentPage= (Integer) request.getAttribute("totalPage");
+    int currentPage= (Integer) request.getAttribute("currentPage");
 %>
 <!DOCTYPE html>
 <html lang="en">

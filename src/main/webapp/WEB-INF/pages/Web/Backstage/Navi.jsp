@@ -7,7 +7,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <td onmouseover="this.style.backgroundColor='#FFcccc'" onmouseout="this.style.backgroundColor=''" onclick="window.location.href='<%=request.getContextPath()%>/index'">首页</td>
-<td onmouseover="this.style.backgroundColor='#FFcccc'" onmouseout="this.style.backgroundColor=''" onclick="window.location.href='<%=request.getContextPath()%>/News/List'">新闻</td>
+<td onmouseover="this.style.backgroundColor='#FFcccc'" onmouseout="this.style.backgroundColor=''" onclick="window.location.href='<%=request.getContextPath()%>/Activity/ActivityList'">新闻</td>
 <%--
 <td onmouseover="this.style.backgroundColor='#FFcccc'" onmouseout="this.style.backgroundColor=''" onclick="window.location.href='<%=request.getContextPath()%>/Activity/List'">活动</td>
 --%>

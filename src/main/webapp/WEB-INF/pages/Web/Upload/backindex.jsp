@@ -10,7 +10,7 @@
 <%
   Club club= (Club) session.getAttribute("club");
   if(club==null) {
-    response.sendRedirect("/clubLogin");
+    response.sendRedirect(request.getContextPath()+"/clubLogin");
     return;
   }
 %>

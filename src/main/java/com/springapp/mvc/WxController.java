@@ -65,7 +65,46 @@ public class WxController extends BaseController {
         ModelAndView modelAndView = new ModelAndView("WeiXin/apply");
         return modelAndView;
     }
-
+    @RequestMapping(value = "/Wx/Partner")
+    public ModelAndView Partner(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
+        String openid = (String) session.getAttribute("openid");
+        if (openid == null) {
+            response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
+        }
+        Agent isAgent = agentDao.isAgent(openid);
+        if (isAgent != null) {
+            if (isAgent.getStatus().equals("可用")) {
+                //返回二维码等
+                ModelAndView modelAndView = new ModelAndView("WeiXin/partner");
+                List<WxUser> wxUsersByAgentid = userDao.getByAgentid(isAgent.getId());
+                List<WxOrderinfo> wxOrderinfoByAgentid = orderDao.getByAgentid(isAgent.getId());
+                modelAndView.addObject("qrcodepath", request.getContextPath() + "/WeiXin/AgentQRCode/" + isAgent.getId().toString() + ".jpg");
+                modelAndView.addObject("userscount", wxUsersByAgentid.size());
+                int canceNum=0,canheNum=0;
+                for(WxOrderinfo wxOrderinfo:wxOrderinfoByAgentid){
+                    canceNum+=wxOrderinfo.getCanceNum().split(",").length;
+                    canheNum+=wxOrderinfo.getCanheNum().split(",").length;
+                }
+                modelAndView.addObject("canceNum",canceNum);
+                modelAndView.addObject("canheNum",canheNum);
+                return modelAndView;
+            } else if (isAgent.getStatus().equals("正在审核")) {
+                //正在审核
+                ModelAndView modelAndView = new ModelAndView("WeiXin/applied");
+                modelAndView.addObject("status", "正在审核");
+                return modelAndView;
+            } else if (isAgent.getStatus().equals("失效")) {
+                //失效
+                ModelAndView modelAndView = new ModelAndView("WeiXin/applied");
+                modelAndView.addObject("status", "已经失效");
+                return modelAndView;
+            } else {
+                throw new Exception("这个状态是不可能的。");
+            }
+        }
+        ModelAndView modelAndView = new ModelAndView("WeiXin/apply");
+        return modelAndView;
+    }
     @RequestMapping(value = "/Wx/Apply", method = RequestMethod.POST)
     public String applyPost(Agent agent, HttpSession session) throws Exception {
         String openid = (String) session.getAttribute("openid");
@@ -171,6 +210,16 @@ public class WxController extends BaseController {
             String token = obj.getString("access_token");
             String openid = obj.getString("openid");
             JSONObject user = getUserInfo(token, openid);
+            WxUser temp=(WxUser) JSONObject.toBean(user,WxUser.class);
+            WxUser wxUser=userDao.getByOpenid(openid);
+            if(wxUser==null){
+                wxUser= (WxUser) JSONObject.toBean(user,WxUser.class);
+                userDao.save(wxUser);
+            }else{
+                wxUser.setNickname(temp.getNickname());
+                userDao.update(wxUser);
+            }
+            session.setAttribute("user", user.toString());
             session.setAttribute("openid", openid);
             //return "redirect:https://www.baidu.com/s?wd=" + openid;
             response.sendRedirect(returnUrl);
@@ -535,6 +584,7 @@ public class WxController extends BaseController {
                     WxUser wxUser = new WxUser();
                     wxUser.setOpenid(fromUsername);
                     wxUser.setAid(Long.parseLong(eventKey.substring(8)));
+                    wxUser.setAgent(agentDao.get(Agent.class,Long.parseLong(eventKey.substring(8))).getAgent());
                     userDao.save(wxUser);
                 }
                 //this.print(response, fromUsername);
@@ -685,7 +735,7 @@ public class WxController extends BaseController {
         Map joinUsBtn = new HashMap();
         joinUsBtn.put("type", "view");
         joinUsBtn.put("name", "合作伙伴");
-        joinUsBtn.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxde1edf21c395f90f&redirect_uri=http%3A%2F%2Fcx.ecnucpp.com%2Fcxmm%2FWx%2FApply&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
+        joinUsBtn.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxde1edf21c395f90f&redirect_uri=http%3A%2F%2Fcx.ecnucpp.com%2Fcxmm%2FWx%2FPartner&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
         thirdSubBtn.add(joinUsBtn);
         thirdBtn.put("sub_button", thirdSubBtn);
         menus.add(thirdBtn);

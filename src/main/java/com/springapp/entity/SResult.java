@@ -9,7 +9,8 @@ import javax.persistence.*;
 @Entity
 public class SResult {
     private int id;
-
+    private WxUser uid;
+    private BodyCondition BCid;
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "uid")
     public WxUser getUid() {
@@ -39,9 +40,6 @@ public class SResult {
     public void setBCid(BodyCondition BCid) {
         this.BCid = BCid;
     }
-
-    private WxUser uid;
-    private BodyCondition BCid;
 
     public int getCount() {
         return count;

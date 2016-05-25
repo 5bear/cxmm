@@ -81,10 +81,10 @@
         香港高等科技教育学院</br>
         费城大学</p>
       <br><br>
-      <h2 class="title4"><a href="/Train/sign"><div class="pic"><img src="<%=request.getContextPath()%>/Web/Upload/images/signin.png" width="100" height="100"/></div></a></h2>
+      <h2 class="title4"><a href="<%=request.getContextPath()%>/Train/sign"><div class="pic"><img src="<%=request.getContextPath()%>/Web/Upload/images/signin.png" width="100" height="100"/></div></a></h2>
       <h2 class="title4"><font color="#38C8AA">在线报名</font></h2>
       <br><br>
-      <h2 class="title4"><h2 class="title4"><a href="/Train/license"><div class="pic"><img src="<%=request.getContextPath()%>/Web/Upload/images/license.png" width="100" height="100"/></div></a></h2></h2>
+      <h2 class="title4"><h2 class="title4"><a href="<%=request.getContextPath()%>/Train/license"><div class="pic"><img src="<%=request.getContextPath()%>/Web/Upload/images/license.png" width="100" height="100"/></div></a></h2></h2>
       <h2 class="title4"><font color="#38C8AA">证书查询</font></h2>
       <br><br><br><br>
     </div>
