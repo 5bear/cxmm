@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import java.sql.Date;
 import java.text.ParseException;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public class TrainController extends BaseController{
         if(pn!=null&&!pn.equals(""))
             pageNum=Integer.parseInt(pn);
         start = (pageNum - 1) * 10;
-        end=start+10;
+        end=10;
         List<Train> trainList = trainDao.getList(name, fromDatetime, toDatetime, status);
         int totalPage;
         if(trainList.size()%10==0)
@@ -70,6 +71,16 @@ public class TrainController extends BaseController{
         modelAndView.addObject("trainList",trainList);
         return modelAndView;
     }
+    @RequestMapping(value = "/certinfo")
+    public ModelAndView certinfo(HttpServletRequest request){
+        ModelAndView modelAndView=new ModelAndView("Web/Upload/certinfo");
+        String id=request.getParameter("id");
+        if(id!=null&&!id.equals("")){
+            Train train=baseDao.get(Train.class,Long.parseLong(id));
+            modelAndView.addObject("train",train);
+        }
+        return modelAndView;
+    }
     @RequestMapping(value = "/sign",method = RequestMethod.POST)
     public String sign(Train train){
         train.setStatus("已报名");
@@ -91,13 +102,24 @@ public class TrainController extends BaseController{
     @RequestMapping(value = "/addCertiInfo",method = RequestMethod.POST)
     @ResponseBody
     public String addCertiInfo(@RequestParam(value = "id") Long id,@RequestParam(value = "sex") String sex, @RequestParam(value = "trainTime") String trainTime,
-                               @RequestParam(value = "licenseTime") String licenseTime,@RequestParam(value = "licenseNum") String licenseNum){
+                               @RequestParam(value = "licenseTime") String licenseTime,@RequestParam(value = "licenseNum") String licenseNum) throws ParseException {
         Train train=trainDao.get(Train.class,id);
         train.setSex(sex);
-        train.setTrainTime(trainTime);
-        train.setLicenseTime(licenseTime);
+        train.setTrainTime(new Date(sdf1.parse(trainTime).getTime()));
+        train.setLicenseTime(new Date(sdf1.parse(licenseTime).getTime()));
         train.setLicenseNum(licenseNum);
         trainDao.update(train);
         return "success";
+    }
+    @RequestMapping(value = "/getCerti",method = RequestMethod.POST)
+    @ResponseBody
+    public String getCerti(@RequestParam(value = "name") String name) throws ParseException {
+        Train train=trainDao.getTrain(name);
+
+        if (train==null)
+            return "NotFound";
+        if(!train.getStatus().equals("已发证"))
+            return "fail";
+        return train.getId().toString();
     }
 }

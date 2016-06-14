@@ -215,6 +215,12 @@ select.table-input {
     border: none;
 }
 
+.nav {
+    background: url(bg2.jpg) repeat-x;
+    height: 40px;
+    line-height: 40px;
+}
+
 .progress-table > tbody > tr > td {
     background-color: white;
     width: 5%;

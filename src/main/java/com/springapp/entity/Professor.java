@@ -8,8 +8,39 @@ public class Professor {
     private String name;
     private String phone;
     private String email;
-    private String link;
+    private String link1;
+    @Basic
+    @Column(name = "link2")
+    public String getLink2() {
+        return link2;
+    }
 
+    public void setLink2(String link2) {
+        this.link2 = link2;
+    }
+
+    @Basic
+    @Column(name = "link1")
+    public String getLink1() {
+        return link1;
+    }
+
+    public void setLink1(String link1) {
+        this.link1 = link1;
+    }
+
+    @Basic
+    @Column(name = "link3")
+    public String getLink3() {
+        return link3;
+    }
+
+    public void setLink3(String link3) {
+        this.link3 = link3;
+    }
+
+    private String link2;
+    private String link3;
     @Basic
     @Column(name = "title")
     public String getTitle() {
@@ -76,16 +107,6 @@ public class Professor {
     }
 
     @Basic
-    @Column(name = "link")
-    public String getLink() {
-        return link;
-    }
-
-    public void setLink(String link) {
-        this.link = link;
-    }
-
-    @Basic
     @Column(name = "picture")
     public String getPicture() {
         return picture;
@@ -106,8 +127,9 @@ public class Professor {
         if (name != null ? !name.equals(professor.name) : professor.name != null) return false;
         if (phone != null ? !phone.equals(professor.phone) : professor.phone != null) return false;
         if (email != null ? !email.equals(professor.email) : professor.email != null) return false;
-        if (link != null ? !link.equals(professor.link) : professor.link != null) return false;
-
+        if (link1 != null ? !link1.equals(professor.link1) : professor.link1 != null) return false;
+        if (link2 != null ? !link2.equals(professor.link2) : professor.link2 != null) return false;
+        if (link3 != null ? !link3.equals(professor.link3) : professor.link3 != null) return false;
         return true;
     }
 
@@ -117,7 +139,9 @@ public class Professor {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (phone != null ? phone.hashCode() : 0);
         result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + (link != null ? link.hashCode() : 0);
+        result = 31 * result + (link1 != null ? link1.hashCode() : 0);
+        result = 31 * result + (link2 != null ? link2.hashCode() : 0);
+        result = 31 * result + (link3 != null ? link3.hashCode() : 0);
         return result;
     }
 

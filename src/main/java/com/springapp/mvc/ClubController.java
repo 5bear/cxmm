@@ -2,7 +2,9 @@ package com.springapp.mvc;
 
 import com.springapp.entity.Club;
 import com.springapp.entity.Evaluation;
+import com.springapp.entity.EvaluationStatus;
 import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -12,7 +14,12 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+import java.math.BigInteger;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by ZhanShaoxiong on 2016/5/8.
@@ -29,7 +36,7 @@ public class ClubController extends BaseController {
         if(pn!=null&&!pn.equals(""))
             pageNum=Integer.parseInt(pn);
         start = (pageNum - 1) * 10;
-        end=start+10;
+        end=10;
         List<Club> clubList = clubDao.getList();
         int totalPage;
         if(clubList.size()%10==0)
@@ -49,18 +56,54 @@ public class ClubController extends BaseController {
         return modelAndView;
     }
     @RequestMapping(value = "pointRecord",method = RequestMethod.GET)
-      public ModelAndView pointRecord(HttpSession session) {
+    public ModelAndView pointRecord(HttpSession session,HttpServletRequest request) throws ParseException {
         ModelAndView modelAndView = new ModelAndView("Web/Upload/pointrecord");
         Club club= (Club) session.getAttribute("club");
-        List<Evaluation>evaluations=evaluationDao.getListByClub(club.getId());
-        modelAndView.addObject("list",evaluations);
+        String name=request.getParameter("name");
+        request.setAttribute("name",name);
+        String fromDatetime=request.getParameter("fromDatetime");
+        request.setAttribute("fromDatetime",fromDatetime);
+        String toDatetime=request.getParameter("toDatetime");
+        request.setAttribute("toDatetime",toDatetime);
+        String status=request.getParameter("status");
+        request.setAttribute("status",status);
+          /*分页，每页十项*/
+        String pn=request.getParameter("pn");
+        int pageNum=1,start=0,end=0;
+        if(pn!=null&&!pn.equals(""))
+            pageNum=Integer.parseInt(pn);
+        start = (pageNum - 1) * 10;
+        end=10;
+        List<Evaluation> wxEvaluationList = evaluationDao.hsList(club.getId(),name,fromDatetime,toDatetime,status);
+        int totalPage;
+        if(wxEvaluationList.size()%10==0)
+            totalPage=wxEvaluationList.size()/10;
+        else
+            totalPage=wxEvaluationList.size()/10+1;
+        request.setAttribute("currentPage",pageNum);
+        request.setAttribute("totalPage",totalPage);
+        List<Evaluation>myList=evaluationDao.getHsByPage(club.getId(),start, end,name,fromDatetime,toDatetime,status);
+        modelAndView.addObject("list", myList);
+        List<EvaluationStatus>evaluationStatuses=baseDao.findAll("from EvaluationStatus",EvaluationStatus.class);
+        modelAndView.addObject("evaluationStatuses",evaluationStatuses);
         return modelAndView;
     }
 
     @RequestMapping(value = "changePassword",method = RequestMethod.GET)
     public ModelAndView changePassword() {
-        ModelAndView modelAndView = new ModelAndView("Web/Upload/changePassword");
+        ModelAndView modelAndView = new ModelAndView("Web/Upload/changepassword");
         return modelAndView;
+    }
+    @RequestMapping(value = "changePassword",method = RequestMethod.POST)
+    @ResponseBody
+    public String changePassword(@RequestParam(value = "oldPwd")String oldPwd,@RequestParam(value = "newPwd")String newPwd,HttpSession session) {
+        Club club= (Club) session.getAttribute("club");
+        if(club.getPassword().equals(oldPwd)) {
+            club.setPassword(newPwd);
+            baseDao.update(club);
+            return "success";
+        }
+        return "fail";
     }
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public String add(Club club) {
@@ -104,5 +147,59 @@ public class ClubController extends BaseController {
             clubDao.update(club);
         }
         return "success";
+    }
+    @RequestMapping(value = "getResult1",method = RequestMethod.POST)
+    @ResponseBody
+    public String getResult1(@RequestParam(value = "type")int type,@RequestParam(value = "evaluationId")String evaluationId) {
+        List<Map> resultList = new ArrayList();
+        Map resultMap = new HashMap();
+        String result = "";
+        if (type == 1) {
+            resultList = answer1Dao.getStatistics(evaluationId);
+            String bodyCondition = "";
+            int index = 0;
+            for (Object item : resultList) {
+                Object[] array = (Object[]) item;
+                Integer answer = (Integer) array[0];
+                BigInteger count = (BigInteger) array[1];
+                String name = (String) array[2];
+                if (index == 0) {
+                    index++;
+                    if (count.intValue() > 1) {
+                        result += name;
+                    } else {
+                        result="无法判断您的体质。。。";
+                    }
+                } else if (index == 1) {
+                    index++;
+                    if (count.intValue() > 1) {
+                        result += "，" + name;
+                    }
+                }
+            }
+            resultMap.put("result",result);
+            resultMap.put("resultList",resultList);
+        }else{
+            resultList = answer2Dao.getStatistics(evaluationId);
+            int index = 0;
+            String bodyCondition = "";
+            for (Object item : resultList) {
+                Object[] array = (Object[]) item;
+                String name = (String) array[0];
+                BigInteger count = (BigInteger) array[1];
+                if (index == 0) {
+                    index++;
+                    result += name;
+                } else if (index == 1) {
+                    index++;
+                    result += "兼" + name;
+                } else {
+                    break;
+                }
+            }
+            resultMap.put("result",result);
+            resultMap.put("resultList",resultList);
+        }
+        return JSONObject.fromObject(resultMap).toString();
     }
 }

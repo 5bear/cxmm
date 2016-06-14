@@ -419,10 +419,10 @@ xsigin/signup popup
 }
 @media only screen and (min-width: 600px) {
   .cd-form {
-    padding: 2em;
+    padding: 1em;
   }
   .cd-form .fieldset {
-    margin: 2em 0;
+    margin: 1em 0;
   }
   .cd-form .fieldset:first-child {
     margin-top: 0;

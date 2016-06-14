@@ -19,13 +19,6 @@
   <link rel="stylesheet" href="<%=request.getContextPath()%>/Web/Upload/login/css/reset.css">
   <link rel="stylesheet" href="<%=request.getContextPath()%>/Web/Upload/login/css/style.css">
   <style type="text/css">
-    table
-    {
-      border-left: 1px solid #fff;
-      border-right: 1px solid #fff;
-      border-top: 1px solid #fff;
-      border-bottom: 1px solid #fff;
-    }
     td
     {
       font-family: "Roboto Slab", sans-serif;
@@ -38,6 +31,9 @@
       width:300px;
       cursor:pointer;
     }
+    .navbar {
+      padding: 50px 0;
+    }
   </style>
 </head>
 
@@ -46,11 +42,10 @@
 
   <div class="main">
     <div  id="fh5co-home">
-      <div style="background-image: url(<%=request.getContextPath()%>/Web/Upload/images/pic1.PNG);" class="flexslider">
+      <div style="background-image: url(<%=request.getContextPath()%>/Web/Upload/images/pic1.png);" class="flexslider">
         <div class="fh5co-overlay"></div>
         <div class="fh5co-text">
-          <br> <br>
-          <div>
+          <div class="navbar">
             <div align="center">
               <table>
                 <jsp:include page="../Backstage/Navi.jsp"></jsp:include>
@@ -58,7 +53,6 @@
             </div>
             </nav>
           </div>
-          <br><br>
         </div>
       </div>
     </div>

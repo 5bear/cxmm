@@ -1,6 +1,8 @@
 package com.springapp.mvc;
 
 import com.springapp.entity.Answer2;
+import com.springapp.entity.Evaluation;
+import com.springapp.entity.EvaluationStatus;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -78,6 +80,41 @@ public class Question2Controller extends BaseController {
         modelAndView.setViewName("Web/Question2/Result");
         modelAndView.addObject("BodyCondition", bodyCondition);
         return modelAndView;
+    }
+
+    @RequestMapping(value = "/Question2/Result", method = RequestMethod.POST)
+    public String result(@RequestParam(value = "evaluationId") String evaluationId,
+                         @RequestParam(value = "name") String name,
+                         @RequestParam(value = "address") String address,
+                         @RequestParam(value = "phone") String phone,
+                         @RequestParam(value = "suggestion") String suggestion,
+                         @RequestParam(value = "ExpectingDate") String ExpectingDate,
+                         @RequestParam(value = "Birthorder") String Birthorder,
+                         @RequestParam(value = "height") String height,
+                         @RequestParam(value = "AfterWeight") String AfterWeight,
+                         @RequestParam(value = "Weight") String Weight,
+                         @RequestParam(value = "eutocia") int eutocia,
+                         @RequestParam(value = "feed") int feed,
+                         @RequestParam(value = "age") String age,
+                         @RequestParam(value = "notes") String notes) {
+        Evaluation evaluation = evaluationDao.find("from Evaluation where guid=?", Evaluation.class, new Object[]{evaluationId});
+        EvaluationStatus evaluationStatus=test1Dao.getEvaluationStatus(2);
+        evaluation.setEvaluationStatus(evaluationStatus);
+        evaluation.setName(name);
+        evaluation.setAddress(address);
+        evaluation.setPhone(phone);
+        evaluation.setSuggestion(suggestion);
+        evaluation.setNotes(notes);
+        evaluation.setExpectingDate(ExpectingDate);
+        evaluation.setBirthorder(Birthorder);
+        evaluation.setHeight(height);
+        evaluation.setAfterWeight(AfterWeight);
+        evaluation.setWeight(Weight);
+        evaluation.setEutocia(eutocia);
+        evaluation.setFeed(feed);
+        evaluation.setAge(age);
+        evaluationDao.update(evaluation);
+        return "redirect:/Question1/Test";
     }
 
     @RequestMapping(value = "/Question2/Clear")

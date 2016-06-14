@@ -30,9 +30,9 @@
   <!-- Collect the nav links, forms, and other content for toggling -->
   <div class="collapse navbar-collapse navbar-ex1-collapse">
     <ul class="nav navbar-nav side-nav">
-      <li class="<%=pageName.equals("index")?"active":"dropdowm"%>"><a href="/Club/clubIndex"><i class="fa fa-dashboard"></i> 首页</a></li>
+      <li class="<%=pageName.equals("index")?"active":"dropdowm"%>"><a href="<%=request.getContextPath()%>/index"><i class="fa fa-dashboard"></i> 首页</a></li>
       <li class="<%=pageName.equals("test")?"active":"dropdowm"%>">
-        <a href="<%=request.getContextPath()%>/Question1/Test" target="_blank"><i class="fa fa-bar-chart-o"></i> 体制评估</a>
+        <a href="<%=request.getContextPath()%>/Question1/Test" target="_blank"><i class="fa fa-bar-chart-o"></i> 体质评估</a>
       </li>
       <li class="<%=pageName.equals("pointerRecord")?"active":"dropdowm"%>">
         <a href="<%=request.getContextPath()%>/Club/pointRecord"><i class="fa fa-bar-chart-o"></i> 评估记录</a>

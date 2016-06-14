@@ -11,10 +11,18 @@
     int totalPage= (Integer) request.getAttribute("totalPage");
     int currentPage= (Integer) request.getAttribute("currentPage");
     String name= (String) request.getAttribute("name");
+    if(name==null)
+        name="";
     String status= (String) request.getAttribute("status");
+    if(status==null)
+        status="";
     String fromDatetime= (String) request.getAttribute("fromDatetime");
+    if(fromDatetime==null)
+        fromDatetime="";
     String toDatetime= (String) request.getAttribute("toDatetime");
-
+    if(toDatetime==null)
+        toDatetime="";
+    String url="certi?name="+name+"&fromDatetime="+fromDatetime+"&toDatetime="+toDatetime+"&status="+status+"&";
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -151,7 +159,7 @@
                         <td>${train.phoneNum}</td>
                         <td>${train.status}</td>
                         <td>${train.trainTime}</td>
-                        <td><label data-toggle="modal" data-target="#AddModal"><a onclick="certi('${train.id}','${train.name}','${train.sex}','${train.trainTime}','${train.licenseTime}','${train.licenseNum}')">查看</a></label></td>
+                        <td><label data-toggle="modal" data-target="#AddModal"><a onclick="certi('${train.id}','${train.name}','${train.sex}','${train.trainTime}','${train.licenseTime}','${train.licenseNum}')">添加/修改</a></label><label style="display: ${train.status=="已发证"?"":"none"}"><a href="<%=request.getContextPath()%>/Train/certinfo?id=${train.id}" target="_blank">查看</a></label></td>
                     </tr>
                     </c:forEach>
                     </tbody>
@@ -159,7 +167,7 @@
                 <jsp:include page="../Backstage/page.jsp" flush="true">
                 <jsp:param name="currentPage" value="<%=currentPage%>"></jsp:param>
                 <jsp:param name="totalPage" value="<%=totalPage%>"></jsp:param>
-                <jsp:param name="url" value="certi"></jsp:param>
+                <jsp:param name="url" value="<%=url%>"></jsp:param>
                 </jsp:include>
             </div>
         </div><!-- /.row -->

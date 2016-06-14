@@ -102,15 +102,15 @@ public class LoginController extends BaseController {
     public String agentLogin(Agent agent,HttpSession session){
         List<Agent>agentList=agentDao.getList();
         for(Agent temp:agentList){
-            if(temp.getAccount().equals(agent.getAccount())){
+            if(temp.getAgent().equals(agent.getAccount())){
                 if(temp.getPassword().equals(agent.getPassword())){
                     session.setAttribute("agent",temp);
-                    return "redirect:/Agency/secondary";
+                    return "redirect:/Agency/joinerm";
                 }
-                return "redirect:/clubLogin?error=pwd_error";
+                return "redirect:/login?error=pwd_error";
             }
         }
-        return "redirect:/clubLogin?error=account_error";
+        return "redirect:/login?error=account_error";
     }
 
 }

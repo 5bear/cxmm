@@ -1,10 +1,12 @@
 package com.springapp.mvc;
 
+import com.springapp.classes.MessageUtil;
 import com.springapp.entity.Auto;
 import com.springapp.entity.LResult;
 import com.springapp.entity.WxOrderinfo;
 import com.springapp.entity.WxUser;
 import com.springapp.helper.MergePDF;
+import net.sf.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -13,15 +15,14 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStream;
-import java.io.OutputStream;
+import java.io.*;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by ZhanShaoxiong on 2016/5/22.
@@ -30,7 +31,7 @@ import java.util.List;
 @RequestMapping(value = "**")
 public class OrderController extends BaseController{
     @RequestMapping(value = "Order",method = RequestMethod.GET)
-    public ModelAndView order(HttpServletRequest request){
+    public ModelAndView order(HttpServletRequest request) throws IOException {
         ModelAndView modelAndView=new ModelAndView("Web/Upload/order");
         String name=request.getParameter("name");
         String express=request.getParameter("express");
@@ -40,13 +41,15 @@ public class OrderController extends BaseController{
         if(pn!=null&&!pn.equals(""))
             pageNum=Integer.parseInt(pn);
         start = (pageNum - 1) * 10;
-        end=start+10;
-        List<WxOrderinfo> wxOrderinfoList = orderDao.getList();
+        end=10;
+        List<WxOrderinfo> wxOrderinfoList = orderDao.getList(name,express);
         int totalPage;
         if(wxOrderinfoList.size()%10==0)
             totalPage=wxOrderinfoList.size()/10;
         else
             totalPage=wxOrderinfoList.size()/10+1;
+        request.setAttribute("name",name);
+        request.setAttribute("express",express);
         request.setAttribute("currentPage",pageNum);
         request.setAttribute("totalPage",totalPage);
         List<WxOrderinfo>myList=orderDao.getByPage(start,end,name,express);
@@ -77,23 +80,31 @@ public class OrderController extends BaseController{
         }
         return "success";
     }
+    private static String company="【禅心妈妈】";
     @RequestMapping(value = "Order/changeStatus", method = RequestMethod.POST)
     @ResponseBody
-    public String changeStatus(@RequestParam(value = "infoList") String infoList, @RequestParam(value = "type") int type) {
+    public String changeStatus(HttpServletRequest request,@RequestParam(value = "infoList") String infoList, @RequestParam(value = "type") int type) throws IOException {
         String[] orderIds = infoList.split(",");
         for (String id : orderIds) {
             WxOrderinfo wxOrderinfo = orderDao.get(WxOrderinfo.class, Integer.parseInt(id));
             if (type == 0)
                 wxOrderinfo.setDeliverStatus("未发货");
-            else if(type==1)
+            else if(type==1) {
                 wxOrderinfo.setDeliverStatus("已发货");
-            else
+                String content=company+"您的订单"+wxOrderinfo.getOrderNum()+"已经发货。快递公司:"+wxOrderinfo.getExpress()+"快递单号:"+wxOrderinfo.getExpressNum();
+                String jsonResult = MessageUtil.request(wxOrderinfo.getPhoneNum(), content);
+                System.out.println(jsonResult);
+            }
+            else {
                 wxOrderinfo.setDeliverStatus("投递成功");
+                String content=company+"您的订单"+wxOrderinfo.getOrderNum()+"已经投递成功。快递公司:"+wxOrderinfo.getExpress()+"快递单号:"+wxOrderinfo.getExpressNum();
+                String jsonResult = MessageUtil.request(wxOrderinfo.getPhoneNum(), content);
+                System.out.println(jsonResult);
+            }
             orderDao.update(wxOrderinfo);
         }
         return "success";
     }
-
     @RequestMapping(value = "Order/outPDF", method = RequestMethod.POST)
     @ResponseBody
     public String menuauto(@RequestParam(value = "canceNum")String canceNum,@RequestParam(value = "uid")int uid, HttpSession session) {

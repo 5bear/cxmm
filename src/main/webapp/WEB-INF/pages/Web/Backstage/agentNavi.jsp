@@ -28,17 +28,20 @@
   <!-- Collect the nav links, forms, and other content for toggling -->
   <div class="collapse navbar-collapse navbar-ex1-collapse">
     <ul class="nav navbar-nav side-nav">
-      <li class="<%=pageName.equals("secondary")?"active":"dropdown"%>">
+     <%-- <li class="<%=pageName.equals("secondary")?"active":"dropdown"%>">
         <a href="/Agency/secondary"><i class="fa fa-bar-chart-o"></i>二级代理管理</a>
-      </li>
+      </li>--%>
       <li class="<%=pageName.equals("joinerm")?"active":"dropdown"%>">
-        <a href="/Agency/joinerm"><i class="fa fa-bar-chart-o"></i> 评估记录</a>
+        <a href="<%=request.getContextPath()%>/Agency/joinerm"><i class="fa fa-bar-chart-o"></i>扫码客户</a>
       </li>
+         <li class="<%=pageName.equals("secondary")?"active":"dropdown"%>">
+             <a href="<%=request.getContextPath()%>/Agency/secondary"><i class="fa fa-bar-chart-o"></i>推荐客户</a>
+         </li>
       <li class="<%=pageName.equals("dlchangePassword")?"active":"dropdown"%>">
-        <a href="/Agency/dlchangePassword"><i class="fa fa-bar-chart-o"></i> 修改密码</a>
+        <a href="<%=request.getContextPath()%>/Agency/dlchangePassword"><i class="fa fa-bar-chart-o"></i> 修改密码</a>
       </li>
       <li class="<%=pageName.equals("logout")?"active":"dropdown"%>">
-        <a href="/logout?role=agent"><i class="fa fa-bar-chart-o"></i> 注销</a>
+        <a href="<%=request.getContextPath()%>/logout?role=agent"><i class="fa fa-bar-chart-o"></i> 注销</a>
       </li>
 
 
@@ -50,7 +53,7 @@
         <ul class="dropdown-menu">
           <li><a href="#"><i class="fa fa-user"></i><%=agent.getAgent()%></a></li>
           <li class="divider"></li>
-          <li><a href="/logout?role=agent"><i class="fa fa-power-off"></i> 注销</a></li>
+          <li><a href="<%=request.getContextPath()%>/logout?role=agent"><i class="fa fa-power-off"></i> 注销</a></li>
         </ul>
       </li>
     </ul>

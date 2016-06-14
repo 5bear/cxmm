@@ -25,7 +25,7 @@
     <context:annotation-config/>
 
     <mvc:resources mapping="**" location="/WEB-INF/pages/"/>
-    <mvc:resources mapping="/WeiXin" location="/WEB-INF/pages/WeiXin"/>
+    <mvc:resources mapping="/WeiXin" location="/WEB-INF/pages/Wx"/>
     <mvc:resources mapping="/Web" location="/WEB-INF/pages/Web"/>
     <mvc:resources mapping="/PDFs" location="/WEB-INF/pages/PDFs"/>
     <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">

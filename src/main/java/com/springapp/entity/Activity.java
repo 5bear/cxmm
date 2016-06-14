@@ -15,6 +15,16 @@ public class Activity {
     private String showPicture;
     private String summary;
     public String newsStatusE;
+    private int type;//0企业动态  1禅心分享
+
+    @Column
+    public int getType() {
+        return type;
+    }
+
+    public void setType(int type) {
+        this.type = type;
+    }
 
     @Column
     public String getUrl() {

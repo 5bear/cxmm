@@ -64,10 +64,24 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-md-3">推荐链接</label>
+                        <label class="control-label col-md-3">推荐链接1</label>
                         <div class="col-md-7">
-                            <input type="text" name="link" class="form-control" placeholder="推荐链接"
-                                   value="${Professor.link}"/>
+                            <input type="text" name="link1" class="form-control" placeholder="推荐链接"
+                                   value="${Professor.link1}"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">推荐链接2</label>
+                        <div class="col-md-7">
+                            <input type="text" name="link2" class="form-control" placeholder="推荐链接"
+                                   value="${Professor.link2}"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">推荐链接3</label>
+                        <div class="col-md-7">
+                            <input type="text" name="link3" class="form-control" placeholder="推荐链接"
+                                   value="${Professor.link3}"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -80,7 +94,7 @@
                     <div class="form-group">
                         <label class="control-label col-md-3">简介</label>
                         <div class="col-md-7">
-                            <textarea type="text" name="introduction" class="form-control" placeholder="简介">${Professor.introduction}</textarea>
+                            <textarea type="text" id="content" name="introduction" class="form-control" placeholder="简介">${Professor.introduction}</textarea>
                         </div>
                     </div>
                     <div class="form-group">
@@ -115,6 +129,34 @@
 <!-- JavaScript -->
 <script src="<%=application.getContextPath()%>/Web/jquery/jquery.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="<%=application.getContextPath()%>/Web/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="<%=application.getContextPath()%>/Web/Upload/ke/kindeditor-all.js"></script>
+<script type="text/javascript" src="<%=application.getContextPath()%>/Web/Upload/ke/kindeditor-all-min.js"></script>
+<script>
+    KindEditor.ready(function(K) {
+        var editor1 = K.create('textarea[name="introduction"]', {
 
+            uploadJson : '<%=request.getContextPath()%>/Activity/fileUpload',
+            fileManagerJson : '<%=request.getContextPath()%>/Activity/fileManager',
+            cssPath:'<%=request.getContextPath()%>/WeiXin/css/style.css',
+            allowFileManager : true,
+            afterCreate : function() {
+                var self = this;
+                K.ctrl(document, 13, function() {
+                    self.sync();
+                    document.forms['news'].submit();
+                });
+                K.ctrl(self.edit.doc, 13, function() {
+                    self.sync();
+                    document.forms['news'].submit();
+                });
+            },
+            afterBlur:function(){
+                this.sync();
+            }
+
+        });
+        // prettyPrint();
+    });
+</script>
 </body>
 </html>

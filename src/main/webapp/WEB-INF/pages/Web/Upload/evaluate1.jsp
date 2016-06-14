@@ -12,17 +12,26 @@
 <%
 
   String name= (String) request.getAttribute("name");
+  if(name==null)
+    name="";
   String fromDatetime= (String) request.getAttribute("fromDatetime");
+  if(fromDatetime==null)
+    fromDatetime="";
   String toDatetime= (String) request.getAttribute("toDatetime");
+  if(toDatetime==null)
+    toDatetime="";
   String status= (String) request.getAttribute("status");
+  if(status==null)
+    status="";
   Admin admin= (Admin) session.getAttribute("admin");
   if(admin==null)
   {
     response.sendRedirect(request.getContextPath()+"/login");
     return;
   }
+  String url="evaluate1?name="+name+"&fromDatetime="+fromDatetime+"&toDatetime="+toDatetime+"&status="+status+"&";
   int totalPage= (Integer) request.getAttribute("totalPage");
-  int currentPage= (Integer) request.getAttribute("totalPage");
+  int currentPage= (Integer) request.getAttribute("currentPage");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -124,6 +133,7 @@
                 <label class="control-label col-md-3">状态</label>
                 <div class="col-md-2">
                   <select class="form-control" name="state" id="status">
+                    <option></option>
                     <c:forEach items="${evaluationStatuses}" var="item">
                       <option value='${item.id}'>${item.name}</option>
                     </c:forEach>
@@ -159,6 +169,9 @@
               状态
             </th>
             <th>
+              查看信息
+            </th>
+            <th>
              一分钟评测报告
             </th>
             <th>
@@ -171,9 +184,10 @@
        <tr>
          <td class="checkbox-column"><input type="checkbox" class="uniform" name="subBox"></td>
          <td>${evaluation.id}</td>
-         <td>${evaluation.name}</td>
+         <td>${evaluation.uid.nickname}</td>
          <td>${evaluation.time}</td>
          <td>${evaluation.evaluation_status.name}</td>
+         <td><label data-toggle="modal" data-target="#InfoModal"><a onclick="getUserinfo('${evaluation.uid.expectingDate}','${evaluation.uid.weight}','${evaluation.uid.afterWeight}','${evaluation.uid.height}','${evaluation.uid.age}','${evaluation.uid.birthorder}','${evaluation.uid.eutocia==1?"顺产":"剖腹产"}','${evaluation.uid.feed==1?"哺乳":"非哺乳"}')">查看</a></label></td>
          <td><label data-toggle="modal" data-target="#Check1Modal"><a onclick="getResult(1,'${evaluation.uid.uid}')">查看</a></label></td>
          <td><label data-toggle="modal" data-target="#Check5Modal"><a onclick="getResult(5,'${evaluation.uid.uid}')">查看</a></label></td>
        </tr>
@@ -183,7 +197,7 @@
         <jsp:include page="../Backstage/page.jsp" flush="true">
           <jsp:param name="currentPage" value="<%=currentPage%>"></jsp:param>
           <jsp:param name="totalPage" value="<%=totalPage%>"></jsp:param>
-          <jsp:param name="url" value="Evaluate/evaluate1"></jsp:param>
+          <jsp:param name="url" value="<%=url%>"></jsp:param>
         </jsp:include>
       </div>
     </div><!-- /.row -->
@@ -194,51 +208,48 @@
 
 
 <!-- Add Modal -->
-<div class="modal fade" id="AddModal" tabindex="-1" role="dialog" aria-labelledby="FindModalLabel">
+<div class="modal fade" id="InfoModal" tabindex="-1" role="dialog" aria-labelledby="FindModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                 aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="AddModalLabel">快递信息</h4>
+        <h4 class="modal-title" >用户填写信息</h4>
       </div>
-      <form:form class="form-horizontal" id="add" novalidate="novalidate">
-        <div class="modal-body">
-          <div class="form-group">
-            <label class="control-label col-md-3">快递单号</label>
-            <div class="col-md-5">
-              <input type="text" name="username" class="form-control" placeholder="快递单号" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label col-md-3">快递公司</label>
-            <div class="col-md-5">
-              <input type="text" name="username" class="form-control" placeholder="快递公司" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label col-md-3">发货时间</label>
-            <div class="col-md-5">
-              <input type="text" name="username" class="form-control" placeholder="发货时间" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label col-md-3">收件人姓名</label>
-            <div class="col-md-5">
-              <input type="text" name="username" class="form-control" placeholder="收件人姓名" />
-            </div>
-          </div>
-          <div class="form-group">
-            <label class="control-label col-md-3">收件人联系方式</label>
-            <div class="col-md-5">
-              <input type="text" name="username" class="form-control" placeholder="手机号码" />
-            </div>
-          </div>
+      <div class="form-horizontal">
+        <div class="form-group">
+          <label class="control-label col-md-3">预产期</label>
+          <label class="control-label col-md-3" id="p1"></label>
         </div>
-        <div class="modal-footer">
-          <input type="button" class="btn btn-success" value="添加" onclick=""/>
+        <div class="form-group">
+          <label class="control-label col-md-3">孕前体重(KG)</label>
+          <label class="control-label col-md-3" id="p2"></label>
         </div>
-      </form:form>
+        <div class="form-group">
+          <label class="control-label col-md-3">当前体重(KG)</label>
+          <label class="control-label col-md-3" id="p3"></label>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-3">身高(CM)</label>
+          <label class="control-label col-md-3" id="p4"></label>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-3">年龄(周岁)</label>
+          <label class="control-label col-md-3" id="p5"></label>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-3">胎次</label>
+          <label class="control-label col-md-3" id="p6"></label>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-3">顺产/剖产</label>
+          <label class="control-label col-md-3" id="p7"></label>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-3">哺乳/非哺乳</label>
+          <label class="control-label col-md-3" id="p8"></label>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -326,6 +337,16 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/eModal.js"></script>
 <script type="text/javascript">
+  function getUserinfo(p1,p2,p3,p4,p5,p6,p7,p8){
+    $("#p1").html(p1)
+    $("#p2").html(p2)
+    $("#p3").html(p3)
+    $("#p4").html(p4)
+    $("#p5").html(p5)
+    $("#p6").html(p6)
+    $("#p7").html(p7)
+    $("#p8").html(p8)
+  }
   function getResult(type,uid){
     $.ajax({
       url:"<%=request.getContextPath()%>/Evaluate/getResult",
@@ -364,7 +385,7 @@
     var fromDatetime=$("#fromDatetime").val();
     var toDatetime=$("#toDatetime").val();
     var status=$("#status").val()
-    location.href="<%=request.getContextPath()%>/Evaluate/evaluate1?name="+name+"&fromDatetime="+fromDatetime+"&toDatetime="+toDatetime+"&status="+status+"&pn=<%=currentPage%>"
+    location.href="<%=request.getContextPath()%>/Evaluate/evaluate1?name="+name+"&fromDatetime="+fromDatetime+"&toDatetime="+toDatetime+"&status="+status+"&pn=1"
   }
 
   $(function() {

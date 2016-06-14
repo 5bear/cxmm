@@ -36,7 +36,10 @@ public class NewsController extends BaseController {
     @RequestMapping(value = "/News/Add", method = RequestMethod.POST)
     public String add(News news, @RequestParam("file") MultipartFile file, HttpSession session) {
         String realPath = session.getServletContext().getRealPath("/WEB-INF/pages/Web/UserFile/NewsPicture/");
-
+        File saveDir = new File(realPath);
+        if (!saveDir.exists()) {
+            saveDir.mkdir();
+        }
         // 获取文件类型
         //System.out.println(file.getContentType());
         // 获取文件大小
@@ -92,6 +95,10 @@ public class NewsController extends BaseController {
     @RequestMapping(value = "/News/Edit/{id}", method = RequestMethod.POST)
     public String edit1(News news, @RequestParam("file") MultipartFile file, HttpSession session) {
         String realPath = session.getServletContext().getRealPath("/WEB-INF/pages/Web/UserFile/NewsPicture/");
+        File saveDir = new File(realPath);
+        if (!saveDir.exists()) {
+            saveDir.mkdir();
+        }
         Boolean isSaveFileSuccess = false;
         // 判断文件是否存在
         if (!file.isEmpty() && file.getContentType().equals("image/jpeg")) {

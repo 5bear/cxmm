@@ -12,17 +12,26 @@
 <%
 
   String name= (String) request.getAttribute("name");
+  if(name==null)
+    name="";
   String fromDatetime= (String) request.getAttribute("fromDatetime");
+  if(fromDatetime==null)
+    fromDatetime="";
   String toDatetime= (String) request.getAttribute("toDatetime");
+  if(toDatetime==null)
+    toDatetime="";
   String status= (String) request.getAttribute("status");
+  if(status==null)
+    status="";
   Admin admin= (Admin) session.getAttribute("admin");
   if(admin==null)
   {
     response.sendRedirect(request.getContextPath()+"/login");
     return;
   }
+  String url="evaluate3?name="+name+"&fromDatetime="+fromDatetime+"&toDatetime="+toDatetime+"&status="+status+"&";
   int totalPage= (Integer) request.getAttribute("totalPage");
-  int currentPage= (Integer) request.getAttribute("totalPage");
+  int currentPage= (Integer) request.getAttribute("currentPage");
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -89,6 +98,7 @@
                 <label class="control-label col-md-3">状态</label>
                 <div class="col-md-2">
                   <select class="form-control" name="state" id="status">
+                    <option></option>
                     <c:forEach items="${evaluationStatuses}" var="item">
                       <option value='${item.id}'>${item.name}</option>
                     </c:forEach>
@@ -101,7 +111,8 @@
 
         </div>
         <div class="modal-footer">
-          <input type="button" class="btn btn-success" value="查找" onclick=""/>
+          <input type="button" class="btn btn-success" value="查找" onclick="find()"/>
+          <input type="button" class="btn btn-success" value="删除" onclick="deleteChoose()"/>
         </div>
       </form>
       <div class="col-md-12">
@@ -124,6 +135,9 @@
               状态
             </th>
             <th>
+              查看信息
+            </th>
+            <th>
               一分钟评测结果
             </th>
             <th>
@@ -135,15 +149,17 @@
         <c:forEach items="${list}" var="evaluation" varStatus="num">
           <tr>
             <td class="checkbox-column"><input type="checkbox" class="uniform" name="subBox"></td>
+            <td style="display:none;">${evaluation.guid}</td>
             <td>${num.count}</td>
             <td>${evaluation.name}</td>
             <td>${evaluation.time}</td>
-            <td>${evaluation.evaluationStatus}</td>
+            <td>${evaluation.evaluationStatus.name}</td>
+            <td><label data-toggle="modal" data-target="#InfoModal"><a onclick="getUserinfo('${evaluation.expectingDate}','${evaluation.weight}','${evaluation.afterWeight}','${evaluation.height}','${evaluation.age}','${evaluation.birthorder}','${evaluation.eutocia==1?"顺产":"剖腹产"}','${evaluation.feed==1?"哺乳":"非哺乳"}')">查看</a></label></td>
             <td>
-              <label data-toggle="modal" data-target="#CheckModal"><a>查看</a></label>
+              <label data-toggle="modal" data-target="#Check1Modal"><a onclick="getResult(1,'${evaluation.guid}')">查看</a></label>
             </td>
             <td>
-              <label data-toggle="modal" data-target="#CheckModal"><a>查看</a></label>
+              <label data-toggle="modal" data-target="#Check5Modal"><a onclick="getResult(5,'${evaluation.guid}')">查看</a></label>
             </td>
           </tr>
         </c:forEach>
@@ -152,7 +168,7 @@
         <jsp:include page="../Backstage/page.jsp" flush="true">
           <jsp:param name="currentPage" value="<%=currentPage%>"></jsp:param>
           <jsp:param name="totalPage" value="<%=totalPage%>"></jsp:param>
-          <jsp:param name="url" value="Evaluate/evaluate3?name=<%=name%>&fromDatetime=<%=fromDatetime%>&toDatetime=<%=toDatetime%>&status=<%=status%>"></jsp:param>
+          <jsp:param name="url" value="<%=url%>"></jsp:param>
         </jsp:include>
       </div>
     </div><!-- /.row -->
@@ -211,27 +227,98 @@
   </div>
 </div>
 
-<!-- Check Modal -->
-<div class="modal fade" id="CheckModal" tabindex="-1" role="dialog" aria-labelledby="FindModalLabel">
+<div class="modal fade" id="InfoModal" tabindex="-1" role="dialog" aria-labelledby="FindModalLabel">
   <div class="modal-dialog" role="document">
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                 aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="CheckModalLabel">体质报告</h4>
+        <h4 class="modal-title" >用户填写信息</h4>
       </div>
-      <form:form class="form-horizontal" id="check" novalidate="novalidate">
-        <div class="form-body">
+      <div class="form-horizontal">
+        <div class="form-group">
+          <label class="control-label col-md-3">预产期</label>
+          <label class="control-label col-md-3" id="p1"></label>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-3">孕前体重(KG)</label>
+          <label class="control-label col-md-3" id="p2"></label>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-3">当前体重(KG)</label>
+          <label class="control-label col-md-3" id="p3"></label>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-3">身高(CM)</label>
+          <label class="control-label col-md-3" id="p4"></label>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-3">年龄(周岁)</label>
+          <label class="control-label col-md-3" id="p5"></label>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-3">胎次</label>
+          <label class="control-label col-md-3" id="p6"></label>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-3">顺产/剖产</label>
+          <label class="control-label col-md-3" id="p7"></label>
+        </div>
+        <div class="form-group">
+          <label class="control-label col-md-3">哺乳/非哺乳</label>
+          <label class="control-label col-md-3" id="p8"></label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Check Modal -->
+<div class="modal fade" id="Check5Modal" tabindex="-1" role="dialog" aria-labelledby="FindModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="Check5ModalLabel">五分钟评测结果</h4>
+      </div>
+      <div class="form-horizontal">
+        <div class="form-group">
+          <label class="control-label col-md-3">您的体质是</label>
+          <label class="control-label col-md-3" id="bodyCondition2"></label>
+        </div>
+        <div id="check5">
           <div class="form-group">
-            <label class="control-label col-md-3">您的体质是：</label>
-            <p>XX型</p>
-          </div>
-          <div class="form-group">
-            <label class="control-label col-md-3">专家意见：</label>
-            <p>多喝热水多运动，少发脾气（或者这里换成图片也行，因为不知道具体内容，所以暂时这么排版了）</p>
+            <label class="control-label col-md-3">这写个体质类型</label>
+            <label class="control-label col-md-3">得分</label>
           </div>
         </div>
-      </form:form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- Check Modal -->
+<div class="modal fade" id="Check1Modal" tabindex="-1" role="dialog" aria-labelledby="FindModalLabel">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="Check1ModalLabel">一分钟评测结果</h4>
+      </div>
+      <div class="form-horizontal" >
+        <div class="form-group">
+          <label class="control-label col-md-3">您的体质是</label>
+          <label class="control-label col-md-3" id="bodyCondition"></label>
+        </div >
+        <div id="check1">
+          <div class="form-group">
+            <label class="control-label col-md-3">这写个体质类型</label>
+            <label class="control-label col-md-3">得分</label>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -245,12 +332,53 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/eModal.js"></script>
 <script type="text/javascript">
+  function getUserinfo(p1,p2,p3,p4,p5,p6,p7,p8){
+    $("#p1").html(p1)
+    $("#p2").html(p2)
+    $("#p3").html(p3)
+    $("#p4").html(p4)
+    $("#p5").html(p5)
+    $("#p6").html(p6)
+    $("#p7").html(p7)
+    $("#p8").html(p8)
+  }
+  function getResult(type,uid){
+    $.ajax({
+      url:"<%=request.getContextPath()%>/Evaluate/getResult1",
+      type:"post",
+      data:{type:type,evaluationId:uid},
+      dataType:"json",
+      success:function(data){
+        if(type==1){
+          $("#bodyCondition").html(data.result);
+          var result="";
+          $(data.resultList).each(function(index,element){
+            result+=" <div class='form-group'> " +
+            "<label class='control-label col-md-3'>"+element[2]+"</label> " +
+            "<label class='control-label col-md-3'>"+element[1]+"</label> " +
+            "</div>"
+          })
+          $("#check1").html(result)
+        }else{
+          $("#bodyCondition2").html(data.result);
+          var result="";
+          $(data.resultList).each(function(index,element){
+            result+=" <div class='form-group'> " +
+            "<label class='control-label col-md-3'>"+element[0]+"</label> " +
+            "<label class='control-label col-md-3'>"+element[1]+"</label> " +
+            "</div>"
+          })
+          $("#check5").html(result)
+        }
+      }
+    })
+  }
   function find(){
     var name=$("#name").val()
     var fromDatetime=$("#fromDatetime").val();
     var toDatetime=$("#toDatetime").val();
     var status=$("#status").val()
-    location.href="<%=request.getContextPath()%>/Evaluate/evaluate3?name="+name+"&fromDatetime="+fromDatetime+"&toDatetime="+toDatetime+"&status="+status+"&pn=<%=currentPage%>"
+    location.href="<%=request.getContextPath()%>/Evaluate/evaluate3?name="+name+"&fromDatetime="+fromDatetime+"&toDatetime="+toDatetime+"&status="+status+"&pn=1"
   }
 
   $(function() {
@@ -268,6 +396,32 @@
       $("#checkAll").prop("checked",$("input[name='subBox']").length == $("input[name='subBox']:checked").length ? true : false);
     });
   });
+  function deleteChoose() {
+    var idList = $("input[name='subBox']");
+    var infoList = "";
+    var count = 0;
+    $(idList).each(function (index, data) {
+      if (data.checked) {
+        if (count > 0)
+          infoList += ",";
+        infoList += $(data).parent().parent().find('td:eq(1)').html();
+        count++;
+      }
+    });
+    if (infoList != "") {
+      $.ajax({
+        type: "post",
+        url: "<%=request.getContextPath()%>/Evaluate/delete1",
+        data: {infoList: infoList},
+        success: function (result) {
+          if (result == "success") {
+            location.reload(true)
+          }
+        }
+      })
+    }
+    console.log(infoList);
+  }
 </script>
 
 </body>

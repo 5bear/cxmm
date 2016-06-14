@@ -11,9 +11,31 @@ import java.util.List;
 @Repository
 public class OrderDao extends BaseDao {
     public List<WxOrderinfo>getList(){
-        return this.findAll("from WxOrderinfo",WxOrderinfo.class);
+        return this.findAll("from WxOrderinfo order by dateTime desc", WxOrderinfo.class);
     }
-
+    public List<WxOrderinfo>getList(String name,String express){
+        String hql="from WxOrderinfo ";
+        String condition1 = null,condition2=null;
+        int count=0;
+        if(name!=null&&!name.equals("")) {
+            condition1 = " name like " + "'%"+name+"%'";
+            count++;
+        }
+        if(express!=null&&!express.equals("")) {
+            condition2 = " express=" + "'"+express+"'";
+            count++;
+        }
+        if(count==0)
+            return this.findAll("from WxOrderinfo order by dateTime desc", WxOrderinfo.class);
+        if(condition1!=null&&condition2!=null)
+            hql+=" where "+condition1+"and"+condition2;
+        else if(condition1!=null&&condition2==null)
+            hql+=" where"+condition1;
+        else
+            hql+=" where"+condition2;
+        hql+="order by dateTime desc";
+        return this.findAll(hql, WxOrderinfo.class);
+    }
     public List<WxOrderinfo>getByPage(int start,int end,String name,String express){
         String hql="from WxOrderinfo ";
         String condition1 = null,condition2=null;
@@ -27,21 +49,22 @@ public class OrderDao extends BaseDao {
             count++;
         }
         if(count==0)
-            return this.findByPage("from WxOrderinfo", WxOrderinfo.class, start, end);
+            return this.findByPage("from WxOrderinfo order by dateTime desc", WxOrderinfo.class, start, end);
         if(condition1!=null&&condition2!=null)
             hql+=" where "+condition1+"and"+condition2;
         else if(condition1!=null&&condition2==null)
             hql+=" where"+condition1;
         else
             hql+=" where"+condition2;
+        hql+="order by dateTime desc";
         return this.findByPage(hql,WxOrderinfo.class,start,end);
     }
     public List<WxOrderinfo> getByOpenid(String openid) {
-        return this.findAll("from WxOrderinfo where uid.openid=?", WxOrderinfo.class, new Object[]{openid});
+        return this.findAll("from WxOrderinfo where uid.openid=? order by dateTime desc", WxOrderinfo.class, new Object[]{openid});
     }
 
     public List<WxOrderinfo> getByAgentid(Long agentid) {
-        return this.findAll("from WxOrderinfo where uid.aid=?", WxOrderinfo.class, agentid);
+        return this.findAll("from WxOrderinfo where uid.aid=? order by dateTime desc", WxOrderinfo.class, agentid);
     }
 }
 

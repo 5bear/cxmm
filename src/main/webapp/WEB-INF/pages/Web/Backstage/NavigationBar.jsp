@@ -25,7 +25,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="">后台管理</a>
+        <a class="navbar-brand" href="#">后台管理</a>
     </div>
 
     <!-- Collect the nav links, forms, and other content for toggling -->
@@ -62,7 +62,10 @@
                 <a href="<%=request.getContextPath()%>/News/Management"><i class="fa fa-bar-chart-o"></i> 新闻管理</a>
             </li>--%>
             <li <%if(pageName.equals("Activity")){%>class="active"<%}else{%>class="dropdown"<%}%>>
-                <a href="<%=request.getContextPath()%>/Activity/Management"><i class="fa fa-bar-chart-o"></i> 活动管理</a>
+                <a href="<%=request.getContextPath()%>/Activity/Management"><i class="fa fa-bar-chart-o"></i> 企业动态</a>
+            </li>
+            <li <%if(pageName.equals("Share")){%>class="active"<%}else{%>class="dropdown"<%}%>>
+                <a href="<%=request.getContextPath()%>/Share/Management"><i class="fa fa-bar-chart-o"></i>禅心分享</a>
             </li>
             <li <%if(pageName.equals("changepwd")){%>class="active"<%}else{%>class="dropdown"<%}%>>
                 <a href="<%=request.getContextPath()%>/changePassword"><i class="fa fa-bar-chart-o"></i> 修改密码</a>

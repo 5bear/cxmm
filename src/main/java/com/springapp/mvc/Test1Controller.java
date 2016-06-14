@@ -25,6 +25,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -36,23 +37,23 @@ import java.util.*;
  五分结果显示体质得分top2
  */
 @Controller
-@RequestMapping(value = "/WeiXin")
+@RequestMapping(value = "/Wx")
 public class Test1Controller extends BaseController {
 
 
-    private static final String APP_ID = "wxde1edf21c395f90f";
-    private static final String APP_SECRET = "Chanxinmama111111222222333333444";
+    private static final String APP_ID = "wx3ced4614cdabe878";
+    private static final String APP_SECRET = "shanghaiyuechanxin20160603104666";
     private static final String DOMAIN = "cx.ecnucpp.com";
-    private static final String MCH_ID = "1336372301";
+    private static final String MCH_ID = "1253261801";
     private static final int cancePrice=98;
     private static final int canhePrice=2980;
     public ModelAndView home(){
-        ModelAndView modelAndView=new ModelAndView("WeiXin/index");
+        ModelAndView modelAndView=new ModelAndView("Wx/index");
         return modelAndView;
     }
     @RequestMapping(value = "/test1")
     public ModelAndView test1(HttpServletRequest request,HttpSession session,HttpServletResponse response) throws IOException {
-        ModelAndView modelAndView=new ModelAndView("WeiXin/test1");
+        ModelAndView modelAndView=new ModelAndView("Wx/test1");
         String openid = (String) session.getAttribute("openid");
         if (openid == null) {
             response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
@@ -91,15 +92,15 @@ public class Test1Controller extends BaseController {
         }
         WxEvaluation wxEvaluation=new WxEvaluation();
         wxEvaluation.setUid(wxuser);
-        wxEvaluation.setTime(sdf.format(new Date()));
+        wxEvaluation.setTime(new Timestamp(System.currentTimeMillis()));
         wxEvaluation.setTimestamp(System.currentTimeMillis());
         wxEvaluation.setEvaluation_status(test1Dao.getEvaluationStatus(1));
         wxEvaluationDao.save(wxEvaluation);
-        return "redirect:/WeiXin/complete";
+        return "redirect:/Wx/complete";
     }
     @RequestMapping(value = "/complete")
     public ModelAndView complete(){
-        ModelAndView modelAndView=new ModelAndView("WeiXin/complete");
+        ModelAndView modelAndView=new ModelAndView("Wx/complete");
         return modelAndView;
     }
     @RequestMapping(value = "/complete",method = RequestMethod.POST)
@@ -111,14 +112,33 @@ public class Test1Controller extends BaseController {
         }
          /*存储用户信息*/
         String Age = request.getParameter("Age");
+        if(Age==null)
+            Age=" ";
         String ExpectingDate = request.getParameter("ExpectingDate");
+        if(ExpectingDate==null)
+            ExpectingDate=" ";
        /* String PregnancyWeek = request.getParameter("PregnancyWeek");*/
         String Birthorder = request.getParameter("Birthorder");
+        if(Birthorder==null)
+            Birthorder=" ";
         String Height = request.getParameter("Height");
+        if(Height==null)
+            Height=" ";
         String AfterWeight = request.getParameter("AfterWeight");
+        if(AfterWeight==null)
+            AfterWeight=" ";
         String Weight = request.getParameter("Weight");
+        if(Weight==null)
+            Weight=" ";
         String eutocia = request.getParameter("eutocia");
+        if(eutocia==null)
+            eutocia=" ";
         String feed = request.getParameter("feed");
+        if(feed==null)
+            feed=" ";
+        String phone = request.getParameter("phone");
+        if(phone==null)
+            phone=" ";
         WxUser wxuser=userDao.getByOpenid(openid);
         if(wxuser==null) {
             wxuser = new WxUser();
@@ -131,6 +151,7 @@ public class Test1Controller extends BaseController {
             wxuser.setHeight(Height);
             wxuser.setAfterWeight(AfterWeight);
             wxuser.setWeight(Weight);
+            wxuser.setPhone(phone);
             if(eutocia!=null)
                 wxuser.setEutocia(Integer.parseInt(eutocia));
             if(feed!=null)
@@ -145,6 +166,7 @@ public class Test1Controller extends BaseController {
         wxuser.setHeight(Height);
         wxuser.setAfterWeight(AfterWeight);
         wxuser.setWeight(Weight);
+        wxuser.setPhone(phone);
         if(eutocia!=null)
             wxuser.setEutocia(Integer.parseInt(eutocia));
         if(feed!=null)
@@ -154,12 +176,12 @@ public class Test1Controller extends BaseController {
         wxEvaluation.setEvaluation_status(test1Dao.getEvaluationStatus(2));
         wxEvaluation.setName(wxuser.getNickname());
         wxEvaluationDao.update(wxEvaluation);
-        return "redirect:/WeiXin/result";
+        return "redirect:/Wx/result";
     }
 
     @RequestMapping(value = "/result")
     public ModelAndView result(HttpSession session,HttpServletResponse response,HttpServletRequest request) throws IOException {
-        ModelAndView modelAndView=new ModelAndView("WeiXin/result");
+        ModelAndView modelAndView=new ModelAndView("Wx/result");
         String openid = (String) session.getAttribute("openid");
         if (openid == null) {
             response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
@@ -228,28 +250,29 @@ public class Test1Controller extends BaseController {
     }
     @RequestMapping(value = "/test",method = RequestMethod.GET)
     public ModelAndView test(HttpServletRequest request,HttpServletResponse response,HttpSession session) throws IOException {
-        ModelAndView modelAndView=new ModelAndView("WeiXin/test");
+        ModelAndView modelAndView=new ModelAndView("Wx/test");
         String openid = (String) session.getAttribute("openid");
         if (openid == null) {
             response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
         }
-        String user= (String) session.getAttribute("user");
+        WxUser wxUser=userDao.getByOpenid(openid);
+        modelAndView.addObject("wxUser",wxUser);
         WxEvaluation wxEvaluation=wxEvaluationDao.get(openid);
         if (wxEvaluation!=null) {
             if(wxEvaluation.getEvaluation_status().getId()==1)
-                return new ModelAndView("redirect:/WeiXin/complete");
+                return new ModelAndView("redirect:/Wx/complete");
             else if(wxEvaluation.getEvaluation_status().getId()==2)
-                return new ModelAndView("redirect:/WeiXin/menu");
+                return new ModelAndView("redirect:/Wx/menu");
             else if(wxEvaluation.getEvaluation_status().getId()==3)
-                return new ModelAndView("redirect:/WeiXin/test5");
+                return new ModelAndView("redirect:/Wx/test5");
             else
-                return new ModelAndView("redirect:/WeiXin/contact");
+                return new ModelAndView("redirect:/Wx/contact");
         }
         return  modelAndView;
     }
     @RequestMapping(value = "/menu",method = RequestMethod.GET)
     public ModelAndView menu(HttpServletRequest request,HttpServletResponse response,HttpSession session) throws IOException {
-        ModelAndView modelAndView=new ModelAndView("WeiXin/menu");
+        ModelAndView modelAndView=new ModelAndView("Wx/menu");
         String openid = (String) session.getAttribute("openid");
         if (openid == null) {
             response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
@@ -258,7 +281,7 @@ public class Test1Controller extends BaseController {
     }
     @RequestMapping(value = "/purchase")
     public ModelAndView purchase(HttpServletRequest request,HttpServletResponse response,HttpSession session) throws IOException, NoSuchAlgorithmException {
-        ModelAndView modelAndView=new ModelAndView("WeiXin/purchase");
+        ModelAndView modelAndView=new ModelAndView("Wx/purchase");
         String openid = (String) session.getAttribute("openid");
         if (openid == null) {
             response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
@@ -268,17 +291,21 @@ public class Test1Controller extends BaseController {
     @RequestMapping(value = "/ensure",method = RequestMethod.POST)
     @ResponseBody
     public String ensure(HttpServletRequest request,HttpServletResponse response,HttpSession session,@RequestParam(value = "canheNum")int canheNum,@RequestParam(value = "canceNum")int canceNum) throws IOException, NoSuchAlgorithmException {
-        int price=canceNum*1+canheNum*1;
+        int price=canceNum*cancePrice+canheNum*canhePrice;
         String openid = (String) session.getAttribute("openid");
         System.out.print("openid"+openid);
         if (openid == null) {
             response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
         }
+        //测试用
+        if(openid.equals("oU4jhwKx8rklU3cWvXY5Hry97xFc"))
+            price=1;
         String body="chanxingouwu";
         Long timeStr=System.currentTimeMillis();
         String nonce_str=timeStr.toString();
         session.setAttribute("order",timeStr.toString());
-        String result=payJSAPI(nonce_str, body, timeStr.toString(), price, getRemortIP(request), openid);
+        session.setAttribute("price",price*100);
+        String result=payJSAPI(nonce_str, body, timeStr.toString(), price*100, getRemortIP(request), openid);
         System.out.print(result);
         String prepay_id=parse(result);
         System.out.print(prepay_id);
@@ -304,6 +331,7 @@ public class Test1Controller extends BaseController {
         }
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         String cance="";
+        if(order.getCanceNums()!=null)
         for(int i=0;i<order.getCanceNums().length;i++){
             if(i==0)
                 cance+=order.getCanceNums()[i];
@@ -311,6 +339,7 @@ public class Test1Controller extends BaseController {
                 cance+=","+order.getCanceNums()[i];
         }
         String canhe="";
+        if(order.getCanheNums()!=null)
         for(int i=0;i<order.getCanheNums().length;i++){
             if(i==0)
                 canhe+=order.getCanheNums()[i];
@@ -328,9 +357,21 @@ public class Test1Controller extends BaseController {
         order.setOrderNum(orderNum);
         orderDao.save(order);
         WxEvaluation wxEvaluation=wxEvaluationDao.get(openid);
+        if(wxEvaluation.getEvaluation_status().getId()==4)
+            return new ModelAndView("redirect:/Wx/index");
         wxEvaluation.setEvaluation_status(test1Dao.getEvaluationStatus(3));
         wxEvaluationDao.update(wxEvaluation);
-        return new ModelAndView("redirect:/WeiXin/test5");
+        return new ModelAndView("redirect:/Wx/test5");
+    }
+    /*
+    * 确认收货*/
+
+    @RequestMapping(value = "/confirmReceived",method = RequestMethod.POST)
+     public  String confirmReceived(int id){
+        WxOrderinfo wxOrderinfo=orderDao.get(WxOrderinfo.class,id);
+        wxOrderinfo.setDeliverStatus("已收货");
+        orderDao.update(wxOrderinfo);
+        return "success";
     }
 /*xml解析*/
     public String parse(String protocolXML) {
@@ -381,7 +422,7 @@ public class Test1Controller extends BaseController {
         urlBuilder.append("<spbill_create_ip>").append(spbill_create_ip).append("</spbill_create_ip>");
         urlBuilder.append("<time_start>").append(df.format(now)).append("</time_start>");
         urlBuilder.append("<time_expire>").append(df.format(date)).append("</time_expire>");
-        urlBuilder.append("<notify_url>").append("http://localhost:8080/WeiXin/index").append("</notify_url>");
+        urlBuilder.append("<notify_url>").append("http://localhost:8080/Wx/index").append("</notify_url>");
         urlBuilder.append("<trade_type>").append("JSAPI").append("</trade_type>");
         urlBuilder.append("<openid>").append(openid).append("</openid>");
         urlBuilder.append("</xml>");
@@ -396,7 +437,7 @@ public class Test1Controller extends BaseController {
         urlBuilder.append("&mch_id=").append(MCH_ID);
         //urlBuilder.append("&device_info=").append( );
         urlBuilder.append("&nonce_str=").append(nonce_str);
-        urlBuilder.append("&notify_url=").append("http://localhost:8080/WeiXin/index");
+        urlBuilder.append("&notify_url=").append("http://localhost:8080/Wx/index");
         urlBuilder.append("&openid=").append(openid);
         urlBuilder.append("&out_trade_no=").append(out_trade_no);
        // urlBuilder.append("&sign=").append(nonce_str);
@@ -465,7 +506,7 @@ public class Test1Controller extends BaseController {
 
     @RequestMapping(value = "/biocode")
     public ModelAndView biocode(HttpServletRequest request,HttpServletResponse response,HttpSession session) throws IOException {
-        ModelAndView modelAndView=new ModelAndView("WeiXin/biocode");
+        ModelAndView modelAndView=new ModelAndView("Wx/biocode");
         String openid = (String) session.getAttribute("openid");
         if (openid == null) {
             response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
@@ -474,28 +515,37 @@ public class Test1Controller extends BaseController {
     }
     @RequestMapping(value = "/index")
     public ModelAndView index(HttpSession session) throws NoSuchAlgorithmException {
-        ModelAndView modelAndView=new ModelAndView("WeiXin/index");
+        ModelAndView modelAndView=new ModelAndView("Wx/index");
         return modelAndView;
     }
     @RequestMapping(value = "/contact")
     public ModelAndView contact(HttpServletRequest request,HttpServletResponse response,HttpSession session) throws IOException {
-        ModelAndView modelAndView=new ModelAndView("WeiXin/contact");
+        ModelAndView modelAndView=new ModelAndView("Wx/contact");
         String openid = (String) session.getAttribute("openid");
         if (openid == null) {
             response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
         }
+        WxUser wxUser=userDao.getByOpenid(openid);
+        modelAndView.addObject("wxUser",wxUser);
         return modelAndView;
     }
     @RequestMapping(value = "/activity")
     public ModelAndView activity(HttpServletRequest request,HttpServletResponse response,HttpSession session) throws IOException {
-        ModelAndView modelAndView=new ModelAndView("WeiXin/news");
+        ModelAndView modelAndView=new ModelAndView("Wx/news");
        List<Activity>activityList=activityDao.getList();
+        modelAndView.addObject("list",activityList);
+        return modelAndView;
+    }
+    @RequestMapping(value = "/share")
+    public ModelAndView share(HttpServletRequest request,HttpServletResponse response,HttpSession session) throws IOException {
+        ModelAndView modelAndView=new ModelAndView("Wx/share");
+        List<Activity>activityList=activityDao.getShareList();
         modelAndView.addObject("list",activityList);
         return modelAndView;
     }
     @RequestMapping(value = "/detail")
     public ModelAndView showActivity(@RequestParam(value = "id")int id) throws IOException {
-        ModelAndView modelAndView=new ModelAndView("WeiXin/detail");
+        ModelAndView modelAndView=new ModelAndView("Wx/detail");
         Activity activity=activityDao.get(Activity.class,id);
         modelAndView.addObject("activity",activity);
         return modelAndView;

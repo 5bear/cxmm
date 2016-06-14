@@ -66,7 +66,13 @@
                             邮箱
                         </th>
                         <th>
-                            推荐链接
+                            推荐链接1
+                        </th>
+                        <th>
+                            推荐链接2
+                        </th>
+                        <th>
+                            推荐链接3
                         </th>
                         <th>
                             状态
@@ -96,7 +102,13 @@
                                     ${professor.email}
                             </td>
                             <td>
-                                    ${professor.link}
+                                    ${professor.link1}
+                            </td>
+                            <td>
+                                    ${professor.link2}
+                            </td>
+                            <td>
+                                    ${professor.link3}
                             </td>
                             <td>
                                     ${professor.professor_status.name}
@@ -108,19 +120,6 @@
                     </c:forEach>
                     </tbody>
                 </table>
-                <section class="archive-pages">
-                    <ul>
-                        <li class="first"><a href="#" title="first page">first page</a></li>
-                        <li class="previous"><a href="#" title="previous page">previous page</a></li>
-                        <li class="selected">1</li>
-                        <li><a href="#" title="Pagina 2">2</a></li>
-                        <li><a href="#" title="Pagina 3">3</a></li>
-                        <li><a href="#" title="Pagina 4">4</a></li>
-                        <li><a href="#" title="Pagina 5">5</a></li>
-                        <li class="next"><a href="#" title="next page">next page</a></li>
-                        <li class="last"><a href="#" title="last page">last page</a></li>
-                    </ul>
-                </section>
             </div>
         </div><!-- /.row -->
 
@@ -185,9 +184,21 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="control-label col-md-3">推荐链接</label>
+                        <label class="control-label col-md-3">推荐链接1</label>
                         <div class="col-md-7">
-                            <input type="text" name="link" class="form-control" placeholder="推荐链接"/>
+                            <input type="text" name="link1" class="form-control" placeholder="推荐链接"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">推荐链接2</label>
+                        <div class="col-md-7">
+                            <input type="text" name="link2" class="form-control" placeholder="推荐链接"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label col-md-3">推荐链接3</label>
+                        <div class="col-md-7">
+                            <input type="text" name="link3" class="form-control" placeholder="推荐链接"/>
                         </div>
                     </div>
                     <div class="form-group">
@@ -199,7 +210,7 @@
                     <div class="form-group">
                         <label class="control-label col-md-3">简介</label>
                         <div class="col-md-7">
-                            <textarea type="text" name="introduction" class="form-control" placeholder="简介"></textarea>
+                            <textarea type="text" id="content" name="introduction" class="form-control" placeholder="简介"></textarea>
                         </div>
                     </div>
                     <div class="form-group">
@@ -249,7 +260,34 @@
 <!-- JavaScript -->
 <script src="<%=application.getContextPath()%>/Web/jquery/jquery.min.js" type="text/javascript"></script>
 <script type="text/javascript" src="<%=application.getContextPath()%>/Web/bootstrap/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="<%=application.getContextPath()%>/Web/Upload/ke/kindeditor-all.js"></script>
+<script type="text/javascript" src="<%=application.getContextPath()%>/Web/Upload/ke/kindeditor-all-min.js"></script>
 <script language="javascript">
+    KindEditor.ready(function(K) {
+        var editor1 = K.create('textarea[name="introduction"]', {
+
+            uploadJson : '<%=request.getContextPath()%>/Activity/fileUpload',
+            fileManagerJson : '<%=request.getContextPath()%>/Activity/fileManager',
+            cssPath:'<%=request.getContextPath()%>/WeiXin/css/style.css',
+            allowFileManager : true,
+            afterCreate : function() {
+                var self = this;
+                K.ctrl(document, 13, function() {
+                    self.sync();
+                    document.forms['news'].submit();
+                });
+                K.ctrl(self.edit.doc, 13, function() {
+                    self.sync();
+                    document.forms['news'].submit();
+                });
+            },
+            afterBlur:function(){
+                this.sync();
+            }
+
+        });
+        // prettyPrint();
+    });
     function cli(Obj) {
         var collid = document.getElementById("all")
         var coll = document.getElementsByName(Obj)

@@ -49,4 +49,7 @@ public class TrainDao extends BaseDao {
             hql+=" and status="+"'"+status+"'";
         return this.findByPage(hql, Train.class, start, end);
     }
+    public Train getTrain(String name){
+        return find("from Train where name=?",Train.class,new Object[]{name});
+    }
 }

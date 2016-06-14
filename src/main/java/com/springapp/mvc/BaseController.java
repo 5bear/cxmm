@@ -19,8 +19,6 @@ public class BaseController {
     @Autowired
     protected BaseDao baseDao;
     @Autowired
-    protected LQuestionDao LQuestionDao;
-    @Autowired
     protected NewsDao newsDao;
     @Autowired
     protected NewsStatusDao newsStatusDao;
@@ -59,8 +57,11 @@ public class BaseController {
     @Autowired
     protected OrderDao orderDao;
     @Autowired
+    protected TSDao tsDao;
+    @Autowired
     protected WxEvaluationDao wxEvaluationDao;
     protected SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+    protected SimpleDateFormat sdf1 = new SimpleDateFormat("yyyy/MM/dd");
 
     @InitBinder
     protected void initBinder(HttpServletRequest request,

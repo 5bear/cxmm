@@ -1,14 +1,18 @@
 package com.springapp.mvc;
 
 import com.springapp.entity.Answer1;
+import com.springapp.entity.Club;
 import com.springapp.entity.Evaluation;
+import com.springapp.entity.EvaluationStatus;
 import com.springapp.form.Answer1s;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
 import java.math.BigInteger;
+import java.sql.Timestamp;
 import java.util.*;
 
 
@@ -39,12 +43,16 @@ public class Question1Controller extends BaseController {
     }
 
     @RequestMapping(value = "/Question1/Test", method = RequestMethod.POST)
-    public String test1(Answer1s answersModel) {
+    public String test1(Answer1s answersModel, HttpSession session) {
         UUID uuid = UUID.randomUUID();
         String guid = uuid.toString().replaceAll("-", "");
         Evaluation evaluation = new Evaluation();
         evaluation.setGuid(guid);
-        evaluation.setEvaluationStatus(1);
+        EvaluationStatus evaluationStatus=test1Dao.getEvaluationStatus(1);
+        evaluation.setEvaluationStatus(evaluationStatus);
+        Club club = (Club) session.getAttribute("club");
+        evaluation.setClub(club);
+        evaluation.setTime(new Timestamp(System.currentTimeMillis()));
         evaluationDao.save(evaluation);
         List<Answer1> answers = answersModel.getAnswers();
         for (Answer1 answer1 : answers) {

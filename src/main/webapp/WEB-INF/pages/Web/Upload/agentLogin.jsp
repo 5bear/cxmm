@@ -19,13 +19,6 @@
   <link rel="stylesheet" href="<%=request.getContextPath()%>/Web/Upload/login/css/reset.css">
   <link rel="stylesheet" href="<%=request.getContextPath()%>/Web/Upload/login/css/style.css">
   <style type="text/css">
-    table
-    {
-      border-left: 1px solid #fff;
-      border-right: 1px solid #fff;
-      border-top: 1px solid #fff;
-      border-bottom: 1px solid #fff;
-    }
     td
     {
       font-family: "Roboto Slab", sans-serif;
@@ -38,32 +31,26 @@
       width:300px;
       cursor:pointer;
     }
+    .navbar {
+      padding: 50px 0;
+    }
   </style>
 </head>
 
 <body class="login" >
-<div class="content" width:1200px; margin:0px auto 0;>
-
-  <div class="main">
-    <div  id="fh5co-home">
-      <div style="background-image: url(<%=request.getContextPath()%>/Web/Upload/images/pic1.PNG);" class="flexslider">
-        <div class="fh5co-overlay"></div>
-        <div class="fh5co-text">
-          <br> <br>
-          <div>
-            <div align="center">
-              <table>
-                <jsp:include page="../Backstage/Navi.jsp"></jsp:include>
-              </table>
-            </div>
-            </nav>
-          </div>
-          <br><br>
-        </div>
+<div style="background-image: url(<%=request.getContextPath()%>/Web/Upload/images/pic1.png)" class="flexslider">
+  <div class="fh5co-overlay"></div>
+  <div class="fh5co-text">
+    <div class="navbar">
+      <div align="center">
+        <table>
+          <tr>
+            <jsp:include page="../Backstage/Navi.jsp"></jsp:include>
+          </tr>
+        </table>
       </div>
     </div>
   </div>
-</div>
 </div>
 <div class="login_m">
   <!--div class="login_logo"><img src="" width="196" height="46"></div-->

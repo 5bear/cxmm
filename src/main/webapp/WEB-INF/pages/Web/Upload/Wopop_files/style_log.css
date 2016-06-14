@@ -1,7 +1,8 @@
 @charset "utf-8";
 /*------------// Overall //------------------*/
+html{height: 100%}
 body{font:12px/180% Arial,Helvetica,Verdana;color:#5a5a5a; margin:0; background:#FFF;}
-body.login{ background:url(login_bgx.gif); background:#F9F2F7;}
+body.login{ background:url(login_bgx.gif); background:#F9F2F7;height: 100%}
 table,td{font:12px/180% Arial, "宋体",Helvetica, sans-serif,Verdana; color:#58595b;}
 table{border-collapse:collapse; border-spacing:0; empty-cells:show; }
 th, td { border-collapse:collapse; }
@@ -119,9 +120,9 @@ html{-webkit-text-size-adjust:none;}
 .contact_right input.sub_mit{ width:150px; height:29px; border:none; background:url(../images/site_bg.png) 0 -850px no-repeat; }
 .contact_right input.sub_mit:hover{ background:url(../images/site_bg.png) 0 -879px no-repeat; cursor:pointer;}
 /*--login--*/
-.login_m{; background:#F9F2F7; width:403px; margin:auto;  height:375px; margin-top:98px; /*position: absolute;left:50%;top:50%;margin-left:-202px;margin-top:-188px;*/}
+.login_m{ background:url("../images/hsbj.jpg"); width:100%; margin:auto; height:100%; /*position: absolute;left:50%;top:50%;margin-left:-202px;margin-top:-188px;*/}
 .login_logo{ text-align:center; margin-bottom:25px;}
-.login_boder{ height:274px; overflow:hidden;}
+.login_boder{ width: 500px; overflow:hidden; margin: auto; padding-top: 30px;}
 .login_padding{ padding:28px 47px 20px 47px ;}
 .login_boder h2{ color:#4f5d80; text-transform:uppercase; font-size:12px; font-weight:normal; margin-bottom:11px;}
 .forget_model_h2{color:#4f5d80; font-size:12px; font-weight:normal; margin-bottom:11px;}

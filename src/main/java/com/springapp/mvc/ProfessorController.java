@@ -36,6 +36,10 @@ public class ProfessorController extends BaseController {
     @RequestMapping(value = "/Professor/Add", method = RequestMethod.POST)
     public String add(Professor professor, @RequestParam("professorStatus") int professorStatus, @RequestParam("file") MultipartFile file, HttpSession session) {
         String realPath = session.getServletContext().getRealPath("/WEB-INF/pages/Web/UserFile/ProfessorPicture/");
+        File saveDir = new File(realPath);
+        if (!saveDir.exists()) {
+            saveDir.mkdir();
+        }
         ProfessorStatus professorStatusObject = professorStatusDao.get(ProfessorStatus.class, professorStatus);
         professor.setProfessor_status(professorStatusObject);
         // 判断文件是否存在
@@ -78,6 +82,10 @@ public class ProfessorController extends BaseController {
     @RequestMapping(value = "/Professor/Edit/{id}", method = RequestMethod.POST)
     public String edit1(Professor professor, @RequestParam("professorStatus") int professorStatus, @RequestParam("file") MultipartFile file, HttpSession session) {
         String realPath = session.getServletContext().getRealPath("/WEB-INF/pages/Web/UserFile/ProfessorPicture/");
+        File saveDir = new File(realPath);
+        if (!saveDir.exists()) {
+            saveDir.mkdir();
+        }
         ProfessorStatus professorStatusObject = professorStatusDao.get(ProfessorStatus.class, professorStatus);
         professor.setProfessor_status(professorStatusObject);
         Boolean isSaveFileSuccess = false;

@@ -21,7 +21,7 @@
     <meta name="description" content=""/>
     <meta name="author" content=""/>
 
-    <title>活动管理</title>
+    <title>企业动态管理</title>
 
     <!-- Bootstrap core CSS -->
     <link href="<%=application.getContextPath()%>/Web/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -108,7 +108,7 @@
                 <jsp:include page="../Backstage/page.jsp" flush="true">
                     <jsp:param name="currentPage" value="<%=currentPage%>"></jsp:param>
                     <jsp:param name="totalPage" value="<%=totalPage%>"></jsp:param>
-                    <jsp:param name="url" value="Management"></jsp:param>
+                    <jsp:param name="url" value="Management?"></jsp:param>
                 </jsp:include>
             </div>
         </div><!-- /.row -->
@@ -131,13 +131,13 @@
                     <div class="form-group">
                         <label class="control-label col-md-3">标题</label>
                         <div class="col-md-5">
-                            <input type="text" name="title" class="form-control" placeholder="标题"/>
+                            <input type="text" name="title" id="biaoti" class="form-control" placeholder="标题"/>
                         </div>
                     </div>
                     <div class="form-group">
                         <label class="control-label col-md-3">状态</label>
                         <div class="col-md-3">
-                            <select class="form-control" name="newsStatusE">
+                            <select class="form-control" name="newsStatusE" id="newsStatusE">
                                     <option value='可用'>可用</option>
                                     <option value='失效'>失效</option>
                             </select>
@@ -173,7 +173,7 @@
                     <div class="form-group">
                         <label class="control-label col-md-3">状态</label>
                         <div class="col-md-3">
-                            <select class="form-control" name="newsStatusE" id="newsStatusE">
+                            <select class="form-control" name="newsStatusE" id="statusE">
                                 <option value="可用">可用</option>
                                 <option value="失效">失效</option>
                             </select>
@@ -256,9 +256,9 @@ function cli(Obj) {
 <script type="text/javascript">
 
     function find(){
-        var title=$("#title").val();
+        var title=$("#biaoti").val();
         var statusE=$("#statusE").val();
-        location.href="<%=request.getContextPath()%>/Activity/Manage?title="+title+"&status="+statusE+"&pn="+<%=currentPage+1>totalPage?currentPage+1:totalPage%>
+        location.href="<%=request.getContextPath()%>/Activity/Management?title="+title+"&status="+statusE+"&pn=1";
     }
 
     function submitForm(){

@@ -7,6 +7,16 @@
         response.sendRedirect("login");
         return;
     }
+    String agent= (String) request.getAttribute("agent");
+    if(agent==null)
+        agent="";
+    String status= (String) request.getAttribute("status");
+    if(status==null)
+        status="";
+    String recommend= (String) request.getAttribute("recommend");
+    if(recommend==null)
+        recommend="";
+    String url=request.getContextPath()+"Agency?agent="+agent+"&status="+status+"&recommend="+recommend+"&";
     int totalPage = (Integer) request.getAttribute("totalPage");
     int currentPage = (Integer) request.getAttribute("currentPage");
 %>
@@ -72,9 +82,9 @@
                     <button type="button" class="btn btn-success" data-toggle="modal" data-target="#FindModal">
                         查找
                     </button>
-                    <button type="button" class="btn btn-success" onclick="deleteChoose()">
+                   <%-- <button type="button" class="btn btn-success" onclick="deleteChoose()">
                         删除
-                    </button>
+                    </button>--%>
                 </div>
             </form>
             <div class="col-md-12">
@@ -90,6 +100,9 @@
                         </th>
                         <th>
                             代理点名称
+                        </th>
+                        <th>
+                            推荐人
                         </th>
                         <th>
                             手机号
@@ -120,6 +133,7 @@
                             <td class="checkbox-column"><input type="checkbox" class="uniform" name="subBox"></td>
                             <td>${agent.id}</td>
                             <td>${agent.agent}</td>
+                            <td>${agent.recommend}</td>
                             <td>${agent.phoneNum}</td>
                             <td>${agent.email}</td>
                             <td>${agent.userNum}</td>
@@ -138,84 +152,12 @@
                 <jsp:include page="../Backstage/page.jsp" flush="true">
                     <jsp:param name="currentPage" value="<%=currentPage%>"></jsp:param>
                     <jsp:param name="totalPage" value="<%=totalPage%>"></jsp:param>
-                    <jsp:param name="url" value="Agency"></jsp:param>
+                    <jsp:param name="url" value="<%=url%>"></jsp:param>
                 </jsp:include>
             </div>
         </div><!-- /.row -->
     </div><!-- /#page-wrapper -->
 </div><!-- /#wrapper -->
-
-
-<!-- Add Modal -->
-<div class="modal fade" id="AddModal" tabindex="-1" role="dialog" aria-labelledby="FindModalLabel">
-    <div class="modal-dialog" role="document">
-        <div class="modal-content">
-            <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                        aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="AddModalLabel">添加</h4>
-            </div>
-            <form:form class="form-horizontal" id="add" novalidate="novalidate" modelAttribute="agent"
-                       action="Agency/add" method="post" enctype="multipart/form-data">
-                <div class="modal-body">
-                    <div class="form-wizard">
-                        <div class="form-body">
-                            <div class="form-group">
-                                <label class="control-label col-md-3">代理点名称</label>
-                                <div class="col-md-5">
-                                    <input type="text" name="agent" class="form-control" placeholder="代理点"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">登陆账号</label>
-                                <div class="col-md-5">
-                                    <input type="text" name="account" class="form-control" placeholder="登陆账号"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">密码</label>
-                                <div class="col-md-5">
-                                    <input type="text" name="password" class="form-control" placeholder="密码"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">手机号</label>
-                                <div class="col-md-5">
-                                    <input type="text" name="phoneNum" class="form-control" placeholder="手机号码"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">邮箱</label>
-                                <div class="col-md-5">
-                                    <input type="text" name="email" class="form-control" placeholder="邮箱"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">上传二维码</label>
-                                <div class="col-md-5">
-                                    <input type="file" name="file"/>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label class="control-label col-md-3">状态</label>
-                                <div class="col-md-3">
-                                    <select class="form-control col-md-3" name="status">
-                                        <option value="可用">可用</option>
-                                        <option value="失效">失效</option>
-                                    </select>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal-footer">
-                    <input type="submit" class="btn btn-success sort" value="添加" onclick=""/>
-                </div>
-            </form:form>
-        </div>
-    </div>
-</div>
-
 <!-- Find Modal -->
 <div class="modal fade" id="FindModal" tabindex="-1" role="dialog" aria-labelledby="AddModalLabel">
     <div class="modal-dialog modal-lg" role="document">
@@ -237,6 +179,13 @@
                                 </div>
                             </div>
                             <div class="form-group">
+                                <label class="control-label col-md-3">推荐人</label>
+                                <div class="col-md-5">
+                                    <input type="text" id="findRecommend" name="phonenumber" class="form-control"
+                                           placeholder="推荐人"/>
+                                </div>
+                            </div>
+                            <div class="form-group">
                                 <label class="control-label col-md-3">状态</label>
                                 <div class="col-md-3">
                                     <select class="form-control col-md-3" name="state" id="findStatus">
@@ -250,7 +199,7 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <input type="button" class="btn btn-success sort" value="查找" onclick="findRecord()"/>
+                    <input type="button" class="btn btn-success sort" data-dismiss="modal" value="查找" onclick="findRecord()"/>
                 </div>
             </form:form>
         </div>
@@ -417,16 +366,26 @@
         var canceRate=$("#canceRate").val();
         var startDate=$("#startDate").val();
         var endDate=$("#endDate").val();
+        if(startDate==null||startDate==""){
+            alert("请选择起始日期")
+            return true
+        }
+        if(endDate==null||endDate==""){
+            alert("请选择起始日期")
+            return true
+        }
        window.open("Agency/balance?agentId="+agentId+"&canheRate="+canheRate+"&canceRate="+canceRate+"&startDate="+startDate+"&endDate="+endDate);
     }
 
     function findRecord() {
-        var club = $("#findAgent").val();
+        var agent = $("#findAgent").val();
         var status = $("#findStatus").val();
-        $.ajax({
+        var recommend=$("#findRecommend").val()
+        location.href="Agency?agent="+agent+"&status="+status+"&recommend="+recommend+"&pn=1";
+    /*    $.ajax({
             url: "<%=request.getContextPath()%>/Agency/find",
             type: "post",
-            data: {club: club, status: status},
+            data: {club: club, status: status,recommend:recommend},
             dataType: "json",
             success: function (data) {
                 var result = "";
@@ -435,6 +394,7 @@
                             "<td class='checkbox-column'><input type='checkbox' class='uniform' name='subBox'></td> " +
                             "<td>" + item.id + "</td>" +
                             "<td>" + item.agent + "</td>" +
+                            "<td>" + item.recommend + "</td>" +
                             "<td>" + item.phoneNum + "</td>" +
                             "<td>" + item.email + "</td>" +
                             "<td>" + item.userNum + "</td>" +
@@ -445,7 +405,7 @@
                 })
                 $("#myTbody").html(result)
             }
-        })
+        })*/
     }
 
     function setEditid(id, agent, phoneNum, email, images, status) {
@@ -459,7 +419,7 @@
 
     function setImgpath(path) {
         console.log(path)
-        $('#qrcode').attr('src', "<%=request.getContextPath()%>/WeiXin/AgentQRCode/" + path + ".jpg")
+        $('#qrcode').attr('src', "<%=request.getContextPath()%>/Wx/AgentQRCode/" + path + ".jpg")
     }
     $(function () {
         $("#checkAll").click(function () {
@@ -473,7 +433,7 @@
         });
     });
 
-    function deleteChoose() {
+   /* function deleteChoose() {
         var idList = $("input[name='subBox']");
         var infoList = "";
         var count = 0;
@@ -498,7 +458,7 @@
             })
         }
         console.log(infoList);
-    }
+    }*/
     /*失效*/
     function invalidChoose() {
         var idList = $("input[name='subBox']");
@@ -521,7 +481,7 @@
                     if (result == "success") {
                         $(idList).each(function (index, data) {
                             if (data.checked) {
-                                $(data).parent().parent().find('td:eq(9)').html("失效");
+                                $(data).parent().parent().find('td:eq(10)').html("失效");
                             }
                         });
                         $("input[name='subBox']").removeAttr("checked");
@@ -554,7 +514,7 @@
                     if (result == "success") {
                         $(idList).each(function (index, data) {
                             if (data.checked) {
-                                $(data).parent().parent().find('td:eq(9)').html("可用");
+                                $(data).parent().parent().find('td:eq(10)').html("可用");
                             }
                         });
                         $("input[name='subBox']").removeAttr("checked");

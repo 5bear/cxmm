@@ -9,10 +9,95 @@ public class Evaluation {
     private String guid;
     private String name = "";
     private String phone = "";
+    private String age;
+    private String ExpectingDate;
+    private String Birthorder;
+    private String height;
+    private String AfterWeight;
+    private String Weight;
+    private int eutocia;
+    private int feed;
     private String address = "";
-    private int evaluationStatus;
+    private String suggestion = "";
+    private String notes = "";
+    private EvaluationStatus evaluationStatus;
     private Timestamp time;//评估时间
-    private Club  club;//外键所属会所
+    private Long timestamp;//用作比较
+    private Club club;//外键所属会所
+
+    @Column
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    @Column(length = 10)
+    public String getAge() {
+        return age;
+    }
+
+    public void setAge(String age) {
+        this.age = age;
+    }
+    @Column(length = 10)
+    public String getExpectingDate() {
+        return ExpectingDate;
+    }
+
+    public void setExpectingDate(String expectingDate) {
+        ExpectingDate = expectingDate;
+    }
+    @Column(length = 10)
+    public String getBirthorder() {
+        return Birthorder;
+    }
+
+    public void setBirthorder(String birthorder) {
+        Birthorder = birthorder;
+    }
+    @Column(length = 10)
+    public String getHeight() {
+        return height;
+    }
+
+    public void setHeight(String height) {
+        this.height = height;
+    }
+    @Column(length = 10)
+    public String getAfterWeight() {
+        return AfterWeight;
+    }
+
+    public void setAfterWeight(String afterWeight) {
+        AfterWeight = afterWeight;
+    }
+    @Column(length = 10)
+    public String getWeight() {
+        return Weight;
+    }
+
+    public void setWeight(String weight) {
+        Weight = weight;
+    }
+    @Column()
+    public int getEutocia() {
+        return eutocia;
+    }
+
+    public void setEutocia(int eutocia) {
+        this.eutocia = eutocia;
+    }
+    @Column()
+    public int getFeed() {
+        return feed;
+    }
+
+    public void setFeed(int feed) {
+        this.feed = feed;
+    }
 
     @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
     @JoinColumn(name = "club")
@@ -32,6 +117,7 @@ public class Evaluation {
     public void setTime(Timestamp time) {
         this.time = time;
     }
+
     @Id
     @Column(name = "guid")
     public String getGuid() {
@@ -73,15 +159,34 @@ public class Evaluation {
     }
 
     @Basic
-    @Column(name = "evaluation_status")
-    public int getEvaluationStatus() {
+    @Column(name = "suggestion")
+    public String getSuggestion() {
+        return suggestion;
+    }
+
+    public void setSuggestion(String suggestion) {
+        this.suggestion = suggestion;
+    }
+
+    @Basic
+    @Column(name = "notes")
+    public String getNotes() {
+        return notes;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
+    @ManyToOne(cascade = CascadeType.MERGE, fetch = FetchType.EAGER)
+    @JoinColumn(name = "evaluation_status")
+    public EvaluationStatus getEvaluationStatus() {
         return evaluationStatus;
     }
 
-    public void setEvaluationStatus(int evaluationStatus) {
+    public void setEvaluationStatus(EvaluationStatus evaluationStatus) {
         this.evaluationStatus = evaluationStatus;
     }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -104,7 +209,7 @@ public class Evaluation {
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (phone != null ? phone.hashCode() : 0);
         result = 31 * result + (address != null ? address.hashCode() : 0);
-        result = 31 * result + evaluationStatus;
+        result = 31 * result + evaluationStatus.getId();
         return result;
     }
 }

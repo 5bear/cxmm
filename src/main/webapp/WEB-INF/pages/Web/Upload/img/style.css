@@ -216,12 +216,6 @@ em {
     margin: 18px 0 0 0
 }
 
-.nav {
-    background: url(bg2.jpg) repeat-x;
-    height: 40px;
-    line-height: 40px;
-}
-
 .nav ul {
     width: 1000px;
     margin: 0 auto;

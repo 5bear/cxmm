@@ -1,6 +1,7 @@
 package com.springapp.entity;
 
 import javax.persistence.*;
+import java.sql.Date;
 
 /**
  * Created by ZhanShaoxiong on 2016/5/10.
@@ -15,9 +16,9 @@ public class Train {
     private String address;
     private String remo;//自我介绍
     private String status;
-    private String trainTime;
+    private Date trainTime;
     private Long timestamp;
-    private String licenseTime;//发证时间
+    private Date licenseTime;//发证时间
     private String licenseNum;//证书编号
 
     @Column
@@ -88,20 +89,20 @@ public class Train {
         this.status = status;
     }
     @Column
-    public String getTrainTime() {
+    public Date getTrainTime() {
         return trainTime;
     }
 
-    public void setTrainTime(String trainTime) {
+    public void setTrainTime(Date trainTime) {
         this.trainTime = trainTime;
     }
 
-    @Column(length = 20)
-    public String getLicenseTime() {
+    @Column()
+    public Date getLicenseTime() {
         return licenseTime;
     }
 
-    public void setLicenseTime(String licenseTime) {
+    public void setLicenseTime(Date licenseTime) {
         this.licenseTime = licenseTime;
     }
     @Column()

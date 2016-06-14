@@ -22,13 +22,14 @@ import java.util.Map;
  * Created by ZhanShaoxiong on 2016/5/9.
  */
 @Controller
-@RequestMapping(value = "/WeiXin")
+@RequestMapping(value = "/Wx")
 public class UserController extends BaseController {
     @RequestMapping(value = "/info")
     public ModelAndView info(HttpServletRequest request) throws UnsupportedEncodingException {
-        ModelAndView modelAndView = new ModelAndView("WeiXin/info");
+        ModelAndView modelAndView = new ModelAndView("Wx/info");
         HttpSession session = request.getSession();
         String openid = (String) session.getAttribute("openid");
+        System.out.print("openid:"+session.getAttribute("openid"));
         if (openid == null) {
             return new ModelAndView("redirect:" + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
         }
@@ -38,29 +39,17 @@ public class UserController extends BaseController {
         List<Map>mapList=new ArrayList<Map>();
         for(WxOrderinfo wxOrderinfo:wxOrderinfoList){
             Map map=new HashMap();
+            map.put("id",wxOrderinfo.getId());
             map.put("orderNum",wxOrderinfo.getOrderNum());
             map.put("dateTime",wxOrderinfo.getDate());
-            String cance="";
-            String []cc=wxOrderinfo.getCanceNum().split(",");
-            for(int c=0;c<cc.length;c++){
-                if(c==0)
-                cance+="第"+cc[c]+"月";
-                else{
-                    cance+=",第"+cc[c]+"月";
-                }
-            }
+            int cc=0,ch=0;
+            if(!wxOrderinfo.getCanceNum().equals(""))
+                cc=wxOrderinfo.getCanceNum().split(",").length;
+            if(!wxOrderinfo.getCanheNum().equals(""))
+                ch=wxOrderinfo.getCanheNum().split(",").length;
             map.put("cance",wxOrderinfo.getCanceNum());
-            String canhe="";
-            String []ch=wxOrderinfo.getCanheNum().split(",");
-            for(int c=0;c<ch.length;c++){
-                if(c==0)
-                    cance+="第"+ch[c]+"月";
-                else{
-                    cance+=",第"+ch[c]+"月";
-                }
-            }
             map.put("canhe",wxOrderinfo.getCanheNum());
-            map.put("price",cc.length*98+ch.length*2980);
+            map.put("price",cc*98+ch*2980);
             map.put("name",wxOrderinfo.getName());
             map.put("address",wxOrderinfo.getAddress());
             map.put("phoneNum",wxOrderinfo.getPhoneNum());
