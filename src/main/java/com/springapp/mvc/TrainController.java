@@ -83,9 +83,13 @@ public class TrainController extends BaseController{
     }
     @RequestMapping(value = "/sign",method = RequestMethod.POST)
     public String sign(Train train){
-        train.setStatus("已报名");
-        train.setTimestamp(System.currentTimeMillis());
-        trainDao.save(train);
+        try {
+            train.setStatus("已报名");
+            train.setTimestamp(System.currentTimeMillis());
+            trainDao.save(train);
+        }catch (Exception e){
+            return "redirect:sign";
+        }
         return "redirect:sign";
     }
     @RequestMapping(value = "/changeStatus",method = RequestMethod.POST)
@@ -105,8 +109,16 @@ public class TrainController extends BaseController{
                                @RequestParam(value = "licenseTime") String licenseTime,@RequestParam(value = "licenseNum") String licenseNum) throws ParseException {
         Train train=trainDao.get(Train.class,id);
         train.setSex(sex);
-        train.setTrainTime(new Date(sdf1.parse(trainTime).getTime()));
-        train.setLicenseTime(new Date(sdf1.parse(licenseTime).getTime()));
+        try {
+            train.setTrainTime(new Date(sdf1.parse(trainTime).getTime()));
+        }catch (Exception e){
+            train.setTrainTime(new Date(sdf.parse(trainTime).getTime()));
+        }
+        try {
+            train.setLicenseTime(new Date(sdf1.parse(licenseTime).getTime()));
+        }catch (Exception e){
+            train.setLicenseTime(new Date(sdf.parse(licenseTime).getTime()));
+        }
         train.setLicenseNum(licenseNum);
         trainDao.update(train);
         return "success";

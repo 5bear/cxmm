@@ -11,8 +11,6 @@
   Agent agent= (Agent) session.getAttribute("agent");
   String pageName=request.getParameter("pageName");
 %>
-<script src="<%=request.getContextPath()%>/Web/Upload/back/js/jquery-1.10.2.js"></script>
-<script src="<%=request.getContextPath()%>/Web/Upload/back/js/bootstrap.js"></script>
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <!-- Brand and toggle get grouped for better mobile display -->
   <div class="navbar-header">

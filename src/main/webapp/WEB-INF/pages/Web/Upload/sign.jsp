@@ -43,7 +43,7 @@
 <body>
 <div class="main">
   <div  id="fh5co-home">
-    <div style="background-image: url(<%=request.getContextPath()%>/Web/Upload/images/pic1.PNG);"class="flexslider">
+    <div style="background-image: url(<%=request.getContextPath()%>/Web/Upload/images/pic1.png);"class="flexslider">
       <div class="fh5co-overlay"></div>
       <div class="fh5co-text">
         <br> <br> <br>

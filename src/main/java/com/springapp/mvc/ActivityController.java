@@ -42,7 +42,7 @@ public class ActivityController extends BaseController{
         if(pn!=null&&!pn.equals(""))
             pageNum=Integer.parseInt(pn);
         start = (pageNum - 1) * 10;
-        end=start+10;
+        end=10;
         List<Activity> activityList = activityDao.getList(title,status);
         int totalPage;
         if(activityList.size()%10==0)
@@ -56,10 +56,18 @@ public class ActivityController extends BaseController{
         return modelAndView;
     }
     @RequestMapping(value = "/List")
-    public ModelAndView List(){
+      public ModelAndView List(){
         ModelAndView modelAndView=new ModelAndView("Web/Upload/ActivityList");
         List<Activity>activityList=activityDao.getList();
         modelAndView.addObject("activityList",activityList);
+        return modelAndView;
+    }
+    @RequestMapping(value = "/detail")
+    public ModelAndView showActivity(@RequestParam(value = "id")int id) throws IOException {
+        ModelAndView modelAndView=new ModelAndView("Web/Upload/detail");
+        Activity activity=activityDao.get(Activity.class,id);
+        activity.setContent(activity.getContent().replace("width=100%",""));
+        modelAndView.addObject("activity",activity);
         return modelAndView;
     }
     @RequestMapping(value = "/Add", method = RequestMethod.POST)
@@ -93,6 +101,7 @@ public class ActivityController extends BaseController{
             activity.setShowPicture("");
         }
         activity.setCreatetime(sdf.format(new Date()));
+        activity.setType(0);
         if(activity.getId()==0)
             activityDao.save(activity);
         else

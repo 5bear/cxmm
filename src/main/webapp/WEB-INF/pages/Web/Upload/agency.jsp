@@ -16,7 +16,7 @@
     String recommend= (String) request.getAttribute("recommend");
     if(recommend==null)
         recommend="";
-    String url=request.getContextPath()+"Agency?agent="+agent+"&status="+status+"&recommend="+recommend+"&";
+    String url=request.getContextPath()+"/Agency?agent="+agent+"&status="+status+"&recommend="+recommend+"&";
     int totalPage = (Integer) request.getAttribute("totalPage");
     int currentPage = (Integer) request.getAttribute("currentPage");
 %>
@@ -142,9 +142,28 @@
                             <td><label data-toggle="modal" data-target="#CommentModal"><a
                                     onclick="setImgpath('${agent.id}')">查看</a></label></td>
                             <td>${agent.status}</td>
+                            <td><label data-toggle="modal" data-target="#EditModal${agent.id}"><a>修改推荐人</a></label></td>
                             <%--<td><label data-toggle="modal" data-target="#EditModal"><a
                                     onclick="setEditid('${agent.id}','${agent.agent}','${agent.phoneNum}','${agent.email}','${agent.account}','${agent.password}','${agent.qrcode}','${agent.status}')">修改</a></label>
                             </td>--%>
+                            <!-- Edit Modal -->
+                            <div class="modal fade" id="EditModal${agent.id}" tabindex="-1" role="dialog" aria-labelledby="AddModalLabel">
+                                <div class="modal-dialog modal-lg" role="document">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                                    aria-hidden="true">&times;</span></button>
+                                            <h4 class="modal-title" >修改代理点</h4>
+                                        </div>
+                                        <select class="form-control" id="rid${agent.id}">
+                                            <c:forEach items="${list1}" var="at">
+                                                <option value="${at.id}">${at.agent}</option>
+                                            </c:forEach>
+                                        </select>
+                                        <input type="button" class="form-control" value="确定" onclick="editRecommend('${agent.id}')">
+                                    </div>
+                                </div>
+                            </div>
                         </tr>
                     </c:forEach>
                     </tbody>
@@ -223,7 +242,7 @@
                                 <label class="control-label col-md-3">代理点</label>
                                 <div class="col-md-3">
                                   <select class="form-control" id="agentId">
-                                     <c:forEach items="${list}" var="agent">
+                                     <c:forEach items="${list1}" var="agent">
                                          <option value="${agent.id}">${agent.agent}</option>
                                      </c:forEach>
                                   </select>
@@ -260,7 +279,7 @@
 </div>
 
 <!-- Edit Modal -->
-<div class="modal fade" id="EditModal" tabindex="-1" role="dialog" aria-labelledby="AddModalLabel">
+<%--<div class="modal fade" id="EditModal" tabindex="-1" role="dialog" aria-labelledby="AddModalLabel">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -335,7 +354,7 @@
             </form:form>
         </div>
     </div>
-</div>
+</div>--%>
 
 
 <!-- Comment Modal -->
@@ -354,12 +373,28 @@
 </div>
 
 
+
+
 <script src="<%=request.getContextPath()%>/Web/Upload/js/jquery.min.js" type="text/javascript"></script>
 <script src="<%=request.getContextPath()%>/Web/Upload/js/jquery-1.10.2.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/eModal.js"></script>
 <script type="text/javascript">
 
+    function editRecommend(aid){
+        var rid=$("#rid"+aid).val()
+        $.ajax({
+            type: "post",
+            url: "Agency/editAgentRecommend",
+            data: {aid: aid, rid: rid},
+            success: function (result) {
+                if (result == "success") {
+                    location.reload(true)
+                }else
+                alert("System error!")
+            }
+        })
+    }
     function balance(){
         var agentId=$("#agentId").val();
         var canheRate=$("#canheRate").val();

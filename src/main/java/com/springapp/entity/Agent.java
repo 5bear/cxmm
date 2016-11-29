@@ -9,7 +9,8 @@ import javax.persistence.*;
 @Entity
 public class Agent {
     private Long id;//主键
-    private String recommend;//推荐人
+    private String recommend;//推荐人,代理点中选择
+    private Long rid;//选择的代理点ID
     private String agent;//代理点名称
     private String phoneNum;
     private String openid;//微信标识
@@ -21,6 +22,25 @@ public class Agent {
     private String status;// 审核可用 结算  失效
     private String account;//一级代理点登陆账号
     private String password;
+    private int isDelete;//0表示未删除 1表示已删除
+
+    @Column
+    public Long getRid() {
+        return rid;
+    }
+
+    public void setRid(Long rid) {
+        this.rid = rid;
+    }
+
+    @Column
+    public int getIsDelete() {
+        return isDelete;
+    }
+
+    public void setIsDelete(int isDelete) {
+        this.isDelete = isDelete;
+    }
 
     @Column
     public int getCanceNum() {

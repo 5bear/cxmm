@@ -31,12 +31,13 @@
             <label for="phoneNum">手机</label> <input name="phoneNum" id="phoneNum" type="text" value=""><br>
             <hr>
             <label for="recommend">推荐人</label>
-            <select name="recommend" id="recommend">
+            <input name="recommend" id="recommend" list="lista">
+            <datalist id="lista">
                 <option value="禅心妈妈">禅心妈妈</option>
                 <c:forEach var="agent" items="${list}">
                     <option value="${agent.agent}">${agent.agent}</option>
                 </c:forEach>
-            </select><br>
+            </datalist>
         </div>
         <input type="button" class="btn" value="点击申请" onclick="submitForm()">
     </form>
@@ -44,21 +45,28 @@
 <script src="<%=application.getContextPath()%>/Wx/js/jquery-1.9.0.js"></script>
 </body>
 <script>
+    function beforeSubmit(){
+
+    }
     function submitForm(){
         var myForm=document.getElementsByName("myForm");
         var agent=$("#agent").val()
         var phoneNum=$("#phoneNum").val()
-        if(agent==""||phoneNum==""){
-            alert("姓名和手机必填！")
+        var recommend=$("#recommend").val()
+        if(agent==""||phoneNum==""||recommend==""){
+            alert("姓名,手机和推荐人必填！")
             return false
         }
         $.ajax({
             url:"<%=request.getContextPath()%>/Wx/isIn",
             type:"post",
-            data:{agent:agent},
+            data:{agent:agent,recommend:recommend},
             success:function(data){
-                if(data=="fail"){
+                if(data=="isIn"){
                     alert("该代理点已存在")
+                    return false
+                }else if(data=="fail"){
+                    alert("该推荐人不存在")
                     return false
                 }
                 myForm[0].submit();

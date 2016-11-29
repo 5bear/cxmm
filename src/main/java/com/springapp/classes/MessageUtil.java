@@ -10,7 +10,7 @@ import java.net.URLEncoder;
  * Created by 11369 on 2016/6/8.
  */
 public class MessageUtil {
-    private static String apikey="10874f62fd8849823613a159c2735b64";
+    private static String apikey="f820f33182baa66bad32f51d9d206cff";
     private static String httpUrl = "http://apis.baidu.com/kingtto_media/106sms/106sms";
     /**
      * @param urlAll
@@ -48,4 +48,7 @@ public class MessageUtil {
         return result;
     }
 
+    public static void main(String[] args) throws UnsupportedEncodingException {
+        System.out.println(request("18818080709","【禅心妈妈】 你好禅心妈妈"));
+    }
 }

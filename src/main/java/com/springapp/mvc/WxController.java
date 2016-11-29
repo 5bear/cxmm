@@ -1,22 +1,34 @@
 package com.springapp.mvc;
 
+import com.springapp.classes.GenerateQRCode;
+import com.springapp.classes.MD5;
+import com.springapp.classes.WxHelp;
 import com.springapp.entity.Agent;
+import com.springapp.entity.QRPay;
 import com.springapp.entity.WxOrderinfo;
 import com.springapp.entity.WxUser;
+import com.springapp.filter.EmojiFilter;
 import com.springapp.helper.SHA1;
 import net.sf.json.JSONObject;
 import org.dom4j.Document;
+import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Element;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -24,13 +36,13 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
 @Controller
 @RequestMapping(value = "**")
 public class WxController extends BaseController {
-
     @RequestMapping(value = "/Wx/Apply")
     public ModelAndView apply(HttpServletRequest request, HttpServletResponse response, HttpSession session) throws Exception {
         String openid = (String) session.getAttribute("openid");
@@ -41,28 +53,30 @@ public class WxController extends BaseController {
         if (isAgent != null) {
             if (isAgent.getStatus().equals("可用")) {
                 //返回二维码等
-                ModelAndView modelAndView = new ModelAndView("WeiXin/biocode");
+                ModelAndView modelAndView = new ModelAndView("Wx/biocode");
                 List<WxUser> wxUsersByAgentid = userDao.getByAgentid(isAgent.getId());
                 List<WxOrderinfo> wxOrderinfoByAgentid = orderDao.getByAgentid(isAgent.getId());
-                modelAndView.addObject("qrcodepath", request.getContextPath() + "/WeiXin/AgentQRCode/" + isAgent.getId().toString() + ".jpg");
+                modelAndView.addObject("qrcodepath", request.getContextPath() + "/Wx/AgentQRCode/" + isAgent.getId().toString() + ".jpg");
                 modelAndView.addObject("userscount", wxUsersByAgentid.size());
                 modelAndView.addObject("orderinfocount", wxOrderinfoByAgentid.size());
                 return modelAndView;
             } else if (isAgent.getStatus().equals("正在审核")) {
                 //正在审核
-                ModelAndView modelAndView = new ModelAndView("WeiXin/applied");
+                ModelAndView modelAndView = new ModelAndView("Wx/applied");
                 modelAndView.addObject("status", "正在审核");
                 return modelAndView;
             } else if (isAgent.getStatus().equals("失效")) {
                 //失效
-                ModelAndView modelAndView = new ModelAndView("WeiXin/applied");
+                ModelAndView modelAndView = new ModelAndView("Wx/applied");
                 modelAndView.addObject("status", "已经失效");
                 return modelAndView;
             } else {
                 throw new Exception("这个状态是不可能的。");
             }
         }
-        ModelAndView modelAndView = new ModelAndView("WeiXin/apply");
+        List<Agent>agents=agentDao.getList();
+        ModelAndView modelAndView = new ModelAndView("Wx/apply");
+        modelAndView.addObject("list",agents);
         return modelAndView;
     }
     @RequestMapping(value = "/Wx/Partner")
@@ -75,34 +89,36 @@ public class WxController extends BaseController {
         if (isAgent != null) {
             if (isAgent.getStatus().equals("可用")) {
                 //返回二维码等
-                ModelAndView modelAndView = new ModelAndView("WeiXin/partner");
+                ModelAndView modelAndView = new ModelAndView("Wx/partner");
                 List<WxUser> wxUsersByAgentid = userDao.getByAgentid(isAgent.getId());
                 List<WxOrderinfo> wxOrderinfoByAgentid = orderDao.getByAgentid(isAgent.getId());
-                modelAndView.addObject("qrcodepath", request.getContextPath() + "/WeiXin/AgentQRCode/" + isAgent.getId().toString() + ".jpg");
+                modelAndView.addObject("qrcodepath", request.getContextPath() + "/Wx/AgentQRCode/" + isAgent.getId().toString() + ".jpg");
                 modelAndView.addObject("userscount", wxUsersByAgentid.size());
                 int canceNum=0,canheNum=0;
                 for(WxOrderinfo wxOrderinfo:wxOrderinfoByAgentid){
-                    canceNum+=wxOrderinfo.getCanceNum().split(",").length;
-                    canheNum+=wxOrderinfo.getCanheNum().split(",").length;
+                    if(wxOrderinfo.getCanceNum()!=null&&!"".equals(wxOrderinfo.getCanceNum()))
+                        canceNum+=wxOrderinfo.getCanceNum().split(",").length;
+                    if(wxOrderinfo.getCanheNum()!=null&&!"".equals(wxOrderinfo.getCanheNum()))
+                        canheNum+=wxOrderinfo.getCanheNum().split(",").length;
                 }
                 modelAndView.addObject("canceNum",canceNum);
                 modelAndView.addObject("canheNum",canheNum);
                 return modelAndView;
             } else if (isAgent.getStatus().equals("正在审核")) {
                 //正在审核
-                ModelAndView modelAndView = new ModelAndView("WeiXin/applied");
+                ModelAndView modelAndView = new ModelAndView("Wx/applied");
                 modelAndView.addObject("status", "正在审核");
                 return modelAndView;
             } else if (isAgent.getStatus().equals("失效")) {
                 //失效
-                ModelAndView modelAndView = new ModelAndView("WeiXin/applied");
+                ModelAndView modelAndView = new ModelAndView("Wx/applied");
                 modelAndView.addObject("status", "已经失效");
                 return modelAndView;
             } else {
                 throw new Exception("这个状态是不可能的。");
             }
         }
-        ModelAndView modelAndView = new ModelAndView("WeiXin/apply");
+        ModelAndView modelAndView = new ModelAndView("Wx/apply");
         return modelAndView;
     }
     @RequestMapping(value = "/Wx/Apply", method = RequestMethod.POST)
@@ -111,17 +127,35 @@ public class WxController extends BaseController {
         if (openid == null) {
             throw new Exception("异常的提交。");
         }
+        if(agent.getRecommend().equals("禅心妈妈"))
+            agent.setRid(Long.parseLong("0"));
+        else {
+            Agent recommend=agentDao.isIn(agent.getRecommend());
+            agent.setRid(recommend.getId());
+        }
         agent.setOpenid(openid);
+        agent.setPassword("123");
         agent.setStatus("正在审核");
         agentDao.save(agent);
         String url = getQC(agent.getId().toString());
-        String realPath = session.getServletContext().getRealPath("/WEB-INF/pages/WeiXin/AgentQRCode/");
+        String realPath = session.getServletContext().getRealPath("/WEB-INF/pages/Wx/AgentQRCode/");
         downLoadFromUrl(url, agent.getId().toString() + ".jpg", realPath);
 //        FileWriter fileWriter = new FileWriter("C:\\Users\\Administrator\\Desktop\\Result.txt", true);
 //        fileWriter.write(url);
 //        fileWriter.flush();
 //        fileWriter.close();
         return "redirect:/Wx/Apply";
+    }
+    @RequestMapping(value = "/Wx/isIn", method = RequestMethod.POST)
+    @ResponseBody
+    public String isIn(String agent,String recommend) throws Exception {
+        Agent recommend1=agentDao.isIn(recommend);
+        if(recommend1==null&&!recommend.equals("禅心妈妈"))
+            return "fail";
+        Agent agent1=agentDao.isIn(agent);
+        if(agent1==null)
+            return "success";
+        return "isIn";
     }
 
     /**
@@ -210,28 +244,55 @@ public class WxController extends BaseController {
             String token = obj.getString("access_token");
             String openid = obj.getString("openid");
             JSONObject user = getUserInfo(token, openid);
-            WxUser temp=(WxUser) JSONObject.toBean(user,WxUser.class);
+            user.discard("privilege");
             WxUser wxUser=userDao.getByOpenid(openid);
             if(wxUser==null){
-                wxUser= (WxUser) JSONObject.toBean(user,WxUser.class);
-                userDao.save(wxUser);
+                wxUser = (WxUser) JSONObject.toBean(user, WxUser.class);
+                wxUser.setOpenid(openid);
+                wxUser.setAid(Long.parseLong("0"));
+                wxUser.setNickname(EmojiFilter.filterEmoji(wxUser.getNickname()));
+                try {
+                    if(wxUser.getOpenid()!=null&&!wxUser.getOpenid().equals(""))
+                        userDao.save(wxUser);
+                }catch (Exception e){
+                    wxUser=new WxUser();
+                    wxUser.setOpenid(openid);
+                    wxUser.setNickname("包含特殊字符");
+                    if(wxUser.getOpenid()!=null&&!wxUser.getOpenid().equals(""))
+                        userDao.save(wxUser);
+                }
+
             }else{
-                wxUser.setNickname(temp.getNickname());
-                userDao.update(wxUser);
+                WxUser temp = (WxUser) JSONObject.toBean(user, WxUser.class);
+                wxUser.setOpenid(openid);
+                wxUser.setNickname(EmojiFilter.filterEmoji(temp.getNickname()));
+                try {
+                    if(wxUser.getOpenid()!=null&&!wxUser.getOpenid().equals(""))
+                        userDao.update(wxUser);
+                }catch (Exception e){
+                    if(wxUser.getOpenid()!=null&&!wxUser.getOpenid().equals(""))
+                        wxUser.setNickname("包含特殊字符");
+                    userDao.update(wxUser);
+                }
+
             }
             session.setAttribute("user", user.toString());
             session.setAttribute("openid", openid);
             //return "redirect:https://www.baidu.com/s?wd=" + openid;
             response.sendRedirect(returnUrl);
         }
-        print(response, "授权失败");
+        /*print(response,  "isValidCode:"+isValidCode+"????"+"openid:"+session.getAttribute("openid"));*/
         //return "redirect:http://www.bing.com/";
     }
 
-    private static final String APP_ID = "wxde1edf21c395f90f";
-    private static final String APP_SECRET = "27842e02309c727301349ccbead46c07";
-    private static final String DOMAIN = "cx.ecnucpp.com";
-    private static final String MCH_ID = "1336372301";
+    private static final String APP_ID = "wx3ced4614cdabe878";
+    private static final String OLDAPP_SECRET = "27842e02309c727301349ccbead46c07";
+    private static final String OLDDOMAIN = "cx.ecnucpp.com";
+    private static final String APP_SECRET = "66db356d4f9fb03023d5475222dde822";
+    private static final String APP_KEY = "shanghaiyuechanxin20160603104666";
+
+    private static final String DOMAIN = "www.yuechanxin.com";
+    private static final String MCH_ID = "1253261801";
 
     private static String getJSONString(String url) throws IOException {
         URL getUrl = new URL(url);
@@ -397,6 +458,14 @@ public class WxController extends BaseController {
         return qCUrl;
     }
 
+    @RequestMapping(value = "/Wx/getQRcoder", method = RequestMethod.GET)
+    @ResponseBody
+    public String getQRcoder(String agent,HttpSession session) throws IOException {
+        String url = getQC(agent);
+        String realPath = session.getServletContext().getRealPath("/WEB-INF/pages/Wx/AgentQRCode/");
+        downLoadFromUrl(url, agent + ".jpg", realPath);
+        return "success";
+    }
     //http://blog.csdn.net/lhzjj/article/details/11678129
 
     private static String TOKEN = "cxmm";
@@ -487,6 +556,20 @@ public class WxController extends BaseController {
                         "【7】关于“高血糖”“高血压”等疾病]]></Content>" +
                         "</xml>";
                 this.print(response, answerMsg);
+            }else  if (msgType.equals("event") && event!=null&&event.equals("subscribe")) {
+                System.out.print("subscribe" + content + msgType);
+                String time = new Date().getTime() + "";
+                String answerMsg = "<xml>" +
+                        "<ToUserName><![CDATA[" + fromUsername + "]]></ToUserName>" +
+                        "<FromUserName><![CDATA[" + toUsername + "]]></FromUserName>" +
+                        "<CreateTime>" + time + "</CreateTime>" +
+                        "<MsgType><![CDATA[text]]></MsgType>" +
+                        "<Content><![CDATA[您好，感谢您关注禅心妈妈！\n" +
+                        "我们是为孕妈妈量身定制月子饮食调养方案的专业平台。\n" +
+                        "我们倡导结合中医体质调理和西医营养平衡搭配，依据每一位妈妈的身体体质，生产方式，哺乳需求，调理需求，提供个性化的月子饮食调养攻略。\n" +
+                        "现在就开始，点击“体质评估”，获得专属您的月子饮食调养方案！\n]]></Content>" +
+                        "</xml>";
+                this.print(response, answerMsg);
             }
             else if(msgType!=null&&msgType.equals("text")) {
                 if (content.equals("1") || content.equals("一")) {
@@ -565,17 +648,17 @@ public class WxController extends BaseController {
                             "高血糖\n" +
                             "由于产后女性胰岛素分泌水平急剧变化，产后妈妈的血糖也会出现变化，一般比较常见的原因是妊娠糖尿病没有及时纠正所引起的，母乳喂养也可能会影响血糖水平的变化。出现这种情况，您平常是否有私自加餐的情况，是否摄入高糖的饮料或者水果，是否进食过多？]]></Content>" + "</xml>";
                     this.print(response, answerMsg);
-                } else {
+                } /*else {
                     String time = new Date().getTime() + "";
                     String answerMsg = "<xml>" +
                             "<ToUserName><![CDATA[" + fromUsername + "]]></ToUserName>" +
                             "<FromUserName><![CDATA[" + toUsername + "]]></FromUserName>" +
                             "<CreateTime>" + time + "</CreateTime>" +
                             "<MsgType><![CDATA[text]]></MsgType>" +
-                            "<Content><![CDATA[]]></Content>" +
+                            "<Content><![CDATA[请您按照提示输入对应的内容。]]></Content>" +
                             "</xml>";
                     this.print(response, answerMsg);
-                }
+                }*/
             }
             if (msgType.equals("event") && event.equals("subscribe") && eventKey.startsWith("qrscene_")) {
                 System.out.print("subscribe******************************" + content + msgType);
@@ -586,6 +669,10 @@ public class WxController extends BaseController {
                     wxUser.setAid(Long.parseLong(eventKey.substring(8)));
                     wxUser.setAgent(agentDao.get(Agent.class,Long.parseLong(eventKey.substring(8))).getAgent());
                     userDao.save(wxUser);
+                }else{
+                    userbyOpenid.setAid(Long.parseLong(eventKey.substring(8)));
+                    userbyOpenid.setAgent(agentDao.get(Agent.class,Long.parseLong(eventKey.substring(8))).getAgent());
+                    userDao.update(userbyOpenid);
                 }
                 //this.print(response, fromUsername);
                 //this.print(response, eventKey.substring(8));
@@ -682,9 +769,6 @@ public class WxController extends BaseController {
         return digest.equals(signature);
     }
 
-    private void responseMsg(HttpServletRequest request) {
-
-    }
 
     @RequestMapping(value = "/Wx/SetMenu")
     public void createMenu(HttpServletResponse response) throws IOException {
@@ -695,7 +779,7 @@ public class WxController extends BaseController {
         Map firstBtn = new HashMap();
         firstBtn.put("type", "view");
         firstBtn.put("name", "体质评估");
-        firstBtn.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxde1edf21c395f90f&redirect_uri=http%3A%2F%2Fcx.ecnucpp.com%2Fcxmm%2FWeiXin%2Findex&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
+        firstBtn.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx3ced4614cdabe878&redirect_uri=http%3A%2F%2Fwww.yuechanxin.com%2Fcxmm%2FWx%2Findex&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
         menus.add(firstBtn);
 
         //第二个菜单
@@ -707,7 +791,7 @@ public class WxController extends BaseController {
         Map myBtn = new HashMap();
         myBtn.put("type", "view");
         myBtn.put("name", "订单信息");
-        myBtn.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxde1edf21c395f90f&redirect_uri=http%3A%2F%2Fcx.ecnucpp.com%2Fcxmm%2FWeiXin%2Finfo&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
+        myBtn.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx3ced4614cdabe878&redirect_uri=http%3A%2F%2Fwww.yuechanxin.com%2Fcxmm%2FWx%2Finfo&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
         secondSubBtn.add(myBtn);
         Map myTest = new HashMap();
         myTest.put("type", "click");
@@ -724,18 +808,23 @@ public class WxController extends BaseController {
         List<Map> thirdSubBtn = new LinkedList<Map>();
         Map newsBtn = new HashMap();
         newsBtn.put("type", "view");
-        newsBtn.put("name", "动态");
-        newsBtn.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxde1edf21c395f90f&redirect_uri=http%3A%2F%2Fcx.ecnucpp.com%2Fcxmm%2FWeiXin%2Factivity&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
+        newsBtn.put("name", "企业动态");
+        newsBtn.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx3ced4614cdabe878&redirect_uri=http%3A%2F%2Fwww.yuechanxin.com%2Fcxmm%2FWx%2Factivity&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
         thirdSubBtn.add(newsBtn);
+        Map newsBtn2 = new HashMap();
+        newsBtn2.put("type", "view");
+        newsBtn2.put("name", "禅心分享");
+        newsBtn2.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx3ced4614cdabe878&redirect_uri=http%3A%2F%2Fwww.yuechanxin.com%2Fcxmm%2FWx%2Fshare&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
+        thirdSubBtn.add(newsBtn2);
         Map activityBtn = new HashMap();
         activityBtn.put("type", "view");
         activityBtn.put("name", "我的推广");
-        activityBtn.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxde1edf21c395f90f&redirect_uri=http%3A%2F%2Fcx.ecnucpp.com%2Fcxmm%2FWx%2FApply&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
+        activityBtn.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx3ced4614cdabe878&redirect_uri=http%3A%2F%2Fwww.yuechanxin.com%2Fcxmm%2FWx%2FApply&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
         thirdSubBtn.add(activityBtn);
         Map joinUsBtn = new HashMap();
         joinUsBtn.put("type", "view");
         joinUsBtn.put("name", "合作伙伴");
-        joinUsBtn.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wxde1edf21c395f90f&redirect_uri=http%3A%2F%2Fcx.ecnucpp.com%2Fcxmm%2FWx%2FPartner&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
+        joinUsBtn.put("url", "https://open.weixin.qq.com/connect/oauth2/authorize?appid=wx3ced4614cdabe878&redirect_uri=http%3A%2F%2Fwww.yuechanxin.com%2Fcxmm%2FWx%2FPartner&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect");
         thirdSubBtn.add(joinUsBtn);
         thirdBtn.put("sub_button", thirdSubBtn);
         menus.add(thirdBtn);
@@ -750,50 +839,95 @@ public class WxController extends BaseController {
     }
 
 
-    public String payJSAPI(String nonce_str, String body, String out_trade_no, int total_fee, String spbill_create_ip, String openid) throws NoSuchAlgorithmException, IOException {
+    /**
+     * 统一下单
+     * @param nonce_str
+     * @param body
+     * @param out_trade_no
+     * @param total_fee
+     * @param spbill_create_ip
+     * @param notify_url
+     * @param trade_type
+     * @return
+     * @throws NoSuchAlgorithmException
+     * @throws IOException
+     */
+    public String payJSAPI(String nonce_str, String body, String out_trade_no, int total_fee, String spbill_create_ip, String notify_url,String trade_type, String openid) throws NoSuchAlgorithmException, IOException {
+/*
         StringBuilder urlBuilder = new StringBuilder();
-        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
-        long currentTime = System.currentTimeMillis();
-        currentTime += 15 * 60 * 1000;
-        Date now = new Date(currentTime);
-        Date date = new Date(currentTime);
-        String signStr = sign(nonce_str, body, out_trade_no, total_fee, spbill_create_ip, openid, now, date);
-        urlBuilder.append("appid=" + APP_ID);
-        urlBuilder.append("&mch_id=").append(MCH_ID);
-        //urlBuilder.append("&device_info=").append( );
-        urlBuilder.append("&nonce_str=").append(nonce_str);
-        urlBuilder.append("&sign=").append(signStr);
+*/
+        String signStr = sign(nonce_str, body, out_trade_no, total_fee, spbill_create_ip, trade_type, notify_url, openid);
+        /*
+        <xml>
+   <appid>wx2421b1c4370ec43b</appid>
+   <attach>支付测试</attach>
+   <body>JSAPI支付测试</body>
+   <mch_id>10000100</mch_id>
+   <detail><![CDATA[{ "goods_detail":[ { "goods_id":"iphone6s_16G", "wxpay_goods_id":"1001", "goods_name":"iPhone6s 16G", "quantity":1, "price":528800, "goods_category":"123456", "body":"苹果手机" }, { "goods_id":"iphone6s_32G", "wxpay_goods_id":"1002", "goods_name":"iPhone6s 32G", "quantity":1, "price":608800, "goods_category":"123789", "body":"苹果手机" } ] }]]></detail>
+   <nonce_str>1add1a30ac87aa2db72f57a2375d8fec</nonce_str>
+   <notify_url>http://wxpay.weixin.qq.com/pub_v2/pay/notify.v2.php</notify_url>
+   <openid>oUpF8uMuAJO_M2pxb1Q9zNjWeS6o</openid>
+   <out_trade_no>1415659990</out_trade_no>
+   <spbill_create_ip>14.23.150.211</spbill_create_ip>
+   <total_fee>1</total_fee>
+   <trade_type>JSAPI</trade_type>
+   <sign>0CB01533B8C1EF103065174F50BCA001</sign>
+</xml>
+         */
+       /*   urlBuilder.append("appid=" + APP_ID);
         urlBuilder.append("&body=").append(body);
-        urlBuilder.append("&out_trade_no=").append(out_trade_no);
-        urlBuilder.append("&total_fee=").append(total_fee);
-        urlBuilder.append("&spbill_create_ip=").append(spbill_create_ip);
-        urlBuilder.append("&time_start=").append(df.format(now));
-        urlBuilder.append("&time_expire=").append(df.format(date));
-        urlBuilder.append("&notify_url=").append("");
-        urlBuilder.append("&trade_type=").append("JSAPI");
+        urlBuilder.append("&mch_id=").append(MCH_ID);
+        urlBuilder.append("&nonce_str=").append(nonce_str);
+        urlBuilder.append("&notify_url=").append(notify_url);
         urlBuilder.append("&openid=").append(openid);
-        String param = urlBuilder.toString();
+        urlBuilder.append("&out_trade_no=").append(out_trade_no);
+        urlBuilder.append("&spbill_create_ip=").append(spbill_create_ip);
+               urlBuilder.append("&total_fee=").append(total_fee);
+        urlBuilder.append("&trade_type=").append(trade_type);
+        urlBuilder.append("&key=").append(APP_KEY);*/
+        String param = "<xml>\n" +
+                "   <appid>"+APP_ID+"</appid>\n" +
+                "   <body>"+body+"</body>\n" +
+                "   <mch_id>"+MCH_ID+"</mch_id>\n" +
+                "   <nonce_str>"+nonce_str+"</nonce_str>\n" +
+                "   <notify_url>"+notify_url+"</notify_url>\n" +
+                "   <openid>"+openid+"</openid>\n" +
+                "   <out_trade_no>"+out_trade_no+"</out_trade_no>\n" +
+                "   <spbill_create_ip>"+spbill_create_ip+"</spbill_create_ip>\n" +
+                "   <total_fee>"+total_fee+"</total_fee>\n" +
+                "   <trade_type>"+trade_type+"</trade_type>\n" +
+                "   <sign>"+signStr+"</sign>\n" +
+                "</xml>";
         return sendPost("https://api.mch.weixin.qq.com/pay/unifiedorder?", param);
     }
 
-    public String sign(String nonce_str, String body, String out_trade_no, int total_fee, String spbill_create_ip, String openid, Date now, Date date) throws NoSuchAlgorithmException {
+    /**
+     * 生成统一下单的签名
+     * @param nonce_str
+     * @param body
+     * @param out_trade_no
+     * @param total_fee
+     * @param spbill_create_ip
+     * @param notify_url
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
+    public String sign(String nonce_str, String body, String out_trade_no, int total_fee, String spbill_create_ip, String trade_type, String notify_url, String openid) throws NoSuchAlgorithmException {
         StringBuilder urlBuilder = new StringBuilder();
-        SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
         urlBuilder.append("appid=" + APP_ID);
         urlBuilder.append("&body=").append(body);
         urlBuilder.append("&mch_id=").append(MCH_ID);
         //urlBuilder.append("&device_info=").append( );
         urlBuilder.append("&nonce_str=").append(nonce_str);
-        urlBuilder.append("&notify_url=").append("");
+        urlBuilder.append("&notify_url=").append(notify_url);
         urlBuilder.append("&openid=").append(openid);
         urlBuilder.append("&out_trade_no=").append(out_trade_no);
-        urlBuilder.append("&sign=").append(nonce_str);
         urlBuilder.append("&spbill_create_ip=").append(spbill_create_ip);
-        urlBuilder.append("&time_expire=").append(df.format(date));
-        urlBuilder.append("&time_start=").append(df.format(now));
+        /*urlBuilder.append("&time_expire=").append(df.format(date));
+        urlBuilder.append("&time_start=").append(df.format(now));*/
         urlBuilder.append("&total_fee=").append(total_fee);
-        urlBuilder.append("&trade_type=").append("JSAPI");
-        urlBuilder.append("&key=").append(APP_SECRET);
+        urlBuilder.append("&trade_type=").append(trade_type);
+        urlBuilder.append("&key=").append(APP_KEY);
         String signStr = urlBuilder.toString();
         signStr = getMd5(signStr).toUpperCase();
         return signStr;
@@ -811,5 +945,255 @@ public class WxController extends BaseController {
             }
         }
         return sb.toString();
+    }
+
+    public String paySign(String nonce_str ,String time_stamp ,String product_id) throws NoSuchAlgorithmException {
+        StringBuilder urlBuilder = new StringBuilder();
+        urlBuilder.append("appid=" + APP_ID);
+        urlBuilder.append("&mch_id=").append(MCH_ID);
+        urlBuilder.append("&nonce_str=").append(nonce_str);
+        urlBuilder.append("&product_id=").append(product_id);
+        urlBuilder.append("&time_stamp=").append(time_stamp);
+        urlBuilder.append("&key=").append(APP_KEY);
+        String signStr = urlBuilder.toString();
+        signStr = getMd5(signStr).toUpperCase();
+        return signStr;
+    }
+
+
+    /**
+     * 生成模式一二维码
+     * @return
+     * @throws NoSuchAlgorithmException
+     */
+    public String GenerateQRCode(String url) throws NoSuchAlgorithmException {
+        /*String time_stamp=Long.toString(System.currentTimeMillis() / 1000);
+        String nonce_str=Long.toString(System.currentTimeMillis());
+        String product_id=time_stamp;
+        String sign = paySign(nonce_str , time_stamp , product_id);
+        String url = "weixin://wxpay/bizpayurl?appid="+APP_ID+"&mch_id="+MCH_ID+"&product_id="+product_id+"&time_stamp="+time_stamp+"&nonce_str="+nonce_str+"&sign="+sign;*/
+        return GenerateQRCode.getLogoQRCode(url,"禅心妈妈");
+    }
+
+    /**
+     * 返回订单信息
+     * @param request
+     * @param response
+     * @throws NoSuchAlgorithmException
+     * @throws IOException
+     */
+    @RequestMapping(value = "/Wx/getPackage")
+    public void getPackage(HttpServletRequest request ,HttpServletResponse response) throws NoSuchAlgorithmException, IOException, DocumentException {
+        System.out.println("wxpay success****************");
+        response.setCharacterEncoding("utf-8");
+        String postStr = null;
+        try {
+            postStr = readStreamParameter(request.getInputStream());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        //this.print(response, postStr);
+        if (null != postStr && !postStr.isEmpty()) {
+            System.out.print(postStr);
+            Document document = null;
+            try {
+                document = DocumentHelper.parseText(postStr);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (null == document) {
+                //this.print(response, "");
+                return ;
+            }
+            Element root = document.getRootElement();
+
+            String re_appid = root.elementText("appid");
+            String re_openid = root.elementText("openid");
+            //String content = root.elementTextTrim("Content");
+            String re_mch_id = root.elementTextTrim("mch_id");
+            String re_is_subscribe = root.elementTextTrim("is_subscribe");
+            String re_nonce_str = root.elementText("nonce_str");
+            String re_product_id = root.elementText("product_id");
+            String re_sign = root.elementText("sign");
+            String body=new String("禅心妈妈".getBytes("utf-8"));
+            Long timeStr=System.currentTimeMillis();
+            String nonce_str=timeStr.toString();
+            String out_trade_no = timeStr.toString();
+            String remoteIp = request.getRemoteAddr();
+            String notify_url = "http://" + DOMAIN + "/cxmm/Wx/PayNotifyUrl";
+            String trade_type = "NATIVE";
+            int total_fee = 200*100;
+            String result=payJSAPI(nonce_str, body ,out_trade_no, total_fee, remoteIp, notify_url, trade_type, re_openid);
+            document = DocumentHelper.parseText(result);
+            if (null == document) {
+                //this.print(response, "");
+                return ;
+            }
+            root = document.getRootElement();
+            String return_code = root.elementText("return_code");
+            String result_code = root.elementText("result_code");
+
+            System.out.print(result);
+            this.print(response, result);
+            if(return_code.equals("SUCCESS")&&result_code.equals("SUCCESS")){
+                String prepay_id=parse(result);
+                System.out.print(prepay_id);
+                Map<String,Object>resParams = new HashMap<String,Object>();
+                resParams.put("return_code", "SUCCESS"); // 必须
+                resParams.put("return_msg", "OK");
+                resParams.put("appid", APP_ID); // 必须
+                resParams.put("mch_id", MCH_ID);
+                resParams.put("nonce_str", timeStr); // 必须
+                resParams.put("prepay_id", prepay_id); // 必须
+                resParams.put("result_code", "SUCCESS"); // 必须
+                resParams.put("err_code_des", "OK");
+                String returnSign = WxHelp.Sign(resParams);
+                resParams.put("sign", returnSign);
+                String resXml = WxHelp.toXML(resParams);
+                BufferedOutputStream out = new BufferedOutputStream(
+                        response.getOutputStream());
+                out.write(resXml.getBytes());
+                out.flush();
+                out.close();
+            }
+        }
+    }
+
+    public String prepaySign(String return_code ,String nonce_str ,String prepay_id) throws NoSuchAlgorithmException {
+        StringBuilder urlBuilder = new StringBuilder();
+        urlBuilder.append("appid=" + APP_ID);
+        urlBuilder.append("&mch_id=").append(MCH_ID);
+        urlBuilder.append("&nonce_str=").append(nonce_str);
+        urlBuilder.append("&prepay_id=").append(prepay_id);
+        urlBuilder.append("&return_code=").append(return_code);
+/*
+        urlBuilder.append("&trade_type=").append(trade_type);
+*/
+        urlBuilder.append("&key=").append(APP_KEY);
+        String signStr = urlBuilder.toString();
+        signStr = getMd5(signStr).toUpperCase();
+        return signStr;
+    }
+
+    public String returnFailSign(String return_code ,String nonce_str ,String prepay_id, String err_code_des) throws NoSuchAlgorithmException {
+        StringBuilder urlBuilder = new StringBuilder();
+        urlBuilder.append("appid=" + APP_ID);
+        urlBuilder.append("err_code_des=" + err_code_des);
+        urlBuilder.append("&mch_id=").append(MCH_ID);
+        urlBuilder.append("&nonce_str=").append(nonce_str);
+        urlBuilder.append("&prepay_id=").append(prepay_id);
+        urlBuilder.append("&return_code=").append(return_code);
+        urlBuilder.append("&key=").append(APP_KEY);
+        String signStr = urlBuilder.toString();
+        signStr = getMd5(signStr).toUpperCase();
+        return signStr;
+    }
+    /**
+     **订单确认
+     */
+    @RequestMapping(value = "/Wx/PayNotifyUrl")
+    @ResponseBody
+    public void PayNotifyUrl(){
+        return;
+    }
+
+    @RequestMapping(value = "/Wx/amount")
+    public ModelAndView amount(HttpSession session, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        ModelAndView modelAndView = new ModelAndView();
+        String openid = (String) session.getAttribute("openid");
+        if (openid == null) {
+            response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
+        }
+        modelAndView.addObject("openid",openid);
+        modelAndView.setViewName("Wx/amount");
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "Wx/PayWithAmount")
+    @ResponseBody
+    public String PayWithAmount(String openid, Double amount, HttpServletRequest request, HttpServletResponse response) throws NoSuchAlgorithmException, IOException {
+        System.out.print("openid"+openid+"amount"+amount);
+        if (openid == null) {
+            response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
+        }
+        //测试用
+        if(openid.equals("oU4jhwA7qX3B0voKbFejcp2km7bk"))
+            amount= Double.valueOf(1);
+        String body="chanxingouwu";
+        Long timeStr=System.currentTimeMillis();
+        String nonce_str=timeStr.toString();
+        String out_trade_no = timeStr.toString();
+        String remoteIp = request.getRemoteAddr();
+        String notify_url = "http://" + DOMAIN + "/Wx/PayNotifyUrl";
+        String trade_type = "JSAPI";
+        String result=payJSAPI(nonce_str, body ,out_trade_no, (int) (amount*100), remoteIp, notify_url, trade_type, openid);
+        System.out.print(result);
+        String prepay_id=parse(result);
+        System.out.print(prepay_id);
+        String p="prepay_id="+prepay_id;
+        String signJS=signJS(nonce_str,prepay_id,timeStr/1000L);
+        Map map=new HashMap();
+        Long timeStamp=timeStr/1000L;
+        map.put("appId",APP_ID);
+        map.put("timeStamp",timeStamp.toString());
+        map.put("nonce_str",nonce_str);
+        map.put("package",p);
+        map.put("paySign",signJS);
+        QRPay qrPay = new QRPay();
+        qrPay.setOut_trade_no(out_trade_no);
+        qrPay.setOpenid(openid);
+        qrPay.setPrepay_id(prepay_id);
+        qrPay.setTimestamp(new Timestamp(timeStamp));
+        baseDao.save(qrPay);
+        return JSONObject.fromObject(map).toString();
+    }
+
+    /*js签名*/
+    public String signJS(String nonce_str,String prepay_id,Long timeStamp) throws NoSuchAlgorithmException {
+        StringBuilder urlBuilder = new StringBuilder();
+        urlBuilder.append("appId=" + APP_ID);
+        urlBuilder.append("&nonceStr=").append(nonce_str);
+        urlBuilder.append("&package=").append("prepay_id="+prepay_id);
+        urlBuilder.append("&signType=").append("MD5");
+        urlBuilder.append("&timeStamp=").append(timeStamp.toString());
+        urlBuilder.append("&key=").append(APP_KEY);
+        String signStr = urlBuilder.toString();
+        signStr = MD5.MD5Encode(signStr).toUpperCase();
+        return signStr;
+    }
+    /*xml解析*/
+    public String parse(String protocolXML) {
+        try {
+            DocumentBuilderFactory factory = DocumentBuilderFactory
+                    .newInstance();
+            DocumentBuilder builder = factory.newDocumentBuilder();
+            org.w3c.dom.Document doc = builder
+                    .parse(new InputSource(new StringReader(protocolXML)));
+
+            org.w3c.dom.Element root = doc.getDocumentElement();
+            NodeList books = root.getChildNodes();
+            String prepay_id;
+            if (books != null) {
+                for (int i = 0; i < books.getLength(); i++) {
+                    Node book = books.item(i);
+                    if(book.getNodeName().equals("prepay_id")) {
+                        prepay_id =  book.getFirstChild().getNodeValue();
+                        return prepay_id;
+                    }
+                }
+            }
+            return  "";
+        } catch (Exception e) {
+            e.printStackTrace();
+            return e.toString();
+        }
+    }
+    public static void main(String[] args) throws NoSuchAlgorithmException {
+       /* WxController wxController=new WxController();
+        String url = "http://" + DOMAIN + "/cxmm/Wx/amount";
+        wxController.GenerateQRCode(url);*/
+       Object ad = null;
+        Integer a = (Integer)ad;
+        System.out.print(a);
     }
 }

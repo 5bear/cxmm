@@ -66,16 +66,17 @@
           <element id="library" level="project" name="Maven: org.apache.ant:ant-launcher:1.8.1" />
           <element id="library" level="project" name="Maven: org.eclipse.birt.runtime.3_7_1:com.lowagie.text:2.1.7" />
           <element id="library" level="project" name="Maven: org.apache.poi:poi:3.9" />
-          <element id="library" level="project" name="Maven: commons-codec:commons-codec:1.5" />
           <element id="library" level="project" name="Maven: commons-lang:commons-lang:2.5" />
           <element id="library" level="project" name="Maven: net.sf.json-lib:json-lib:jdk15:2.4" />
           <element id="library" level="project" name="Maven: commons-beanutils:commons-beanutils:1.8.0" />
           <element id="library" level="project" name="Maven: commons-collections:commons-collections:3.2.1" />
           <element id="library" level="project" name="Maven: net.sf.ezmorph:ezmorph:1.0.6" />
+          <element id="library" level="project" name="Maven: com.google.zxing:core:3.1.0" />
+          <element id="library" level="project" name="Maven: commons-codec:commons-codec:1.8" />
         </element>
       </element>
       <element id="directory" name="META-INF">
-        <element id="file-copy" path="D:\学习生活\鲍老师工作室\月子餐\yzc\target/MANIFEST.MF" />
+        <element id="file-copy" path="$PROJECT_DIR$/target/yzc/META-INF/MANIFEST.MF" />
       </element>
       <element id="javaee-facet-resources" facet="yzc/web/Web" />
     </root>

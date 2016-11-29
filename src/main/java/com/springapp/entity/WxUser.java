@@ -20,11 +20,11 @@ public class WxUser {
     private String province;
     private String country;
     private String headimgurl;
-    private JSON[] privilege;
+    /*private JSON[] privilege;*/
     private String phone;
     private String dateOfLogin;
     private String age;
-    private String ExpectingDate;
+    private String ExpectingDate;//预产期
     private int PregnancyWeek;
     private String Birthorder;
     private String height;
@@ -90,14 +90,14 @@ public class WxUser {
     public void setHeadimgurl(String headimgurl) {
         this.headimgurl = headimgurl;
     }
-    @Transient
+  /*  @Transient
     public JSON[] getPrivilege() {
         return privilege;
     }
 
     public void setPrivilege(JSON[] privilege) {
         this.privilege = privilege;
-    }
+    }*/
 
     @Column(length = 45)
     public String getAgent() {

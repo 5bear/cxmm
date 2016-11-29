@@ -84,23 +84,23 @@
               <div class="form-group">
                 <label class="control-label col-md-3">会员名</label>
                 <div class="col-md-7">
-                  <input type="text" name="username" id="name" class="form-control" placeholder="姓名" />
+                  <input type="text" name="username" id="name" class="form-control" placeholder="姓名"  value="<%=name%>"/>
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-md-3">代理点名称</label>
                 <div class="col-md-7">
-                  <input type="text" name="username" id="agent" class="form-control" placeholder="代理点" />
+                  <input type="text" name="username" id="agent" class="form-control" placeholder="代理点" value="<%=agent%>"/>
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-md-3">评估时间</label>
                 <div class="col-md-3">
-                  <input type="text" data-language="en" id="fromDatetime" class="form-control datepicker-here" placeholder="年/月/日">
+                  <input type="text" data-language="en" id="fromDatetime" class="form-control datepicker-here" placeholder="年/月/日" value="<%=fromDatetime%>">
                 </div>
                 <label class="control-label col-md-1">到</label>
                 <div class="col-md-3">
-                  <input type="text" data-language="en" id="toDatetime" class="form-control datepicker-here" placeholder="年/月/日">
+                  <input type="text" data-language="en" id="toDatetime" class="form-control datepicker-here" placeholder="年/月/日" value="<%=toDatetime%>">
                 </div>
 
               </div>
@@ -123,6 +123,7 @@
         <div class="modal-footer">
           <input type="button" class="btn btn-success" value="查找" onclick="find()"/>
           <input type="button" class="btn btn-success" value="删除" onclick="deleteChoose()"/>
+          <input type="button" class="btn btn-success" value="导出" onclick="outExcel()"/>
         </div>
       </div>
       <div class="col-md-12">
@@ -167,7 +168,7 @@
             <td>${evaluation.uid.agent}</td>
             <td>${evaluation.time}</td>
             <td>${evaluation.evaluation_status.name}</td>
-            <td><label data-toggle="modal" data-target="#InfoModal"><a onclick="getUserinfo('${evaluation.uid.expectingDate}','${evaluation.uid.weight}','${evaluation.uid.afterWeight}','${evaluation.uid.height}','${evaluation.uid.age}','${evaluation.uid.birthorder}','${evaluation.uid.eutocia==1?"顺产":"剖腹产"}','${evaluation.uid.feed==1?"哺乳":"非哺乳"}')">查看</a></label></td>
+            <td><label data-toggle="modal" data-target="#InfoModal"><a onclick="getUserinfo('${evaluation.uid.expectingDate}','${evaluation.uid.weight}','${evaluation.uid.afterWeight}','${evaluation.uid.height}','${evaluation.uid.age}','${evaluation.uid.birthorder}','${evaluation.uid.eutocia==1?"顺产":"剖腹产"}','${evaluation.uid.feed==1?"哺乳":"非哺乳"}','${evaluation.uid.phone}')">查看</a></label></td>
             <td>
               <label data-toggle="modal" data-target="#Check1Modal"><a onclick="getResult(1,'${evaluation.uid.uid}')">查看</a></label>
             </td>
@@ -233,6 +234,10 @@
           <label class="control-label col-md-3">哺乳/非哺乳</label>
           <label class="control-label col-md-3" id="p8"></label>
         </div>
+        <div class="form-group">
+          <label class="control-label col-md-3">手机号</label>
+          <label class="control-label col-md-3" id="p9"></label>
+        </div>
       </div>
     </div>
   </div>
@@ -297,7 +302,7 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/eModal.js"></script>
 <script type="text/javascript">
-  function getUserinfo(p1,p2,p3,p4,p5,p6,p7,p8){
+  function getUserinfo(p1,p2,p3,p4,p5,p6,p7,p8,p9){
     $("#p1").html(p1)
     $("#p2").html(p2)
     $("#p3").html(p3)
@@ -306,6 +311,7 @@
     $("#p6").html(p6)
     $("#p7").html(p7)
     $("#p8").html(p8)
+    $("#p9").html(p9)
   }
   function getResult(type,uid){
     $.ajax({
@@ -348,7 +354,14 @@
     var agent=$("#agent").val();
     location.href="<%=request.getContextPath()%>/Evaluate/evaluate2?name="+name+"&agent="+agent+"&fromDatetime="+fromDatetime+"&toDatetime="+toDatetime+"&status="+status+"&pn=1"
   }
-
+  function outExcel(){
+    var name=$("#name").val()
+    var fromDatetime=$("#fromDatetime").val();
+    var toDatetime=$("#toDatetime").val();
+    var status=$("#status").val()
+    var agent=$("#agent").val();
+    window.open("<%=request.getContextPath()%>/Evaluate/outExcel2?name="+name+"&agent="+agent+"&fromDatetime="+fromDatetime+"&toDatetime="+toDatetime+"&status="+status)
+  }
 
   $(function() {
     $("#checkAll").click(function() {

@@ -31,7 +31,9 @@
     <!-- Collect the nav links, forms, and other content for toggling -->
     <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav side-nav">
-            <li class="dropdown"><a href="<%=request.getContextPath()%>/index"><i class="fa fa-dashboard"></i> 首页</a></li>
+            <li <%if(pageName.equals("imgManagement")){%>class="active"<%}else{%>class="dropdown"<%}%>>
+                <a href="<%=request.getContextPath()%>/imgManagement"><i class="fa fa-dashboard"></i> 首页</a>
+            </li>
             <li <%if(pageName.equals("Agency")){%>class="active"<%}else{%>class="dropdown"<%}%>>
                 <a href="<%=request.getContextPath()%>/Agency"><i class="fa fa-bar-chart-o"></i>代理点管理</a>
             </li>

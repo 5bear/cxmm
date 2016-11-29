@@ -1,4 +1,4 @@
-<%@ page language="java" import="com.springapp.entity.Admin" pageEncoding="UTF-8" %>
+﻿<%@ page language="java" import="com.springapp.entity.Admin" pageEncoding="UTF-8" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
@@ -97,7 +97,7 @@
                             </td>
 
                             <td>
-                                <a href="<%=request.getContextPath()%>/WeiXin/detail?id=${news.id}" target="_blank">查看</a>
+                                <a href="<%=request.getContextPath()%>/Activity/detail?id=${news.id}" target="_blank">查看</a>
                                 <a onclick="setInfo('${news.id}')" href="" data-toggle="modal" data-target="#AddModal">
                                     修改</a>
                             </td>

@@ -30,6 +30,7 @@ public class TrainDao extends BaseDao {
         }
         if(status!=null&&!status.equals(""))
             hql+=" and status="+"'"+status+"'";
+        hql+=" order by timestamp desc";
         return this.findAll(hql,Train.class);
     }
     public List<Train>getListByPage(int start,int end,String name,String fromDatetime,String toDatetime,String status) throws ParseException {
@@ -47,6 +48,7 @@ public class TrainDao extends BaseDao {
         }
         if(status!=null&&!status.equals(""))
             hql+=" and status="+"'"+status+"'";
+        hql+=" order by timestamp desc";
         return this.findByPage(hql, Train.class, start, end);
     }
     public Train getTrain(String name){

@@ -137,7 +137,7 @@
                 <jsp:include page="../Backstage/page.jsp" flush="true">
                     <jsp:param name="currentPage" value="<%=currentPage%>"></jsp:param>
                     <jsp:param name="totalPage" value="<%=totalPage%>"></jsp:param>
-                    <jsp:param name="url" value="Club"></jsp:param>
+                    <jsp:param name="url" value="Club?"></jsp:param>
                 </jsp:include>
                 <%--分页--%>
                 <%--   <section class="archive-pages">

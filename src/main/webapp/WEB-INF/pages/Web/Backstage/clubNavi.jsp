@@ -13,8 +13,6 @@
   String pageName= request.getParameter("pageName");
   System.out.print(pageName);
 %>
-<script src="<%=request.getContextPath()%>/Web/Upload/back/js/jquery-1.10.2.js"></script>
-<script src="<%=request.getContextPath()%>/Web/Upload/back/js/bootstrap.js"></script>
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
   <!-- Brand and toggle get grouped for better mobile display -->
   <div class="navbar-header">
@@ -36,6 +34,9 @@
       </li>
       <li class="<%=pageName.equals("pointerRecord")?"active":"dropdowm"%>">
         <a href="<%=request.getContextPath()%>/Club/pointRecord"><i class="fa fa-bar-chart-o"></i> 评估记录</a>
+      </li>
+      <li class="<%=pageName.equals("order")?"active":"dropdowm"%>">
+        <a href="<%=request.getContextPath()%>/Club/clubOrder"><i class="fa fa-bar-chart-o"></i> 订单记录</a>
       </li>
       <li class="<%=pageName.equals("changePassword")?"active":"dropdowm"%>">
         <a href="<%=request.getContextPath()%>/Club/changePassword"><i class="fa fa-bar-chart-o"></i> 修改密码</a>

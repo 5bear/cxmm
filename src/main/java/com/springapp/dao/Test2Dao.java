@@ -33,8 +33,7 @@ public class Test2Dao extends BaseDao {
     public void setResult(int openID){
         //由lchoice表计算5分钟测试的得分，并存入lresult表中
         String queryString = "insert into LResult(BCid,uid,score)(select Question2.type,LChoice.uid,count(LChoice.tid) from Question2,LChoice where uid="+openID+" and Question2.id=LChoice.tid group by Question2.type);";
-        SQLQuery queryObject = getSession().createSQLQuery(queryString);
-        queryObject.executeUpdate();
+        executeSQL(queryString);
 
         //从lresult表中查询取出，上句存入的测试得分。uid=openID
        /* return this.findAll("from LResult where uid.openid=?", LResult.class, new Object[]{openID});*/
@@ -47,7 +46,6 @@ public class Test2Dao extends BaseDao {
  */
     public void setStatus(String openID){
         String queryString = "update WxEvaluation set evaluation_status=4 where uid="+openID+";";
-        SQLQuery queryObject = getSession().createSQLQuery(queryString);
-        queryObject.executeUpdate();
+        executeSQL(queryString);
     }
 }

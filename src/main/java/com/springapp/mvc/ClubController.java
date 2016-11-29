@@ -3,6 +3,7 @@ package com.springapp.mvc;
 import com.springapp.entity.Club;
 import com.springapp.entity.Evaluation;
 import com.springapp.entity.EvaluationStatus;
+import com.springapp.entity.HsOrder;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.stereotype.Controller;
@@ -53,6 +54,32 @@ public class ClubController extends BaseController {
     @RequestMapping(value = "clubIndex",method = RequestMethod.GET)
     public ModelAndView clubIndex() {
         ModelAndView modelAndView = new ModelAndView("Web/Upload/backindex");
+        return modelAndView;
+    }
+    @RequestMapping(value = "clubOrder",method = RequestMethod.GET)
+    public ModelAndView clubOrder(HttpServletRequest request) {
+        ModelAndView modelAndView = new ModelAndView("Web/Upload/clubOrder");
+        String name=request.getParameter("name");
+        String express=request.getParameter("express");
+         /*分页，每页十项*/
+        String pn=request.getParameter("pn");
+        int pageNum=1,start=0,end=0;
+        if(pn!=null&&!pn.equals(""))
+            pageNum=Integer.parseInt(pn);
+        start = (pageNum - 1) * 10;
+        end=10;
+        List<HsOrder> hsOrderList = orderDao.getHsList(name, express);
+        int totalPage;
+        if(hsOrderList.size()%10==0)
+            totalPage=hsOrderList.size()/10;
+        else
+            totalPage=hsOrderList.size()/10+1;
+        request.setAttribute("name",name);
+        request.setAttribute("express",express);
+        request.setAttribute("currentPage",pageNum);
+        request.setAttribute("totalPage",totalPage);
+        List<HsOrder>myList=orderDao.getHsByPage(start,end,name,express);
+        modelAndView.addObject("list", myList);
         return modelAndView;
     }
     @RequestMapping(value = "pointRecord",method = RequestMethod.GET)

@@ -27,6 +27,37 @@ import java.util.Map;
 @Controller
 @RequestMapping(value = "/Agency")
 public class AgentController extends BaseController {
+
+    /**
+     * 修改代理点推荐人
+     * @param aid
+     * @return
+     */
+    @RequestMapping(value = "editAgentRecommend",method = RequestMethod.POST)
+    @ResponseBody
+    public String editAgentRecommend(Long aid,Long rid){
+        Agent agent=null;
+        Agent recommend=null;
+       try {
+           agent=agentDao.get(Agent.class,aid);
+           if(rid==0){
+               agent.setRid(rid);
+               agent.setRecommend("禅心妈妈");
+               agentDao.update(agent);
+               return "success";
+           }
+           recommend=agentDao.get(Agent.class,rid);
+       }catch (Exception e) {
+           return "fail";
+       }
+       if(agent!=null&&recommend!=null){
+           agent.setRid(rid);
+           agent.setRecommend(recommend.getAgent());
+           agentDao.update(agent);
+           return "success";
+       }
+        return "fail";
+    }
     /*这里全部是一级代理*/
     @RequestMapping(method = RequestMethod.GET)
     public ModelAndView home(HttpServletRequest request) {
@@ -53,6 +84,12 @@ public class AgentController extends BaseController {
         request.setAttribute("currentPage", pageNum);
         request.setAttribute("totalPage", totalPage);
         List<Agent> myList = agentDao.getByPage(agent,status,recommend,start, end);
+        List<Agent>balanceList=agentDao.getListByStatus();
+        Agent agent1=new Agent();
+        agent1.setId(Long.parseLong("0"));
+        agent1.setAgent("禅心妈妈");
+        balanceList.add(0,agent1);
+        modelAndView.addObject("list1",balanceList);
         modelAndView.addObject("list", myList);
         return modelAndView;
     }
@@ -254,13 +291,22 @@ public class AgentController extends BaseController {
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy/MM");
         Long timeStamp1=simpleDateFormat.parse(startDate).getTime();
         Long timeStamp2=simpleDateFormat.parse(endDate).getTime();
-        Agent fromAgent=agentDao.get(Agent.class,agentId);
-        Map agent=agentDao.getAsMap(agentId,canceRate,canheRate,timeStamp1,timeStamp2);
+        Agent fromAgent=null;
+        if(agentId==0){
+            fromAgent=new Agent();
+            fromAgent.setId(Long.parseLong("0"));
+            fromAgent.setAgent("禅心妈妈");
+        }else{
+            fromAgent=agentDao.get(Agent.class,agentId);
+        }
         List<Map>agentList=agentDao.getByAgent(fromAgent, canceRate, canheRate, timeStamp1, timeStamp2);
-        agentList.add(0,agent);
+        if(agentId>0) {
+            Map agent = agentDao.getAsMap(agentId, canceRate, canheRate, timeStamp1, timeStamp2);
+            agentList.add(0, agent);
+        }
         try{
-            String[] titles = new String[]{"代理点", "手机号", "餐册数","餐册提成比例","餐盒数","餐盒提成比例","推荐人","上线"};
-            String[] keys = new String[]{"name", "phoneNum", "canceNum","canceRate","canheNum","canheRate","recommend","agent"};
+            String[] titles = new String[]{"代理点", "手机号", "餐册数","餐册提成比例","餐盒数","餐盒提成比例","推荐人"};
+            String[] keys = new String[]{"name", "phoneNum", "canceNum","canceRate","canheNum","canheRate","recommend"};
 
             HSSFWorkbook wb = new HSSFWorkbook();
             // 在webbook中添加一个sheet,对应Excel文件中的sheet

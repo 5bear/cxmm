@@ -14,6 +14,9 @@
   String name= (String) request.getAttribute("name");
   if(name==null)
     name="";
+  String clubName= (String) request.getAttribute("clubName");
+  if(clubName==null)
+    clubName="";
   String fromDatetime= (String) request.getAttribute("fromDatetime");
   if(fromDatetime==null)
     fromDatetime="";
@@ -81,17 +84,23 @@
               <div class="form-group">
                 <label class="control-label col-md-3">会员名</label>
                 <div class="col-md-7">
-                  <input type="text" name="username" id="name" class="form-control" placeholder="姓名" />
+                  <input type="text" name="username" id="name" class="form-control" placeholder="姓名" value="<%=name%>"/>
+                </div>
+              </div>
+              <div class="form-group">
+                <label class="control-label col-md-3">会所</label>
+                <div class="col-md-7">
+                  <input type="text" name="clubName" id="clubName" class="form-control" placeholder="会所" value="<%=clubName%>"/>
                 </div>
               </div>
               <div class="form-group">
                 <label class="control-label col-md-3">评估时间</label>
                 <div class="col-md-3">
-                  <input type="text" data-language="en" id="fromDatetime" class="form-control datepicker-here" placeholder="年/月/日">
+                  <input type="text" data-language="en" id="fromDatetime" class="form-control datepicker-here" placeholder="年/月/日" value="<%=fromDatetime%>">
                 </div>
                 <label class="control-label col-md-1">到</label>
                 <div class="col-md-3">
-                  <input type="text" data-language="en" id="toDatetime" class="form-control datepicker-here" placeholder="年/月/日">
+                  <input type="text" data-language="en" id="toDatetime" class="form-control datepicker-here" placeholder="年/月/日" value="<%=toDatetime%>">
                 </div>
               </div>
               <div class="form-group">
@@ -113,6 +122,7 @@
         <div class="modal-footer">
           <input type="button" class="btn btn-success" value="查找" onclick="find()"/>
           <input type="button" class="btn btn-success" value="删除" onclick="deleteChoose()"/>
+          <input type="button" class="btn btn-success" value="导出" onclick="outExcel()"/>
         </div>
       </form>
       <div class="col-md-12">
@@ -124,6 +134,9 @@
             </th>
             <th>
               编号
+            </th>
+            <th>
+              会所
             </th>
             <th>
               会员名
@@ -151,10 +164,11 @@
             <td class="checkbox-column"><input type="checkbox" class="uniform" name="subBox"></td>
             <td style="display:none;">${evaluation.guid}</td>
             <td>${num.count}</td>
+            <td>${evaluation.club.club}</td>
             <td>${evaluation.name}</td>
             <td>${evaluation.time}</td>
             <td>${evaluation.evaluationStatus.name}</td>
-            <td><label data-toggle="modal" data-target="#InfoModal"><a onclick="getUserinfo('${evaluation.expectingDate}','${evaluation.weight}','${evaluation.afterWeight}','${evaluation.height}','${evaluation.age}','${evaluation.birthorder}','${evaluation.eutocia==1?"顺产":"剖腹产"}','${evaluation.feed==1?"哺乳":"非哺乳"}')">查看</a></label></td>
+            <td><label data-toggle="modal" data-target="#InfoModal"><a onclick="getUserinfo('${evaluation.expectingDate}','${evaluation.weight}','${evaluation.afterWeight}','${evaluation.height}','${evaluation.age}','${evaluation.birthorder}','${evaluation.eutocia==1?"顺产":"剖腹产"}','${evaluation.feed==1?"哺乳":"非哺乳"}','${evaluation.phone}')">查看</a></label></td>
             <td>
               <label data-toggle="modal" data-target="#Check1Modal"><a onclick="getResult(1,'${evaluation.guid}')">查看</a></label>
             </td>
@@ -268,6 +282,10 @@
           <label class="control-label col-md-3">哺乳/非哺乳</label>
           <label class="control-label col-md-3" id="p8"></label>
         </div>
+        <div class="form-group">
+          <label class="control-label col-md-3"手机号</label>
+          <label class="control-label col-md-3" id="p9"></label>
+        </div>
       </div>
     </div>
   </div>
@@ -332,7 +350,7 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/eModal.js"></script>
 <script type="text/javascript">
-  function getUserinfo(p1,p2,p3,p4,p5,p6,p7,p8){
+  function getUserinfo(p1,p2,p3,p4,p5,p6,p7,p8,p9){
     $("#p1").html(p1)
     $("#p2").html(p2)
     $("#p3").html(p3)
@@ -341,6 +359,7 @@
     $("#p6").html(p6)
     $("#p7").html(p7)
     $("#p8").html(p8)
+    $("#p8").html(p9)
   }
   function getResult(type,uid){
     $.ajax({
@@ -375,12 +394,20 @@
   }
   function find(){
     var name=$("#name").val()
+    var clubName=$("#clubName").val()
     var fromDatetime=$("#fromDatetime").val();
     var toDatetime=$("#toDatetime").val();
     var status=$("#status").val()
-    location.href="<%=request.getContextPath()%>/Evaluate/evaluate3?name="+name+"&fromDatetime="+fromDatetime+"&toDatetime="+toDatetime+"&status="+status+"&pn=1"
+    location.href="<%=request.getContextPath()%>/Evaluate/evaluate3?name="+name+"&fromDatetime="+fromDatetime+"&toDatetime="+toDatetime+"&status="+status+"&clubName="+clubName+"&pn=1"
   }
-
+  function outExcel(){
+    var name=$("#name").val()
+    var clubName=$("#clubName").val()
+    var fromDatetime=$("#fromDatetime").val();
+    var toDatetime=$("#toDatetime").val();
+    var status=$("#status").val()
+    window.open("<%=request.getContextPath()%>/Evaluate/outExcel3?name="+name+"&fromDatetime="+fromDatetime+"&toDatetime="+toDatetime+"&clubName="+clubName+"&status="+status)
+  }
   $(function() {
     $("#checkAll").click(function() {
       // 	alert($("input[name='subBox']").length);

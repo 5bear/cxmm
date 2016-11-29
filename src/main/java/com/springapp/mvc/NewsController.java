@@ -127,7 +127,7 @@ public class NewsController extends BaseController {
     public String delete(@RequestParam(value = "infoList") String infoList) {
         String[] newsIds = infoList.split(",");
         for (String id : newsIds) {
-            newsDao.delete(News.class, Integer.parseInt(id.trim()));
+            newsDao.delete(News.class, Long.valueOf(id.trim()));
         }
         return "success";
     }

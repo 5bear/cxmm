@@ -116,7 +116,7 @@ public class ProfessorController extends BaseController {
     public String delete(@RequestParam(value = "infoList") String infoList) {
         String[] professorIds = infoList.split(",");
         for (String id : professorIds) {
-            professorDao.delete(Professor.class, Integer.parseInt(id.trim()));
+            professorDao.delete(Professor.class, Long.valueOf(id.trim()));
         }
         return "success";
     }

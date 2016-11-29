@@ -19,24 +19,36 @@ import java.util.List;
  * Created by xj on 2016/5/10.
  */
 @Controller
-@RequestMapping(value = "/WeiXin")
+@RequestMapping(value = "/Wx")
 public class Test2Controller extends BaseController{
     public ModelAndView home(){
-        ModelAndView modelAndView=new ModelAndView("WeiXin/index");
+        ModelAndView modelAndView=new ModelAndView("Wx/index");
         return modelAndView;
     }
     @RequestMapping(value = "/test5")
     public ModelAndView test5(HttpSession session,HttpServletResponse response,HttpServletRequest request) throws IOException {
-        ModelAndView modelAndView=new ModelAndView("WeiXin/test5");
+        ModelAndView modelAndView=new ModelAndView("Wx/test5");
 
         String openid = (String) session.getAttribute("openid");
         if (openid == null) {
-            response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
+            return new ModelAndView("redirect:"+request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI()));
         }
-        List<Question2> question2=test2Dao.getList(openid);//得到对应的多选题
-        modelAndView.addObject("Question2List", question2);
-        modelAndView.addObject("openID", openid);//微信用户账号
-        return modelAndView;
+        WxEvaluation wxEvaluation=wxEvaluationDao.get(openid);
+        if (wxEvaluation!=null) {
+            if(wxEvaluation.getEvaluation_status().getId()==1)
+                return new ModelAndView("redirect:/Wx/complete");
+            else if(wxEvaluation.getEvaluation_status().getId()==2)
+                return new ModelAndView("redirect:/Wx/menu");
+            else if(wxEvaluation.getEvaluation_status().getId()==3){
+                List<Question2> question2=test2Dao.getList(openid);//得到对应的多选题
+                modelAndView.addObject("Question2List", question2);
+                modelAndView.addObject("openID", openid);//微信用户账号
+                return modelAndView;
+            }
+            else
+                return new ModelAndView("redirect:/Wx/contact");
+        }
+        return new ModelAndView("redirect:/Wx/test");
     }
     @RequestMapping(value = "/test5", method = RequestMethod.POST)
     public String test1(@RequestParam(value = "answers") String answers, @RequestParam(value = "openID") String openID) {
@@ -46,7 +58,6 @@ public class Test2Controller extends BaseController{
         for (String s : split) {
             LChoice answer2 = new LChoice();
             answer2.setTid(Integer.parseInt(s));
-
             answer2.setUid(user);
             answersList.add(answer2);
         }
@@ -57,6 +68,6 @@ public class Test2Controller extends BaseController{
         wxEvaluation.setEvaluation_status(evaluationStatus);
         test2Dao.update(wxEvaluation);//将当前状态设置为4：已做完5分钟评测
 
-        return "redirect:/WeiXin/contact";
+        return "redirect:/Wx/contact";
     }
 }

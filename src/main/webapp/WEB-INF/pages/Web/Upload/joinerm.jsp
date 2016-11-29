@@ -144,11 +144,11 @@
                         <tr>
                             <td class="checkbox-column"><input type="checkbox" class="uniform" name="subBox"></td>
                             <td>${evaluation.id}</td>
-                            <td>${evaluation.name}</td>
+                            <td>${evaluation.uid.nickname}</td>
                             <td>${evaluation.uid.agent}</td>
                             <td>${evaluation.time}</td>
                             <td>${evaluation.evaluation_status.name}</td>
-                            <td><label data-toggle="modal" data-target="#InfoModal"><a onclick="getUserinfo('${evaluation.uid.expectingDate}','${evaluation.uid.weight}','${evaluation.uid.afterWeight}','${evaluation.uid.height}','${evaluation.uid.age}','${evaluation.uid.birthorder}','${evaluation.uid.eutocia==1?"顺产":"剖腹产"}','${evaluation.uid.feed==1?"哺乳":"非哺乳"}')">查看</a></label></td>
+                            <td><label data-toggle="modal" data-target="#InfoModal"><a onclick="getUserinfo('${evaluation.uid.expectingDate}','${evaluation.uid.weight}','${evaluation.uid.afterWeight}','${evaluation.uid.height}','${evaluation.uid.age}','${evaluation.uid.birthorder}','${evaluation.uid.eutocia==1?"顺产":"剖腹产"}','${evaluation.uid.feed==1?"哺乳":"非哺乳"}','${evaluation.uid.phone}')">查看</a></label></td>
                             <td>
                                 <label data-toggle="modal" data-target="#Check1Modal"><a onclick="getResult(1,'${evaluation.uid.uid}')">查看</a></label>
                             </td>
@@ -213,6 +213,10 @@
                 <div class="form-group">
                     <label class="control-label col-md-3">哺乳/非哺乳</label>
                     <label class="control-label col-md-3" id="p8"></label>
+                </div>
+                <div class="form-group">
+                    <label class="control-label col-md-3">手机号</label>
+                    <label class="control-label col-md-3" id="p9"></label>
                 </div>
             </div>
         </div>
@@ -327,7 +331,7 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/eModal.js"></script>
 <script type="text/javascript">
-    function getUserinfo(p1,p2,p3,p4,p5,p6,p7,p8){
+    function getUserinfo(p1,p2,p3,p4,p5,p6,p7,p8,p9){
         $("#p1").html(p1)
         $("#p2").html(p2)
         $("#p3").html(p3)
@@ -336,6 +340,7 @@
         $("#p6").html(p6)
         $("#p7").html(p7)
         $("#p8").html(p8)
+        $("#p9").html(p9)
     }
     function getResult(type,uid){
         $.ajax({

@@ -1,12 +1,10 @@
 package com.springapp.mvc;
 
 import com.springapp.classes.MessageUtil;
-import com.springapp.entity.Auto;
-import com.springapp.entity.LResult;
-import com.springapp.entity.WxOrderinfo;
-import com.springapp.entity.WxUser;
+import com.springapp.entity.*;
 import com.springapp.helper.MergePDF;
 import net.sf.json.JSONObject;
+import org.apache.poi.hssf.usermodel.*;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -21,6 +19,7 @@ import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -91,20 +90,104 @@ public class OrderController extends BaseController{
                 wxOrderinfo.setDeliverStatus("未发货");
             else if(type==1) {
                 wxOrderinfo.setDeliverStatus("已发货");
-                String content=company+"您的订单"+wxOrderinfo.getOrderNum()+"已经发货。快递公司:"+wxOrderinfo.getExpress()+"快递单号:"+wxOrderinfo.getExpressNum();
+                String content=company+"亲爱的妈妈，订单已发货，快递单号在我的订单中可查询。如有疑问，请电询400-6822257";
                 String jsonResult = MessageUtil.request(wxOrderinfo.getPhoneNum(), content);
                 System.out.println(jsonResult);
             }
             else {
                 wxOrderinfo.setDeliverStatus("投递成功");
-                String content=company+"您的订单"+wxOrderinfo.getOrderNum()+"已经投递成功。快递公司:"+wxOrderinfo.getExpress()+"快递单号:"+wxOrderinfo.getExpressNum();
+               /* String content=company+"您的订单"+wxOrderinfo.getOrderNum()+"已经投递成功。快递公司:"+wxOrderinfo.getExpress()+"快递单号:"+wxOrderinfo.getExpressNum();
                 String jsonResult = MessageUtil.request(wxOrderinfo.getPhoneNum(), content);
-                System.out.println(jsonResult);
+                System.out.println(jsonResult);*/
             }
             orderDao.update(wxOrderinfo);
         }
         return "success";
     }
+    @RequestMapping(value = "Order/outExcel", method = RequestMethod.GET)
+    public void outExcel3(HttpServletResponse response) throws ParseException {
+        List<WxOrderinfo> wxOrderinfoList = orderDao.getList();
+        List<Map>mapList=new ArrayList<Map>();
+        for(WxOrderinfo wxOrderinfo:wxOrderinfoList){
+            Map map=new HashMap();
+            map.put("p1",wxOrderinfo.getOrderNum());
+            map.put("p2",wxOrderinfo.getUid().getNickname());
+            map.put("p3",wxOrderinfo.getDate());
+            map.put("p4",wxOrderinfo.getCanceNum());
+            map.put("p5",wxOrderinfo.getCanheNum());
+            map.put("p6",wxOrderinfo.getName());
+            map.put("p7",wxOrderinfo.getPhoneNum());
+            map.put("p8",wxOrderinfo.getAddress());
+            map.put("p9",wxOrderinfo.getExpress());
+            map.put("p10",wxOrderinfo.getExpressNum());
+            map.put("p11",wxOrderinfo.getDeliverStatus());
+            mapList.add(map);
+        }
+        try{
+            String[] titles = new String[]{"订单号", "昵称", "购买时间","餐册","餐盒","收货人","电话","收货地址","快递公司","快递编号","发货状态"};
+            String[] keys = new String[]{"p1", "p2", "p3","p4","p5","p6","p7","p8","p9","p10","p11"};
+
+            HSSFWorkbook wb = new HSSFWorkbook();
+            // 在webbook中添加一个sheet,对应Excel文件中的sheet
+            HSSFSheet sheet = wb.createSheet("sheet1");
+            // 在sheet中添加表头第0行
+            HSSFRow row = sheet.createRow((int) 0);
+            // 创建单元格，并设置值表头 设置表头居中
+            HSSFCellStyle headStyle = wb.createCellStyle();
+            headStyle.setAlignment(HSSFCellStyle.ALIGN_CENTER); // 创建一个居中格式
+            headStyle.setBorderBottom((short) 1);
+            headStyle.setBorderLeft((short) 1);
+            headStyle.setBorderTop((short) 1);
+            headStyle.setBorderRight((short) 1);
+
+            HSSFRow firstRow = sheet.createRow((int) 0);
+            HSSFCell cell;
+            int i = 0;
+            for (String title : titles) {
+                cell = firstRow.createCell((short) i);
+                cell.setCellValue(title);
+                cell.setCellStyle(headStyle);
+                i++;
+            }
+            HSSFCellStyle style = wb.createCellStyle();
+            style.setAlignment(HSSFCellStyle.ALIGN_CENTER);
+            i = 1;
+
+
+
+            for (Map map : mapList) {
+                row = sheet.createRow(i);
+
+                row.setRowStyle(style);
+                int j = 0;
+                //for(int n=0;i<enrollCodeList.size();n++)
+                for (String key : keys) {
+                    cell = row.createCell(j);
+                    cell.setCellValue(map.get(key)+"");
+                    cell.setCellStyle(style);
+                    j++;
+                }
+                i++;
+            }
+
+            response.reset();
+            // 设置response的Header
+            response.setHeader("pragma", "no-cache");
+            response.setCharacterEncoding("UTF-8");
+            response.setHeader("Content-Disposition", "attachment; filename=" + "result" + ".xls");
+            response.setContentType("application ");
+            try {
+                wb.write(response.getOutputStream());
+                response.flushBuffer();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
+        }
+        catch (Exception e){
+            System.out.print("exception"+e);
+        }
+    }
+
     @RequestMapping(value = "Order/outPDF", method = RequestMethod.POST)
     @ResponseBody
     public String menuauto(@RequestParam(value = "canceNum")String canceNum,@RequestParam(value = "uid")int uid, HttpSession session) {

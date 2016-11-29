@@ -16,18 +16,26 @@
 %>
 <section class="archive-pages">
   <ul>
-    <li class="first"><a href="<%=url%>?pn=1" title="first page">first page</a></li>
-    <li class="previous"><a href="<%=url%>?pn=<%=lastPage%>" title="previous page">previous page</a></li>
+    <li class="first"><a href="<%=url%>pn=1" title="first page">first page</a></li>
+    <li class="previous"><a href="<%=url%>pn=<%=lastPage%>" title="previous page">previous page</a></li>
     <%
       for(int i=1;i<=totalPage;i++){
+        if(i==currentPage){
     %>
-    <li><a href="<%=url%>?pn=<%=i%>"><%=i%></a></li>
+    <li><a href="<%=url%>pn=<%=i%>" style="background-color: #428bca"><%=i%></a></li>
+    <%
+      }else{
+    %>
+    <li><a href="<%=url%>pn=<%=i%>"><%=i%></a></li>
+    <%
+      }
+    %>
     <%
       }
     if(nextPage>totalPage)
       nextPage=totalPage;
     %>
-    <li class="next"><a href="<%=url%>?pn=<%=nextPage%>">next page</a></li>
-    <li class="last"><a href="<%=url%>?pn=<%=totalPage%>">last page</a></li>
+    <li class="next"><a href="<%=url%>pn=<%=nextPage%>">next page</a></li>
+    <li class="last"><a href="<%=url%>pn=<%=totalPage%>">last page</a></li>
   </ul>
 </section>

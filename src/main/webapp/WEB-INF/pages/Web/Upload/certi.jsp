@@ -159,7 +159,7 @@
                         <td>${train.phoneNum}</td>
                         <td>${train.status}</td>
                         <td>${train.trainTime}</td>
-                        <td><label data-toggle="modal" data-target="#AddModal"><a onclick="certi('${train.id}','${train.name}','${train.sex}','${train.trainTime}','${train.licenseTime}','${train.licenseNum}')">添加/修改</a></label><label style="display: ${train.status=="已发证"?"":"none"}"><a href="<%=request.getContextPath()%>/Train/certinfo?id=${train.id}" target="_blank">查看</a></label></td>
+                        <td><label data-toggle="modal" data-target="#AddModal"><a onclick="certi('${train.id}','${train.name}','${train.sex}','${train.trainTime.toString()}','${train.licenseTime.toString()}','${train.licenseNum}')">添加/修改</a></label><label style="display: ${train.status=="已发证"?"":"none"}"><a href="<%=request.getContextPath()%>/Train/certinfo?id=${train.id}" target="_blank">查看</a></label></td>
                     </tr>
                     </c:forEach>
                     </tbody>
@@ -246,7 +246,7 @@
         var fromDatetime=$("#fromDatetime").val();
         var toDatetime=$("#toDatetime").val();
         var status=$("#status").val()
-        location.href="<%=request.getContextPath()%>/Train/certi?name="+name+"&fromDatetime="+fromDatetime+"&toDatetime="+toDatetime+"&status="+status+"&pn=<%=currentPage%>"
+        location.href="<%=request.getContextPath()%>/Train/certi?name="+name+"&fromDatetime="+fromDatetime+"&toDatetime="+toDatetime+"&status="+status;
     }
 
     $(function () {

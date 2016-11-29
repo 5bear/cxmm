@@ -10,13 +10,6 @@
 <script src="http://mat1.gtimg.com/joke/Koala/Qfast1.0.1.js" type="text/javascript"></script>
 <script src="http://mat1.gtimg.com/www/js/Koala/Koala.min.1.5.js" type="text/javascript"></script>  
 <style type="text/css">
-	table
-	{
-          border-left: 1px solid #fff;
-          border-right: 1px solid #fff;
-         border-top: 1px solid #fff;
-         border-bottom: 1px solid #fff;
-    }
     td
     {
          font-family: "Roboto Slab", sans-serif;
@@ -29,6 +22,9 @@
          width:300px;
          cursor:pointer;
     }
+    .navbar {
+        padding: 50px 0;
+    }
 	</style>
 </head>
 <body>
@@ -37,7 +33,6 @@
             <div style="background-image: url(images/pic1.png);"class="flexslider">                
                 <div class="fh5co-overlay"></div>
                 <div class="fh5co-text">
-                <br> <br> <br>
                     <div>
                         <div align="center">
 							<table>
@@ -54,7 +49,6 @@
 						</div>
 			</nav>
              </div>
-             <br><br><br>
          </div>
           </div>
 	</div>

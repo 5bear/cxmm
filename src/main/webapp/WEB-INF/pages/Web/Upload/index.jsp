@@ -140,7 +140,7 @@
 					</div>
 					</div>
 	<script>
-		var img = ["url(\"<%=request.getContextPath()%>/Web/Upload/images/manindex.jpg\")", "url(\"<%=request.getContextPath()%>/Web/Upload/images/womanindex.jpg\")"]
+		var img = ["url(\"<%=request.getContextPath()%>/Web/Upload/images/bg1.jpg\")", "url(\"<%=request.getContextPath()%>/Web/Upload/images/bg2.jpg\")","url(\"<%=request.getContextPath()%>/Web/Upload/images/bg3.jpg\")", "url(\"<%=request.getContextPath()%>/Web/Upload/images/bg4.jpg\")"]
 
 		changeBg();
 

@@ -46,6 +46,7 @@ public class Question1Controller extends BaseController {
     public String test1(Answer1s answersModel, HttpSession session) {
         UUID uuid = UUID.randomUUID();
         String guid = uuid.toString().replaceAll("-", "");
+        session.setAttribute("guid",guid);
         Evaluation evaluation = new Evaluation();
         evaluation.setGuid(guid);
         EvaluationStatus evaluationStatus=test1Dao.getEvaluationStatus(1);
@@ -107,7 +108,7 @@ public class Question1Controller extends BaseController {
 
     @RequestMapping(value = "/Question1/Clear")
     public String clear(String evaluationId) {
-        evaluationDao.delete(Evaluation.class, evaluationId);
+        evaluationDao.delete(Evaluation.class, Long.parseLong(evaluationId));
         return "redirect:/Question1/Test";
     }
 }

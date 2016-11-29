@@ -97,7 +97,7 @@
                 else if(data=="fail")
                     alert("暂未发证");
                 else
-                    window.open("<%=request.getContextPath()%>/Train/certinfo?id="+data)
+                    location.href="<%=request.getContextPath()%>/Train/certinfo?id="+data;
             }
         })
     }

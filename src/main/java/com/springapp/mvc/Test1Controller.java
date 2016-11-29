@@ -1,8 +1,12 @@
 package com.springapp.mvc;
 
 import com.springapp.classes.MD5;
+import com.springapp.classes.MessageUtil;
+import com.springapp.classes.WxHelp;
 import com.springapp.entity.*;
 import net.sf.json.JSONObject;
+import org.apache.commons.collections.map.HashedMap;
+import org.dom4j.DocumentHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -58,12 +62,27 @@ public class Test1Controller extends BaseController {
         if (openid == null) {
             response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
         }
+        WxEvaluation wxEvaluation=wxEvaluationDao.get(openid);
+        if (wxEvaluation!=null) {
+            if(wxEvaluation.getEvaluation_status().getId()==1)
+                return new ModelAndView("redirect:/Wx/complete");
+            else if(wxEvaluation.getEvaluation_status().getId()==2)
+                return new ModelAndView("redirect:/Wx/menu");
+            else if(wxEvaluation.getEvaluation_status().getId()==3){
+                List<Question2> question2=test2Dao.getList(openid);//得到对应的多选题
+                modelAndView.addObject("Question2List", question2);
+                modelAndView.addObject("openID", openid);//微信用户账号
+                return new ModelAndView("redirect:/Wx/test5");
+            }
+            else
+                return new ModelAndView("redirect:/Wx/contact");
+        }
         List<Question1>question1List=question1Dao.getList();
         modelAndView.addObject("list",question1List);
         return modelAndView;
     }
     @RequestMapping(value = "/test1",method = RequestMethod.POST)
-    public String test1(HttpServletRequest request,HttpSession session,HttpServletResponse response,@RequestParam(value = "q1")String q1,@RequestParam(value = "q2")String q2,@RequestParam(value = "q3")String q3,@RequestParam(value = "q4")String q4,@RequestParam(value = "q5")String q5) throws IOException {
+    public String test1(HttpServletRequest request,HttpSession session,HttpServletResponse response,@RequestParam(value = "q1")String answer1,@RequestParam(value = "q2")String answer2,@RequestParam(value = "q3")String answer3,@RequestParam(value = "q4")String answer4,@RequestParam(value = "q5")String answer5) throws IOException {
         String openid = (String) session.getAttribute("openid");
         WxUser wxuser=userDao.getByOpenid(openid);
         if(wxuser==null) {
@@ -71,12 +90,12 @@ public class Test1Controller extends BaseController {
             wxuser.setOpenid(openid);
             userDao.save(wxuser);
         }
+        WxEvaluation wxEvaluation=wxEvaluationDao.get(openid);
+        if(wxEvaluation==null)
+            wxEvaluation=new WxEvaluation();
+        else
+            return "redirect:/Wx/complete";
         //存储选择
-        String answer1 = request.getParameter("q1");
-        String answer2 = request.getParameter("q2");
-        String answer3 = request.getParameter("q3");
-        String answer4 = request.getParameter("q4");
-        String answer5 = request.getParameter("q5");
         List<String>list=new ArrayList<String>();
         list.add(answer1);
         list.add(answer2);
@@ -90,7 +109,6 @@ public class Test1Controller extends BaseController {
             SChoice.setUid(wxuser);
             baseDao.save(SChoice);
         }
-        WxEvaluation wxEvaluation=new WxEvaluation();
         wxEvaluation.setUid(wxuser);
         wxEvaluation.setTime(new Timestamp(System.currentTimeMillis()));
         wxEvaluation.setTimestamp(System.currentTimeMillis());
@@ -99,9 +117,24 @@ public class Test1Controller extends BaseController {
         return "redirect:/Wx/complete";
     }
     @RequestMapping(value = "/complete")
-    public ModelAndView complete(){
+    public ModelAndView complete(HttpSession session,HttpServletRequest request){
         ModelAndView modelAndView=new ModelAndView("Wx/complete");
-        return modelAndView;
+        String openid = (String) session.getAttribute("openid");
+        if (openid == null) {
+            return new ModelAndView("redirect:"+request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI()));
+        }
+        WxEvaluation wxEvaluation=wxEvaluationDao.get(openid);
+        if (wxEvaluation!=null) {
+            if(wxEvaluation.getEvaluation_status().getId()==1)
+                return modelAndView;
+            else if(wxEvaluation.getEvaluation_status().getId()==2)
+                return new ModelAndView("redirect:/Wx/menu");
+            else if(wxEvaluation.getEvaluation_status().getId()==3)
+                return new ModelAndView("redirect:/Wx/test5");
+            else
+                return new ModelAndView("redirect:/Wx/contact");
+        }
+        return new ModelAndView("redirect:/Wx/test");
     }
     @RequestMapping(value = "/complete",method = RequestMethod.POST)
     public String complete(HttpServletRequest request,HttpSession session,HttpServletResponse response) throws IOException {
@@ -180,7 +213,7 @@ public class Test1Controller extends BaseController {
     }
 
     @RequestMapping(value = "/result")
-    public ModelAndView result(HttpSession session,HttpServletResponse response,HttpServletRequest request) throws IOException {
+    public ModelAndView result(HttpSession session,HttpServletResponse response,HttpServletRequest request) throws Exception {
         ModelAndView modelAndView=new ModelAndView("Wx/result");
         String openid = (String) session.getAttribute("openid");
         if (openid == null) {
@@ -190,6 +223,8 @@ public class Test1Controller extends BaseController {
         if(wxuser==null) {
             wxuser = new WxUser();
             wxuser.setOpenid(openid);
+            if(wxuser.getAid()==null)
+                wxuser.setAid(0L);
             userDao.save(wxuser);
         }
         //取uid
@@ -231,9 +266,13 @@ public class Test1Controller extends BaseController {
                     count++;
                 }
             }
-            WxEvaluation wxEvaluation=wxEvaluationDao.get(openid);
-            wxEvaluation.setUid(wxUser);
-            wxEvaluationDao.update(wxEvaluation);
+            WxEvaluation wxEvaluation = wxEvaluationDao.get(openid);
+            try {
+                wxEvaluation.setUid(wxUser);
+                wxEvaluationDao.update(wxEvaluation);
+            }catch (Exception exception){
+                throw new Exception("wxEvaluation:"+wxEvaluation+"\nwxUser"+wxUser);
+            }
         }
 
         List<BodyCondition>bodyConditions=bodyconditionDao.getList();
@@ -270,6 +309,143 @@ public class Test1Controller extends BaseController {
         }
         return  modelAndView;
     }
+    @RequestMapping(value = "/checkWxOrder",method = RequestMethod.GET)
+    public void checkWxOrder(){
+        List<WxOrderinfo> orderinfos = orderDao.findAll("from WxOrderinfo where result='fail'",WxOrderinfo.class);
+        for(WxOrderinfo wxOrderinfo:orderinfos) {
+            String url = "https://api.mch.weixin.qq.com/pay/orderquery?";
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("appid", APP_ID);
+            params.put("mch_id", MCH_ID);
+            String out_trade_no = wxOrderinfo.getOrderNum();
+            Long timeMillis = System.currentTimeMillis();
+            String nonce_str = timeMillis.toString();
+            params.put("nonce_str", nonce_str);
+            params.put("out_trade_no",out_trade_no);
+            String sign = WxHelp.Sign(params);
+            params.put("sign",sign);
+            String xmlString = WxHelp.toXML(params);
+            String result = urlConnect(xmlString,url);
+            org.dom4j.Document document = null;
+            try {
+                document = DocumentHelper.parseText(result);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (null == document) {
+                //this.print(response, "");
+                return ;
+            }
+            org.dom4j.Element root = document.getRootElement();
+            String return_code = root.elementText("return_code");
+            String result_code = root.elementText("result_code");
+            if(return_code.equals("SUCCESS")&&result_code.equals("SUCCESS")){
+                String trade_state = root.elementText("trade_state");
+                if(trade_state.equals("SUCCESS")){
+                    wxOrderinfo.setResult("success");
+                    orderDao.update(wxOrderinfo);
+                    WxEvaluation wxEvaluation = wxEvaluationDao.get(wxOrderinfo.getUid().getOpenid());
+                    if(wxEvaluation.getId()<3) {
+                        EvaluationStatus evaluationStatus = test1Dao.getEvaluationStatus(3);
+                        wxEvaluation.setEvaluation_status(evaluationStatus);
+                        wxEvaluationDao.update(wxEvaluation);
+                    }
+                }else{
+                    wxOrderinfo.setResult(trade_state);
+                    orderDao.update(wxOrderinfo);
+                }
+            }
+        }
+    }
+    public void checkWxOrder(WxUser wxUser){
+        List<WxOrderinfo> orderinfos = orderDao.getByWxUser(wxUser.getOpenid());
+        for(WxOrderinfo wxOrderinfo:orderinfos) {
+            String url = "https://api.mch.weixin.qq.com/pay/orderquery?";
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("appid", APP_ID);
+            params.put("mch_id", MCH_ID);
+            String out_trade_no = wxOrderinfo.getOrderNum();
+            Long timeMillis = System.currentTimeMillis();
+            String nonce_str = timeMillis.toString();
+            params.put("nonce_str", nonce_str);
+            params.put("out_trade_no",out_trade_no);
+            String sign = WxHelp.Sign(params);
+            params.put("sign",sign);
+            String xmlString = WxHelp.toXML(params);
+            String result = urlConnect(xmlString,url);
+            org.dom4j.Document document = null;
+            try {
+                document = DocumentHelper.parseText(result);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (null == document) {
+                //this.print(response, "");
+                return ;
+            }
+            org.dom4j.Element root = document.getRootElement();
+            String return_code = root.elementText("return_code");
+            String result_code = root.elementText("result_code");
+            if(return_code.equals("SUCCESS")&&result_code.equals("SUCCESS")){
+                String trade_state = root.elementText("trade_state");
+                if(trade_state.equals("SUCCESS")){
+                    wxOrderinfo.setResult("success");
+                    orderDao.update(wxOrderinfo);
+                    WxEvaluation wxEvaluation = wxEvaluationDao.get(wxUser.getOpenid());
+                    if(wxEvaluation.getId()<3) {
+                        EvaluationStatus evaluationStatus = test1Dao.getEvaluationStatus(3);
+                        wxEvaluation.setEvaluation_status(evaluationStatus);
+                        wxEvaluationDao.update(wxEvaluation);
+                    }
+                }else{
+                    wxOrderinfo.setResult(trade_state);
+                    orderDao.update(wxOrderinfo);
+                }
+            }
+        }
+    }
+    @RequestMapping(value = "checkOrder",method = RequestMethod.GET)
+    public String checkOrder(String orderNum){
+        String url = "https://api.mch.weixin.qq.com/pay/orderquery?";
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("appid", APP_ID);
+        params.put("mch_id", MCH_ID);
+        String out_trade_no = orderNum;
+        Long timeMillis = System.currentTimeMillis();
+        String nonce_str = timeMillis.toString();
+        params.put("nonce_str", nonce_str);
+        params.put("out_trade_no",out_trade_no);
+        String sign = WxHelp.Sign(params);
+        params.put("sign",sign);
+        String xmlString = WxHelp.toXML(params);
+        String result = urlConnect(xmlString,url);
+        org.dom4j.Document document = null;
+        try {
+            document = DocumentHelper.parseText(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        if (null == document) {
+            //this.print(response, "");
+            return "redirect:/Wx/index";
+        }
+        org.dom4j.Element root = document.getRootElement();
+        String return_code = root.elementText("return_code");
+        String result_code = root.elementText("result_code");
+        WxOrderinfo wxOrderinfo = orderDao.find("from WxOrderinfo where orderNum=?",WxOrderinfo.class,new Object[]{orderNum});
+        if(return_code.equals("SUCCESS")&&result_code.equals("SUCCESS")&&wxOrderinfo!=null){
+            String trade_state = root.elementText("trade_state");
+            wxOrderinfo.setResult(trade_state.toLowerCase());
+            orderDao.update(wxOrderinfo);
+            WxEvaluation wxEvaluation = wxEvaluationDao.get(wxOrderinfo.getUid().getOpenid());
+            if (wxEvaluation.getEvaluation_status().getId() == 4)
+                return "redirect:/Wx/index";
+            wxEvaluation.setEvaluation_status(test1Dao.getEvaluationStatus(3));
+            wxEvaluationDao.update(wxEvaluation);
+            return "redirect:/Wx/test5";
+        }
+        return "redirect:/Wx/index";
+    }
     @RequestMapping(value = "/menu",method = RequestMethod.GET)
     public ModelAndView menu(HttpServletRequest request,HttpServletResponse response,HttpSession session) throws IOException {
         ModelAndView modelAndView=new ModelAndView("Wx/menu");
@@ -282,6 +458,7 @@ public class Test1Controller extends BaseController {
     @RequestMapping(value = "/purchase")
     public ModelAndView purchase(HttpServletRequest request,HttpServletResponse response,HttpSession session) throws IOException, NoSuchAlgorithmException {
         ModelAndView modelAndView=new ModelAndView("Wx/purchase");
+        session.setAttribute("openid","oU4jhwA7qX3B0voKbFejcp2km7bk");
         String openid = (String) session.getAttribute("openid");
         if (openid == null) {
             response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
@@ -290,25 +467,45 @@ public class Test1Controller extends BaseController {
     }
     @RequestMapping(value = "/ensure",method = RequestMethod.POST)
     @ResponseBody
-    public String ensure(HttpServletRequest request,HttpServletResponse response,HttpSession session,@RequestParam(value = "canheNum")int canheNum,@RequestParam(value = "canceNum")int canceNum) throws IOException, NoSuchAlgorithmException {
+    public String ensure(HttpServletRequest request,HttpServletResponse response,HttpSession session,@RequestParam(value = "canheNum")int canheNum,@RequestParam(value = "canceNum")int canceNum,@RequestParam(value = "cance")int[] cance, @RequestParam(value = "canhe")int[] canhe) throws IOException, NoSuchAlgorithmException {
+        SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         int price=canceNum*cancePrice+canheNum*canhePrice;
+        price = price*100;
         String openid = (String) session.getAttribute("openid");
         System.out.print("openid"+openid);
         if (openid == null) {
             response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
         }
+        WxUser wxUser=userDao.getByOpenid(openid);
         //测试用
-        if(openid.equals("oU4jhwKx8rklU3cWvXY5Hry97xFc"))
+        if(openid.equals("oU4jhwA7qX3B0voKbFejcp2km7bk"))
             price=1;
         String body="chanxingouwu";
         Long timeStr=System.currentTimeMillis();
         String nonce_str=timeStr.toString();
         session.setAttribute("order",timeStr.toString());
+        WxOrderinfo wxOrderinfo=new WxOrderinfo();
+        wxOrderinfo.setCanceNums(cance);
+        wxOrderinfo.setCanheNums(canhe);
+        wxOrderinfo.setResult("fail");
+        wxOrderinfo.setName(wxUser.getNickname());
+        wxOrderinfo.setOrderNum(timeStr.toString());
+        wxOrderinfo.setDate(simpleDateFormat.format(new Date()));
+        wxOrderinfo.setDateTime(System.currentTimeMillis());
+        wxOrderinfo.setUid(wxUser);
+        setCanceCanhe(wxOrderinfo);
+        orderDao.save(wxOrderinfo);
+        session.setAttribute("orderID",wxOrderinfo.getId());
         session.setAttribute("price",price*100);
-        String result=payJSAPI(nonce_str, body, timeStr.toString(), price*100, getRemortIP(request), openid);
+        String result=payJSAPI(nonce_str, body, timeStr.toString(), price, getRemortIP(request), openid);
         System.out.print(result);
         String prepay_id=parse(result);
         System.out.print(prepay_id);
+        if(prepay_id==null) {
+            Map<String,String>map = new HashMap<String, String>();
+            map.put("status","fail");
+            return JSONObject.fromObject(map).toString();//预支付失败
+        }
         String p="prepay_id="+prepay_id;
         String signJS=signJS(nonce_str,prepay_id,timeStr/1000L);
         Map map=new HashMap();
@@ -318,11 +515,44 @@ public class Test1Controller extends BaseController {
         map.put("nonce_str",nonce_str);
         map.put("package",p);
         map.put("paySign",signJS);
+        map.put("orderNum",wxOrderinfo.getOrderNum());
+        map.put("orderID",wxOrderinfo.getId());
         return JSONObject.fromObject(map).toString();
     }
+
+    public void setCanceCanhe(WxOrderinfo wxOrderinfo){
+        int[] cance = wxOrderinfo.getCanceNums();
+        int[] canhe = wxOrderinfo.getCanheNums();
+        String cances="";
+        if(cance!=null)
+            for(int i=0;i<cance.length;i++){
+                if(cance[i]==0)
+                    continue;
+                if(i==0)
+                    cances+=cance[i];
+                else
+                    cances+=","+cance[i];
+            }
+        String canhes="";
+        if(canhe!=null)
+            for(int i=0;i<canhe.length;i++){
+                if(canhe[i]==0)
+                    continue;
+                if(i==0)
+                    canhes+=canhe[i];
+                else
+                    canhes+=","+canhe[i];
+            }
+        wxOrderinfo.setCanceNum(cances);
+        wxOrderinfo.setCanheNum(canhes);
+    }
+    private static String company="【禅心妈妈】";
     @RequestMapping(value = "/purchase",method = RequestMethod.POST)
-    public ModelAndView purchase(WxOrderinfo order,HttpSession session,HttpServletRequest request) throws IOException, NoSuchAlgorithmException {
+    public ModelAndView purchase(WxOrderinfo order,HttpSession session,HttpServletRequest request, HttpServletResponse response) throws IOException, NoSuchAlgorithmException {
         String openid = (String) session.getAttribute("openid");
+        if (openid == null) {
+            response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
+        }
         WxUser wxuser=userDao.getByOpenid(openid);
         if(wxuser==null) {
             wxuser = new WxUser();
@@ -330,7 +560,7 @@ public class Test1Controller extends BaseController {
             userDao.save(wxuser);
         }
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
-        String cance="";
+        /*String cance="";
         if(order.getCanceNums()!=null)
         for(int i=0;i<order.getCanceNums().length;i++){
             if(i==0)
@@ -345,23 +575,37 @@ public class Test1Controller extends BaseController {
                 canhe+=order.getCanheNums()[i];
             else
                 canhe+=","+order.getCanheNums()[i];
+        }*/
+        try {
+            String orderNum = (String) session.getAttribute("order");
+            Integer orderID = (Integer) session.getAttribute("orderID");
+            if (orderID == null && orderNum == null)
+                order.setPayType("不支持session");
+            if (orderID != null) {
+                order.setId(orderID);
+            }
+            if (orderNum != null) {
+                order.setOrderNum(orderNum);
+            }
+            order.setDeliverStatus("未发货");
+            setCanceCanhe(order);
+            order.setDate(simpleDateFormat.format(new Date()));
+            order.setDateTime(System.currentTimeMillis());
+            order.setResult("success");
+            order.setUid(wxuser);
+            orderDao.update(order);
+            String content = company + "亲爱的妈妈，下单成功，方案将在7个工作日内快递给您。如有疑问，请电询400-6822257";
+            String jsonResult = MessageUtil.request(order.getPhoneNum(), content);
+            System.out.println(jsonResult);
+            WxEvaluation wxEvaluation = wxEvaluationDao.get(openid);
+            if (wxEvaluation.getEvaluation_status().getId() == 4)
+                return new ModelAndView("redirect:/Wx/index");
+            wxEvaluation.setEvaluation_status(test1Dao.getEvaluationStatus(3));
+            wxEvaluationDao.update(wxEvaluation);
+            return new ModelAndView("redirect:/Wx/test5");
+        }catch (Exception e){
+            return new ModelAndView("redirect:/Wx/checkOrder?orderNum="+order.getOrderNum());
         }
-        String orderNum= (String) session.getAttribute("order");
-        order.setDeliverStatus("未发货");
-        order.setCanceNum(cance);
-        order.setCanheNum(canhe);
-        order.setDate(simpleDateFormat.format(new Date()));
-        order.setDateTime(System.currentTimeMillis());
-        order.setResult("success");
-        order.setUid(wxuser);
-        order.setOrderNum(orderNum);
-        orderDao.save(order);
-        WxEvaluation wxEvaluation=wxEvaluationDao.get(openid);
-        if(wxEvaluation.getEvaluation_status().getId()==4)
-            return new ModelAndView("redirect:/Wx/index");
-        wxEvaluation.setEvaluation_status(test1Dao.getEvaluationStatus(3));
-        wxEvaluationDao.update(wxEvaluation);
-        return new ModelAndView("redirect:/Wx/test5");
     }
     /*
     * 确认收货*/
@@ -375,7 +619,6 @@ public class Test1Controller extends BaseController {
     }
 /*xml解析*/
     public String parse(String protocolXML) {
-
         try {
             DocumentBuilderFactory factory = DocumentBuilderFactory
                     .newInstance();
@@ -395,10 +638,10 @@ public class Test1Controller extends BaseController {
                     }
                 }
             }
-            return  "";
+            return  null;
         } catch (Exception e) {
             e.printStackTrace();
-            return e.toString();
+            return null;
         }
     }
 
@@ -411,6 +654,7 @@ public class Test1Controller extends BaseController {
         Date now = new Date(currentTime);
         Date date=new Date(currentTime);
         String signStr = sign(nonce_str,body,out_trade_no,total_fee,spbill_create_ip,openid,now,date);
+        String notify_url = "http://" + DOMAIN + "/cxmm/Wx/PayNotifyUrl";
         urlBuilder.append("<xml>");
         urlBuilder.append("<appid>" + APP_ID + "</appid>");
         urlBuilder.append("<mch_id>").append(MCH_ID).append("</mch_id>");
@@ -422,7 +666,7 @@ public class Test1Controller extends BaseController {
         urlBuilder.append("<spbill_create_ip>").append(spbill_create_ip).append("</spbill_create_ip>");
         urlBuilder.append("<time_start>").append(df.format(now)).append("</time_start>");
         urlBuilder.append("<time_expire>").append(df.format(date)).append("</time_expire>");
-        urlBuilder.append("<notify_url>").append("http://localhost:8080/Wx/index").append("</notify_url>");
+        urlBuilder.append("<notify_url>").append(notify_url).append("</notify_url>");
         urlBuilder.append("<trade_type>").append("JSAPI").append("</trade_type>");
         urlBuilder.append("<openid>").append(openid).append("</openid>");
         urlBuilder.append("</xml>");
@@ -431,13 +675,14 @@ public class Test1Controller extends BaseController {
     }
     public String sign(String nonce_str,String body,String out_trade_no,int total_fee,String spbill_create_ip,String openid,Date now,Date date) throws NoSuchAlgorithmException {
         StringBuilder urlBuilder = new StringBuilder();
+        String notify_url = "http://" + DOMAIN + "/cxmm/Wx/PayNotifyUrl";
         SimpleDateFormat df = new SimpleDateFormat("yyyyMMddHHmmss");//设置日期格式
         urlBuilder.append("appid=" + APP_ID);
         urlBuilder.append("&body=").append(body);
         urlBuilder.append("&mch_id=").append(MCH_ID);
         //urlBuilder.append("&device_info=").append( );
         urlBuilder.append("&nonce_str=").append(nonce_str);
-        urlBuilder.append("&notify_url=").append("http://localhost:8080/Wx/index");
+        urlBuilder.append("&notify_url=").append(notify_url);
         urlBuilder.append("&openid=").append(openid);
         urlBuilder.append("&out_trade_no=").append(out_trade_no);
        // urlBuilder.append("&sign=").append(nonce_str);

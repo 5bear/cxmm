@@ -9,7 +9,7 @@
 <%@ page import="com.springapp.entity.Agent" %><%
   Agent agent= (Agent) session.getAttribute("agent");
   if(agent==null){
-    response.sendRedirect("agentLogin");
+    response.sendRedirect("login");
     return;
   }
 %>
@@ -52,23 +52,23 @@
       <div class="form-group">
         <label class="control-label col-md-3">旧密码</label>
         <div class="col-md-7">
-          <input type="text" name="opsw" class="form-control"/>
+          <input type="text" name="opsw" id="oldPwd" class="form-control"/>
         </div>
       </div><br><br><br>
       <div class="form-group">
         <label class="control-label col-md-3">新密码</label>
         <div class="col-md-7">
-          <input type="text" name="npsw" class="form-control"/>
+          <input type="text" name="npsw" id="newPwd" class="form-control"/>
         </div>
       </div><br><br>
       <div class="form-group">
         <label class="control-label col-md-3">重复新密码</label>
         <div class="col-md-7">
-          <input type="text" name="rppsw" class="form-control"/>
+          <input type="text" name="rppsw" id="newPwd2" class="form-control"/>
         </div>
       </div><br><br>
       <div class="modal-footer">
-        <input type="submit" class="btn btn-success" value="提交" onclick=""/>
+        <input type="button" class="btn btn-success" value="提交" onclick="changePwd()"/>
       </div>
     </div><!-- /.row -->
 
@@ -86,6 +86,27 @@
 <script src="<%=request.getContextPath()%>/Web/Upload/dist/js/i18n/datepicker.en.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/eModal.js"></script>
-
+<script>
+  function changePwd(){
+    var oldPwd=$("#oldPwd").val();
+    var newPwd=$("#newPwd").val();
+    var newPwd2=$("#newPwd2").val();
+    if(newPwd!=newPwd2){
+      alert("两次密码输入不一致");
+      return true;
+    }
+    $.ajax({
+      url:"<%=request.getContextPath()%>/Agency/changePassword",
+      type:"post",
+      data:{oldPwd:oldPwd,newPwd:newPwd},
+      success:function(data){
+        if(data=="fail")
+          alert("旧密码输入错误")
+        else
+          location.reload(true)
+      }
+    })
+  }
+</script>
 </body>
 </html>

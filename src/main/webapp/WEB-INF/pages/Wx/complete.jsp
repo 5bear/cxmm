@@ -52,52 +52,72 @@
 <script src="js/laydate.dev.js"></script>
 <script>
     function check(){
-        for (var i=0;i<document.myForm.length;i++ )
-        {
-            if (document.myForm.elements[i].value=="")
-            {
-                if(!(remind(i)=="success")){
-                    document.myForm.elements[i].focus();
-                    alert(remind(i))
-                    return false
-                }
-
-            }
+        var ExpectingDate=document.getElementById("ExpectingDate");
+        if(ExpectingDate.value==""){
+            alert("预产期未填写")
+            ExpectingDate.focus()
+            return false
+        }
+        var Weight=document.getElementById("Weight")
+        if(Weight.value==""){
+            alert("孕前体重未填写")
+            Weight.focus()
+            return false
+        }
+        var AfterWeight=document.getElementById("AfterWeight")
+        if(AfterWeight.value==""){
+            alert("当前体重未填写")
+            AfterWeight.focus()
+            return false
+        }
+        var Height=document.getElementById("Height")
+        if(Height.value==""){
+            alert("身高未填写")
+            Height.focus()
+            return false
+        }
+        var Age=document.getElementById("Age")
+        if(Age.value==""){
+            alert("年龄未填写")
+            Age.focus()
+            return false
+        }
+        var Birthorder=document.getElementById("Birthorder")
+        if(Birthorder.value==""){
+            alert("胎次未填写")
+            Birthorder.focus()
+            return false
+        }
+        var eutocia=document.getElementsByName("eutocia")
+        var flag1=false;
+        $(eutocia).each(function (index,element) {
+            if(element.checked==true)
+                flag1=true
+        })
+        if(!flag1) {
+            alert("顺产/剖产未选择")
+            eutocia[0].focus()
+            return false
+        }
+        var feed=document.getElementsByName("feed")
+        var flag2=false;
+        $(feed).each(function (index,element) {
+            if(element.checked==true)
+                flag2=true
+        })
+        if(!flag2){
+            alert("哺乳/非哺乳未选择")
+            feed[0].focus()
+            return false
+        }
+        var phone=document.getElementById("phone")
+        if(phone.value==""){
+            alert("手机号码未填写")
+            phone.focus()
+            return false
         }
         var myForm=document.getElementsByName("myForm");
         myForm[0].submit()
-    }
-    function remind(i){
-        switch (i){
-            case 0:
-                return ("预产期未填写")
-                break
-            case 1:
-                return ("孕前体重未填写")
-                break
-            case 2:
-                return("当前体重未填写")
-                break
-            case 3:
-                return ("身高未填写")
-                break
-            case 4:
-                return ("年龄未填写")
-                break
-            case 5:
-                return ("胎次未填写")
-                break
-            case 6:
-                return ("顺产/剖产未选择")
-                break
-            case 7:
-                return ("哺乳/非哺乳未选择")
-                break
-            case 8:
-                return ("手机未填写")
-                break
-        }
-        return "success"
     }
     laydate({
         elem: '#ExpectingDate'

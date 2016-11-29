@@ -35,7 +35,6 @@
 
 <div class="services" id="services">
     <div class="container">
-        <a href="./Clear">重新测试</a>
         <form:form class="form-horizontal" role="form" modelAttribute="answersModel"
                    action="" method="post" novalidate="novalidate">
             <ul class="basic-list">
