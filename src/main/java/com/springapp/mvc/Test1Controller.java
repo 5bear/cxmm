@@ -5,7 +5,6 @@ import com.springapp.classes.MessageUtil;
 import com.springapp.classes.WxHelp;
 import com.springapp.entity.*;
 import net.sf.json.JSONObject;
-import org.apache.commons.collections.map.HashedMap;
 import org.dom4j.DocumentHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -296,6 +295,8 @@ public class Test1Controller extends BaseController {
         }
         WxUser wxUser=userDao.getByOpenid(openid);
         modelAndView.addObject("wxUser",wxUser);
+        //集中处理失效订单
+        checkWxOrder(openid);
         WxEvaluation wxEvaluation=wxEvaluationDao.get(openid);
         if (wxEvaluation!=null) {
             if(wxEvaluation.getEvaluation_status().getId()==1)
@@ -309,6 +310,10 @@ public class Test1Controller extends BaseController {
         }
         return  modelAndView;
     }
+
+    /**
+     * 查询订单并更新订单状态
+     */
     @RequestMapping(value = "/checkWxOrder",method = RequestMethod.GET)
     public void checkWxOrder(){
         List<WxOrderinfo> orderinfos = orderDao.findAll("from WxOrderinfo where result='fail'",WxOrderinfo.class);
@@ -357,8 +362,13 @@ public class Test1Controller extends BaseController {
             }
         }
     }
-    public void checkWxOrder(WxUser wxUser){
-        List<WxOrderinfo> orderinfos = orderDao.getByWxUser(wxUser.getOpenid());
+
+    /**
+     * 查询个人订单状态
+     * @param openid
+     */
+    public void checkWxOrder(String openid){
+        List<WxOrderinfo> orderinfos = orderDao.getByWxUser(openid);
         for(WxOrderinfo wxOrderinfo:orderinfos) {
             String url = "https://api.mch.weixin.qq.com/pay/orderquery?";
             Map<String, Object> params = new HashMap<String, Object>();
@@ -391,7 +401,7 @@ public class Test1Controller extends BaseController {
                 if(trade_state.equals("SUCCESS")){
                     wxOrderinfo.setResult("success");
                     orderDao.update(wxOrderinfo);
-                    WxEvaluation wxEvaluation = wxEvaluationDao.get(wxUser.getOpenid());
+                    WxEvaluation wxEvaluation = wxEvaluationDao.get(openid);
                     if(wxEvaluation.getId()<3) {
                         EvaluationStatus evaluationStatus = test1Dao.getEvaluationStatus(3);
                         wxEvaluation.setEvaluation_status(evaluationStatus);
@@ -458,7 +468,6 @@ public class Test1Controller extends BaseController {
     @RequestMapping(value = "/purchase")
     public ModelAndView purchase(HttpServletRequest request,HttpServletResponse response,HttpSession session) throws IOException, NoSuchAlgorithmException {
         ModelAndView modelAndView=new ModelAndView("Wx/purchase");
-        session.setAttribute("openid","oU4jhwA7qX3B0voKbFejcp2km7bk");
         String openid = (String) session.getAttribute("openid");
         if (openid == null) {
             response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));

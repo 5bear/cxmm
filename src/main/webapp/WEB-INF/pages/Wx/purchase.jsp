@@ -150,7 +150,7 @@
                   if (res.err_msg == "get_brand_wcpay_request:ok") {
                       submitForm();
                   }else if(res.err_mes == "get_brand_wcpay_request:cancel"||res_err_mes == "get_brand_wcpay_request:fail"){
-                      alert("用户遇到错误或者主动放弃")
+                      console.log("用户遇到错误或者主动放弃")
                   }else{
                       location.href="<%=request.getContextPath()%>/Wx/checkOrder?orderNum="+data.orderNum;
                   }
