@@ -241,7 +241,7 @@ public class WxController extends BaseController {
         //如果用户同意授权并且，用户session不存在，通过OAUTH接口调用获取用户信息
         if (isValidCode && session.getAttribute("openid") == null) {
             JSONObject obj = getAccessToken(APP_ID, APP_SECRET, code);
-            String token = obj.getString("access_token");
+            String token = obj.getString("access_token");//    //可能会有NullPointerException
             String openid = obj.getString("openid");
             JSONObject user = getUserInfo(token, openid);
             user.discard("privilege");

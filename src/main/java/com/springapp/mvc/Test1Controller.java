@@ -347,6 +347,7 @@ public class Test1Controller extends BaseController {
             if(return_code.equals("SUCCESS")&&result_code.equals("SUCCESS")){
                 String trade_state = root.elementText("trade_state");
                 if(trade_state.equals("SUCCESS")){
+                    System.out.println(wxOrderinfo.getOrderNum());
                     wxOrderinfo.setResult("success");
                     orderDao.update(wxOrderinfo);
                     WxEvaluation wxEvaluation = wxEvaluationDao.get(wxOrderinfo.getUid().getOpenid());
@@ -474,9 +475,16 @@ public class Test1Controller extends BaseController {
         }
         return modelAndView;
     }
+    //2016-12-10 修改 初次确定保存订单信息增加收货人姓名 手机和收货地址
     @RequestMapping(value = "/ensure",method = RequestMethod.POST)
     @ResponseBody
-    public String ensure(HttpServletRequest request,HttpServletResponse response,HttpSession session,@RequestParam(value = "canheNum")int canheNum,@RequestParam(value = "canceNum")int canceNum,@RequestParam(value = "cance")int[] cance, @RequestParam(value = "canhe")int[] canhe) throws IOException, NoSuchAlgorithmException {
+    public String ensure(HttpServletRequest request,HttpServletResponse response,HttpSession session,
+                         @RequestParam(value = "canheNum")int canheNum,@RequestParam(value = "canceNum")int canceNum,
+                         @RequestParam(value = "cance")int[] cance,
+                         @RequestParam(value = "canhe")int[] canhe,
+                         @RequestParam(value = "name")String name,
+                         @RequestParam(value = "phoneNum")String phoneNum,
+                         @RequestParam(value = "address")String address) throws IOException, NoSuchAlgorithmException {
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         int price=canceNum*cancePrice+canheNum*canhePrice;
         price = price*100;
@@ -497,7 +505,9 @@ public class Test1Controller extends BaseController {
         wxOrderinfo.setCanceNums(cance);
         wxOrderinfo.setCanheNums(canhe);
         wxOrderinfo.setResult("fail");
-        wxOrderinfo.setName(wxUser.getNickname());
+        wxOrderinfo.setName(name);
+        wxOrderinfo.setPhoneNum(phoneNum);
+        wxOrderinfo.setAddress(address);
         wxOrderinfo.setOrderNum(timeStr.toString());
         wxOrderinfo.setDate(simpleDateFormat.format(new Date()));
         wxOrderinfo.setDateTime(System.currentTimeMillis());

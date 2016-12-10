@@ -125,7 +125,7 @@
       url:"<%=request.getContextPath()%>/Wx/ensure",
       type:"post",
         traditional: true,
-      data:{canceNum:canceNum,canheNum:canheNum,cance:ce,canhe:he},
+      data:{canceNum:canceNum,canheNum:canheNum,cance:ce,canhe:he, name:name, phoneNum:phoneNum, address:address},
 /*
       dataType:"json",
 */

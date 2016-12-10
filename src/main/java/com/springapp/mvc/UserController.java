@@ -66,14 +66,23 @@ public class UserController extends BaseController {
 
     @RequestMapping(value = "/getReceipt")
     public void getReceipt(HttpServletRequest request, HttpSession session, HttpServletResponse response) throws IOException {
-        String openid = (String) session.getAttribute("openid");
-        if (openid == null) {
-            response.sendRedirect(request.getContextPath() + "/Wx/GetOpenId?returnUrl=" + URLEncoder.encode(request.getRequestURI(), "utf-8"));
+        Map<String,Integer> mapUser = wxUsers();
+        for(String key:mapUser.keySet()){
+            if(mapUser.get(key)>1)
+                System.out.print(key+"\n");
         }
-        String return_code = request.getParameter("return_code");
-        String return_msg = request.getParameter("return_msg");
-        List<WxOrderinfo> wxOrderinfoList=orderDao.getByOpenid(openid);
-        /*wxOrderinfo.setResult(return_code);
-        orderDao.update(wxOrderinfo);*/
+    }
+    public Map<String,Integer>  wxUsers(){
+        List<WxUser> users = userDao.findAll("from WxUser",WxUser.class);
+        Map<String,Integer> mapUser = new HashMap<String, Integer>();
+        for(WxUser wxUser:users){
+            Integer count = mapUser.get(wxUser.getOpenid());
+            if(count==null)
+                mapUser.put(wxUser.getOpenid(),1);
+            else{
+                mapUser.put(wxUser.getOpenid(),count+1);
+            }
+        }
+        return mapUser;
     }
 }

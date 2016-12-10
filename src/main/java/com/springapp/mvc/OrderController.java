@@ -32,6 +32,9 @@ public class OrderController extends BaseController{
     @RequestMapping(value = "Order",method = RequestMethod.GET)
     public ModelAndView order(HttpServletRequest request) throws IOException {
         ModelAndView modelAndView=new ModelAndView("Web/Upload/order");
+        //检测失效订单状态
+        Test1Controller test1Controller = new Test1Controller();
+        test1Controller.checkWxOrder();
         String name=request.getParameter("name");
         String express=request.getParameter("express");
          /*分页，每页十项*/

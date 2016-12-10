@@ -349,6 +349,27 @@ public class BaseDao {
         return result;
     }
 
+    public <T> List<T> findAllBySql(String hql) {
+        Session session = getSession();
+        JdbcTransaction tx = (JdbcTransaction)session.getTransaction();
+        if(tx.getLocalStatus().equals(LocalStatus.ACTIVE))
+            System.out.print("已存在活动的事务");
+        else
+            tx=(JdbcTransaction) session.beginTransaction();
+        System.out.println(hql);
+        Query query = session.createSQLQuery(hql);
+        List<T> result = null;
+        try {
+            result = (List<T>) query.list();
+            tx.commit();
+        } catch (Exception err) {
+            if (tx != null) {
+                tx.rollback();
+                err.printStackTrace();
+            }
+        }
+        return result;
+    }
     public void executeSQL(String queryString) {
         Session session = getSession();
         JdbcTransaction tx = (JdbcTransaction)session.getTransaction();
