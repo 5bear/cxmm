@@ -1,10 +1,12 @@
 package com.springapp.mvc;
 
 import com.springapp.classes.MessageUtil;
+import com.springapp.classes.WxHelp;
 import com.springapp.entity.*;
 import com.springapp.helper.MergePDF;
 import net.sf.json.JSONObject;
 import org.apache.poi.hssf.usermodel.*;
+import org.dom4j.DocumentHelper;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -29,12 +31,100 @@ import java.util.*;
 @Controller
 @RequestMapping(value = "**")
 public class OrderController extends BaseController{
+    private static final String APP_ID = "wx3ced4614cdabe878";
+    private static final String APP_SECRET = "shanghaiyuechanxin20160603104666";
+    private static final String DOMAIN = "cx.ecnucpp.com";
+    private static final String MCH_ID = "1253261801";
+    public String urlConnect(String param, String url) {
+        // 使用POST方式向目的服务器发送请求
+        URL connect;
+        StringBuffer data = new StringBuffer();
+        try {
+            connect = new URL(url);
+            System.out.println(connect);
+            HttpURLConnection connection = (HttpURLConnection) connect.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setDoOutput(true);
+
+            OutputStreamWriter paramout = new OutputStreamWriter(
+                    connection.getOutputStream(), "UTF-8");
+
+            paramout.write(param);
+            paramout.flush();
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    connection.getInputStream(), "UTF-8"));
+            String line;
+            while ((line = reader.readLine()) != null) {
+                data.append(line);
+            }
+
+            paramout.close();
+            reader.close();
+        } catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        String result = data.toString();
+        return result;
+    }
+
+    /**
+     * 检查所有未完成订单的状态
+     */
+    public void checkWxOrder(){
+        List<WxOrderinfo> orderinfos = orderDao.findAll("from WxOrderinfo where result='fail'",WxOrderinfo.class);
+        for(WxOrderinfo wxOrderinfo:orderinfos) {
+            String url = "https://api.mch.weixin.qq.com/pay/orderquery?";
+            Map<String, Object> params = new HashMap<String, Object>();
+            params.put("appid", APP_ID);
+            params.put("mch_id", MCH_ID);
+            String out_trade_no = wxOrderinfo.getOrderNum();
+            Long timeMillis = System.currentTimeMillis();
+            String nonce_str = timeMillis.toString();
+            params.put("nonce_str", nonce_str);
+            params.put("out_trade_no",out_trade_no);
+            String sign = WxHelp.Sign(params);
+            params.put("sign",sign);
+            String xmlString = WxHelp.toXML(params);
+            String result = urlConnect(xmlString,url);
+            org.dom4j.Document document = null;
+            try {
+                document = DocumentHelper.parseText(result);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (null == document) {
+                //this.print(response, "");
+                return ;
+            }
+            org.dom4j.Element root = document.getRootElement();
+            String return_code = root.elementText("return_code");
+            String result_code = root.elementText("result_code");
+            if(return_code.equals("SUCCESS")&&result_code.equals("SUCCESS")){
+                String trade_state = root.elementText("trade_state");
+                if(trade_state.equals("SUCCESS")){
+                    System.out.println(wxOrderinfo.getOrderNum());
+                    wxOrderinfo.setResult("success");
+                    orderDao.update(wxOrderinfo);
+                    WxEvaluation wxEvaluation = wxEvaluationDao.get(wxOrderinfo.getUid().getOpenid());
+                    if(wxEvaluation.getEvaluation_status().getId()<3) {
+                        EvaluationStatus evaluationStatus = test1Dao.getEvaluationStatus(3);
+                        wxEvaluation.setEvaluation_status(evaluationStatus);
+                        wxEvaluationDao.update(wxEvaluation);
+                    }
+                }else{
+                    wxOrderinfo.setResult(trade_state.toLowerCase());
+                    orderDao.update(wxOrderinfo);
+                }
+            }
+        }
+    }
     @RequestMapping(value = "Order",method = RequestMethod.GET)
     public ModelAndView order(HttpServletRequest request) throws IOException {
         ModelAndView modelAndView=new ModelAndView("Web/Upload/order");
         //检测失效订单状态
-        Test1Controller test1Controller = new Test1Controller();
-        test1Controller.checkWxOrder();
+        checkWxOrder();
         String name=request.getParameter("name");
         String express=request.getParameter("express");
          /*分页，每页十项*/

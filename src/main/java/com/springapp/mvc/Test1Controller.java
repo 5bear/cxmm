@@ -351,7 +351,7 @@ public class Test1Controller extends BaseController {
                     wxOrderinfo.setResult("success");
                     orderDao.update(wxOrderinfo);
                     WxEvaluation wxEvaluation = wxEvaluationDao.get(wxOrderinfo.getUid().getOpenid());
-                    if(wxEvaluation.getId()<3) {
+                    if(wxEvaluation.getEvaluation_status().getId()<3) {
                         EvaluationStatus evaluationStatus = test1Dao.getEvaluationStatus(3);
                         wxEvaluation.setEvaluation_status(evaluationStatus);
                         wxEvaluationDao.update(wxEvaluation);

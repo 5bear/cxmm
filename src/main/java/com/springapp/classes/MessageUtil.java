@@ -49,6 +49,6 @@ public class MessageUtil {
     }
 
     public static void main(String[] args) throws UnsupportedEncodingException {
-        System.out.println(request("18818080709","【禅心妈妈】 你好禅心妈妈"));
+        System.out.println(request("18916362670","【禅心妈妈】 你好禅心妈妈"));
     }
 }
