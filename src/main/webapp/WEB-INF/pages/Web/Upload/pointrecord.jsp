@@ -137,9 +137,6 @@
                             查看信息
                         </th>
                         <th>
-                            一分钟评测结果
-                        </th>
-                        <th>
                             五分钟评测结果
                         </th>
                     </tr>
@@ -155,10 +152,7 @@
                             <td>${evaluation.evaluationStatus.name}</td>
                             <td><label data-toggle="modal" data-target="#InfoModal"><a onclick="getUserinfo('${evaluation.expectingDate}','${evaluation.weight}','${evaluation.afterWeight}','${evaluation.height}','${evaluation.age}','${evaluation.birthorder}','${evaluation.eutocia==1?"顺产":"剖腹产"}','${evaluation.feed==1?"哺乳":"非哺乳"}')">查看</a></label></td>
                             <td>
-                                <label data-toggle="modal" data-target="#Check1Modal"><a onclick="getResult(1,'${evaluation.guid}')">查看</a></label>
-                            </td>
-                            <td>
-                                <label data-toggle="modal" data-target="#Check5Modal"><a onclick="getResult(5,'${evaluation.guid}')">查看</a></label>
+                                <label data-toggle="modal" data-target="#Check5Modal"><a onclick="getResult('${evaluation.guid}')">查看</a></label>
                             </td>
                         </tr>
                     </c:forEach>
@@ -340,36 +334,23 @@
         $("#p7").html(p7)
         $("#p8").html(p8)
     }
-    function getResult(type,uid){
+    function getResult(uid){
         $.ajax({
             url:"<%=request.getContextPath()%>/Club/getResult1",
             type:"post",
-            data:{type:type,evaluationId:uid},
+            data:{evaluationId:uid},
             dataType:"json",
             success:function(data){
-                if(type==1){
-                    $("#bodyCondition").html(data.result);
-                    var result="";
-                    $(data.resultList).each(function(index,element){
-                        console.log(element.name)
-                        result+=" <div class='form-group'> " +
-                        "<label class='control-label col-md-3'>"+element[2]+"</label> " +
-                        "<label class='control-label col-md-3'>"+element[1]+"</label> " +
+                $("#bodyCondition2").html(data.result);
+                var result="";
+                $(data.resultList).each(function(index,element){
+                    console.log(element)
+                    result+=" <div class='form-group'> " +
+                        "<label class='control-label col-md-3'>"+element.bodyCondition+"</label> " +
+                        "<label class='control-label col-md-3'>"+element.score+"</label> " +
                         "</div>"
-                    })
-                    $("#check1").html(result)
-                }else{
-                    $("#bodyCondition2").html(data.result);
-                    var result="";
-                    $(data.resultList).each(function(index,element){
-                        console.log(element[0])
-                        result+=" <div class='form-group'> " +
-                        "<label class='control-label col-md-3'>"+element[0]+"</label> " +
-                        "<label class='control-label col-md-3'>"+element[1]+"</label> " +
-                        "</div>"
-                    })
-                    $("#check5").html(result)
-                }
+                })
+                $("#check5").html(result)
             }
         })
     }

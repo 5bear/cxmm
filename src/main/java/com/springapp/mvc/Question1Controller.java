@@ -1,13 +1,13 @@
 package com.springapp.mvc;
 
-import com.springapp.entity.Answer1;
-import com.springapp.entity.Club;
-import com.springapp.entity.Evaluation;
-import com.springapp.entity.EvaluationStatus;
+import com.springapp.entity.*;
 import com.springapp.form.Answer1s;
+import net.sf.json.JSONArray;
+import net.sf.json.JSONObject;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
@@ -38,74 +38,56 @@ public class Question1Controller extends BaseController {
     public ModelAndView test0() {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("Web/Question1/Test");
-        modelAndView.addObject("Question1List", question1Dao.getList());
+        modelAndView.addObject("Question1List", question1Dao.getClubQuestion());
         return modelAndView;
     }
 
     @RequestMapping(value = "/Question1/Test", method = RequestMethod.POST)
-    public String test1(Answer1s answersModel, HttpSession session) {
-        UUID uuid = UUID.randomUUID();
-        String guid = uuid.toString().replaceAll("-", "");
-        session.setAttribute("guid",guid);
-        Evaluation evaluation = new Evaluation();
-        evaluation.setGuid(guid);
-        EvaluationStatus evaluationStatus=test1Dao.getEvaluationStatus(1);
-        evaluation.setEvaluationStatus(evaluationStatus);
-        Club club = (Club) session.getAttribute("club");
-        evaluation.setClub(club);
-        evaluation.setTime(new Timestamp(System.currentTimeMillis()));
-        evaluationDao.save(evaluation);
-        List<Answer1> answers = answersModel.getAnswers();
-        for (Answer1 answer1 : answers) {
-            answer1.setEvaluationId(guid);
+    @ResponseBody
+    public String test1(Integer[] score, HttpSession session) {
+        Map<String,String> returnMap = new HashMap<String, String>();
+        try {
+            UUID uuid = UUID.randomUUID();
+            String guid = uuid.toString().replaceAll("-", "");
+            session.setAttribute("guid", guid);
+            Evaluation evaluation = new Evaluation();
+            evaluation.setGuid(guid);
+            EvaluationStatus evaluationStatus = test1Dao.getEvaluationStatus(1);
+            evaluation.setEvaluationStatus(evaluationStatus);
+            Club club = (Club) session.getAttribute("club");
+            evaluation.setClub(club);
+            evaluation.setTime(new Timestamp(System.currentTimeMillis()));
+            evaluationDao.save(evaluation);
+            for (int i = 1; i <= 9; i++) {
+                ClubResult clubResult = new ClubResult();
+                clubResult.setBid(i);
+                clubResult.setEvaluationId(evaluation.getGuid());
+                clubResult.setScore(score[i]);
+                baseDao.save(clubResult);
+            }
+            returnMap.put("status", "success");
+            returnMap.put("guid", guid);
+            return JSONObject.fromObject(returnMap).toString();
+        }catch (Exception e){
+            returnMap.put("status", "fail");
+            return JSONObject.fromObject(returnMap).toString();
         }
-        answer1Dao.save(answers);
-        return "redirect:/Question1/Result?evaluationId=" + guid;
     }
 
     @RequestMapping(value = "/Question1/Result")
     public ModelAndView result(String evaluationId) throws Exception {
-        List statistics = answer1Dao.getStatistics(evaluationId);
-        String bodyCondition = "";
-        String risk = "";
-        int index = 0;
-        for (Object item : statistics) {
-            Object[] array = (Object[]) item;
-            Integer answer = (Integer) array[0];
-            BigInteger count = (BigInteger) array[1];
-            String name = (String) array[2];
-            if (index == 0) {
-                index++;
-                if (count.intValue() > 1) {
-                    bodyCondition += name;
-                    risk += bodyConditionToDetails.get(name);
-                } else {
-                    throw new Exception("遇到1+1+……的极端情况了。");
-                }
-            } else if (index == 1) {
-                index++;
-                if (count.intValue() > 1) {
-                    bodyCondition += "，" + name;
-                    if (!risk.equals("")) {
-                        risk += "、";
-                    }
-                    risk += bodyConditionToDetails.get(name);
-                }
-            }
-        }
-        String details;
-        if (bodyCondition.equals("平和")) {
-            details = "您的体质偏向平和质，是最为平衡，健康的身体状态。\r\n坐月子是女人改变体质的黄金期，也是极易让妇科，内分泌等慢性疾病埋下隐患的敏感期，为了保持您健康状态，建议您依据体质，合理规划好产后饮食调理，选择由专家为您量身定制的食疗调理方案，降低敏感期风险，让您和宝宝更加健康！";
-        } else {
-            details = String.format(models, bodyCondition, risk);
-        }
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("Web/Question1/Result");
-        modelAndView.addObject("Details", details);
         modelAndView.addObject("EvaluationId", evaluationId);
         return modelAndView;
     }
 
+    @RequestMapping(value = "getClubResult",method = RequestMethod.POST)
+    @ResponseBody
+    public String getClubResult(String EvaluationId){
+        List<ClubResult> clubResultList = question1Dao.getClubResult(EvaluationId);
+        return JSONArray.fromObject(clubResultList).toString();
+    }
     @RequestMapping(value = "/Question1/Clear")
     public String clear(String evaluationId) {
         evaluationDao.delete(Evaluation.class, Long.parseLong(evaluationId));

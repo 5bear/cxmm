@@ -23,20 +23,64 @@
 
     <link href="<%=application.getContextPath()%>/Web/jquery-ui-slider-pips/jquery-ui-slider-pips.css" rel="stylesheet">
     <script src="<%=application.getContextPath()%>/Web/jquery-ui-slider-pips/jquery-ui-slider-pips.js"></script>
+
 </head>
 <body>
 <div class="header2">
     <div class="container">
         <div class="header-text">
-            <div class="logo2">
-                <h3 class="text-head">专家意见</h3>
-                <p class="small-text3">${Details}</p>
-                <a href="<%=application.getContextPath()%>/Question2/Test?evaluationId=${EvaluationId}">下一步测试</a>
+            <div class="logo2" >
+                <h3 class="text-head">测试结果</h3>
+                <div class="button-section">
+                    <a class="top-button" href="<%=request.getContextPath()%>/Question2/Result?evaluationId=${EvaluationId}">填写详细信息</a>
+                </div>
             </div>
 
         </div>
     </div>
 </div>
+<div class="services" id="chart2"  style="width: 1000px;margin-left: 500px;margin-top: 20px">
+</div>
+<script type="text/javascript" src="<%=application.getContextPath()%>/Web/Question1/jQuery.js"></script>
+<script type="text/javascript" src="<%=application.getContextPath()%>/Web/Question1/jqplot.js"></script>
+<script type="text/javascript" src="<%=application.getContextPath()%>/Web/Question1/m_jqplot.js"></script>
+<script>
+    var content = new Array();
+    $.ajax({
+        url:"<%=request.getContextPath()%>/getClubResult",
+        type:"post",
+        data:{EvaluationId:'${EvaluationId}'},
+        dataType:"json",
+        async:false,
+        success:function (data) {
+            $(data).each(function (index,element) {
+                var ele_array = new Array();
+                ele_array.push(element.bodyCondition,element.score);
+                content.push(ele_array);
+            })
+            console.log(content)
+        }
+    })
+    $(document).ready(function() {
+        var line1 = content;
+        $('#chart2').jqplot([line1], {
+            title:'体质偏向',
+            seriesDefaults:{
+                renderer:$.jqplot.BarRenderer,
+                rendererOptions: {
+                    // Set the varyBarColor option to true to use different colors for each bar.
+                    // The default series colors are used.
+                    varyBarColor: true
+                }
+            },
+            axes:{
+                xaxis:{
+                    renderer: $.jqplot.CategoryAxisRenderer
+                }
+            }
+        });
+    });
 
+</script>
 </body>
 </html>

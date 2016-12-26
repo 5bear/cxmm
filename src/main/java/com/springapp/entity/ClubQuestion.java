@@ -9,7 +9,7 @@ import javax.persistence.Id;
  * Created by 11369 on 2016/12/26.
  */
 @Entity
-public class clubQuestion {
+public class ClubQuestion {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private int id;

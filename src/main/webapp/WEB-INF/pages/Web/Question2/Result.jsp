@@ -52,7 +52,9 @@
         <p class="box-desc">我们提供权威意见、贴心服务我们提供权威意见、贴心服务我们提供权威意见、贴心服务我们提供权威意见、贴心服务我们提供权威意见、贴心服务</p>
         -->
         <div class="contact-section">
+<%--
             您的体质是${BodyCondition}
+--%>
             <form method="post" action="" name="myForm">
                 <div>
                     <input type="text" name="name" placeholder="姓名"/>

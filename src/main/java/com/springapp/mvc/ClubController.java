@@ -1,9 +1,6 @@
 package com.springapp.mvc;
 
-import com.springapp.entity.Club;
-import com.springapp.entity.Evaluation;
-import com.springapp.entity.EvaluationStatus;
-import com.springapp.entity.HsOrder;
+import com.springapp.entity.*;
 import net.sf.json.JSONArray;
 import net.sf.json.JSONObject;
 import org.springframework.stereotype.Controller;
@@ -177,56 +174,26 @@ public class ClubController extends BaseController {
     }
     @RequestMapping(value = "getResult1",method = RequestMethod.POST)
     @ResponseBody
-    public String getResult1(@RequestParam(value = "type")int type,@RequestParam(value = "evaluationId")String evaluationId) {
-        List<Map> resultList = new ArrayList();
+    public String getResult1(@RequestParam(value = "evaluationId")String evaluationId) {
         Map resultMap = new HashMap();
         String result = "";
-        if (type == 1) {
-            resultList = answer1Dao.getStatistics(evaluationId);
-            String bodyCondition = "";
-            int index = 0;
-            for (Object item : resultList) {
-                Object[] array = (Object[]) item;
-                Integer answer = (Integer) array[0];
-                BigInteger count = (BigInteger) array[1];
-                String name = (String) array[2];
+        List<ClubResult> clubResultList = question1Dao.getClubResult1(evaluationId);
+        int index = 0;
+        ClubResult firstItem = clubResultList.get(0);
+        int maxScore = firstItem.getScore();
+        for (ClubResult clubResult : clubResultList) {
+            if(clubResult.getScore()==maxScore) {
                 if (index == 0) {
                     index++;
-                    if (count.intValue() > 1) {
-                        result += name;
-                    } else {
-                        result="无法判断您的体质。。。";
-                    }
-                } else if (index == 1) {
-                    index++;
-                    if (count.intValue() > 1) {
-                        result += "，" + name;
-                    }
-                }
-            }
-            resultMap.put("result",result);
-            resultMap.put("resultList",resultList);
-        }else{
-            resultList = answer2Dao.getStatistics(evaluationId);
-            int index = 0;
-            String bodyCondition = "";
-            for (Object item : resultList) {
-                Object[] array = (Object[]) item;
-                String name = (String) array[0];
-                BigInteger count = (BigInteger) array[1];
-                if (index == 0) {
-                    index++;
-                    result += name;
-                } else if (index == 1) {
-                    index++;
-                    result += "兼" + name;
+                    result += clubResult.getBodyCondition();
                 } else {
-                    break;
+                    index++;
+                    result += "兼" + clubResult.getBodyCondition();
                 }
             }
-            resultMap.put("result",result);
-            resultMap.put("resultList",resultList);
         }
+        resultMap.put("result",result);
+        resultMap.put("resultList",clubResultList);
         return JSONObject.fromObject(resultMap).toString();
     }
 }

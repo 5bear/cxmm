@@ -67,26 +67,8 @@ public class Question2Controller extends BaseController {
 
     @RequestMapping(value = "/Question2/Result")
     public ModelAndView result(String evaluationId) {
-        List statistics = answer2Dao.getStatistics(evaluationId);
-        int index = 0;
-        String bodyCondition = "";
-        for (Object item : statistics) {
-            Object[] array = (Object[]) item;
-            String name = (String) array[0];
-            BigInteger count = (BigInteger) array[1];
-            if (index == 0) {
-                index++;
-                bodyCondition += name;
-            } else if (index == 1) {
-                index++;
-                bodyCondition += "兼" + name;
-            } else {
-                break;
-            }
-        }
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("Web/Question2/Result");
-        modelAndView.addObject("BodyCondition", bodyCondition);
         return modelAndView;
     }
     @RequestMapping(value = "/Question2/purchase")
