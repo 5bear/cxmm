@@ -1188,12 +1188,13 @@ public class WxController extends BaseController {
             return e.toString();
         }
     }
-    public static void main(String[] args) throws NoSuchAlgorithmException {
+    public static void main(String[] args) throws NoSuchAlgorithmException, IOException {
        /* WxController wxController=new WxController();
         String url = "http://" + DOMAIN + "/cxmm/Wx/amount";
         wxController.GenerateQRCode(url);*/
-       Object ad = null;
-        Integer a = (Integer)ad;
-        System.out.print(a);
+        WxController wxController=new WxController();
+        String url = wxController.getQC("1074");
+        String realPath = "D:\\11369";
+        downLoadFromUrl(url, "1074" + ".jpg", realPath);
     }
 }
