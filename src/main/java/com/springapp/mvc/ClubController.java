@@ -178,6 +178,11 @@ public class ClubController extends BaseController {
         Map resultMap = new HashMap();
         String result = "";
         List<ClubResult> clubResultList = question1Dao.getClubResult1(evaluationId);
+        if (clubResultList.size()==0){
+            resultMap.put("result","");
+            resultMap.put("resultList",clubResultList);
+            return JSONObject.fromObject(resultMap).toString();
+        }
         int index = 0;
         ClubResult firstItem = clubResultList.get(0);
         int maxScore = firstItem.getScore();

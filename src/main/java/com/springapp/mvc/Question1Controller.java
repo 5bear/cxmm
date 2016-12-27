@@ -52,11 +52,12 @@ public class Question1Controller extends BaseController {
             session.setAttribute("guid", guid);
             Evaluation evaluation = new Evaluation();
             evaluation.setGuid(guid);
-            EvaluationStatus evaluationStatus = test1Dao.getEvaluationStatus(1);
+            EvaluationStatus evaluationStatus = test1Dao.getEvaluationStatus(4);
             evaluation.setEvaluationStatus(evaluationStatus);
             Club club = (Club) session.getAttribute("club");
             evaluation.setClub(club);
             evaluation.setTime(new Timestamp(System.currentTimeMillis()));
+            evaluation.setTimestamp(System.currentTimeMillis());
             evaluationDao.save(evaluation);
             for (int i = 1; i <= 9; i++) {
                 ClubResult clubResult = new ClubResult();
@@ -78,6 +79,14 @@ public class Question1Controller extends BaseController {
     public ModelAndView result(String evaluationId) throws Exception {
         ModelAndView modelAndView = new ModelAndView();
         modelAndView.setViewName("Web/Question1/Result");
+        modelAndView.addObject("EvaluationId", evaluationId);
+        return modelAndView;
+    }
+
+    @RequestMapping(value = "/Question1/testChart")
+    public ModelAndView testChart(String evaluationId) throws Exception {
+        ModelAndView modelAndView = new ModelAndView();
+        modelAndView.setViewName("Web/Question1/testChart");
         modelAndView.addObject("EvaluationId", evaluationId);
         return modelAndView;
     }

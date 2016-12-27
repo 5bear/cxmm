@@ -99,7 +99,11 @@
                                 <div class="col-md-2">
                                     <select class="form-control" name="state" id="status">
                                         <c:forEach items="${evaluationStatuses}" var="item">
-                                            <option value='${item.id}'>${item.name}</option>
+                                            <c:choose>
+                                                <c:when test="${item.id>1}">
+                                                    <option value='${item.id}'>${item.name}</option>
+                                                </c:when>
+                                            </c:choose>
                                         </c:forEach>
                                     </select>
 
@@ -324,6 +328,9 @@
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="<%=request.getContextPath()%>/Web/Upload/js/eModal.js"></script>
 <script type="text/javascript">
+    $(document).ready(function () {
+        $("#status").find("option[value='<%=status%>']").attr("selected",true);
+    })
     function getUserinfo(p1,p2,p3,p4,p5,p6,p7,p8){
         $("#p1").html(p1)
         $("#p2").html(p2)

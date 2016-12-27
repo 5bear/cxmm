@@ -81,6 +81,9 @@ public class Question2Controller extends BaseController {
     public String purchase(HsOrder hsOrder,HttpSession session) {
         SimpleDateFormat simpleDateFormat=new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
         String guid= (String) session.getAttribute("guid");
+        Evaluation evaluation = evaluationDao.getHsEvaluate(guid);
+        evaluation.setEvaluationStatus(test1Dao.getEvaluationStatus(3));
+        evaluationDao.update(evaluation);
         hsOrder.setGuid(guid);
         String cance="";
         if(hsOrder.getCanceNums()!=null)
@@ -105,7 +108,7 @@ public class Question2Controller extends BaseController {
         hsOrder.setDate(simpleDateFormat.format(new Date()));
         hsOrder.setDateTime(new Date().getTime());
         baseDao.save(hsOrder);
-        return "redirect:/Question2/purchase";
+        return "redirect:/Question1/Test";
     }
     @RequestMapping(value = "/Question2/Result", method = RequestMethod.POST)
     public String result(@RequestParam(value = "evaluationId") String evaluationId,

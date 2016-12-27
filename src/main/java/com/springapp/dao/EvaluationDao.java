@@ -213,7 +213,7 @@ public class EvaluationDao extends BaseDao {
         }
        /* if(count>0)
             hql+=" where ";*/
-        hql+=condition;
+        hql += condition + " order by timestamp desc";
         return this.findAll(hql,Evaluation.class);
     }
     public List<Evaluation>getHsByPage(int start,int end,String name,String fromDatetime,String toDatetime,String status,String clubName) throws ParseException {
@@ -271,7 +271,7 @@ public class EvaluationDao extends BaseDao {
             else
                 condition+=" and "+condition5;
         }
-        hql+=condition;
+        hql += condition + " order by timestamp desc";
         return this.findByPage(hql, Evaluation.class,start,end);
     }
     public List<Evaluation>getHsByPage(Long id,int start,int end,String name,String fromDatetime,String toDatetime,String status) throws ParseException {
@@ -294,7 +294,7 @@ public class EvaluationDao extends BaseDao {
         if(status!=null&&!status.equals("")) {
             condition += " and evaluationStatus.id=" + Integer.parseInt(status);
         }
-        hql+=condition;
+        hql += condition + " order by timestamp desc";
         return this.findByPage(hql, Evaluation.class,start,end);
     }
     public List<Evaluation>getListByClub(Long club){

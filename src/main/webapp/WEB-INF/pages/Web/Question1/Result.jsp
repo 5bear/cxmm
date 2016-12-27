@@ -39,7 +39,10 @@
         </div>
     </div>
 </div>
-<div class="services" id="chart2"  style="width: 1000px;margin-left: 500px;margin-top: 20px">
+<div class="services"   style="text-align: center">
+    <div id="chart2" style="width:1000px;margin: 0 auto;">
+
+    </div>
 </div>
 <script type="text/javascript" src="<%=application.getContextPath()%>/Web/Question1/jQuery.js"></script>
 <script type="text/javascript" src="<%=application.getContextPath()%>/Web/Question1/jqplot.js"></script>
