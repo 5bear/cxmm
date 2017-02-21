@@ -104,10 +104,10 @@
     function check(){
         for (var i=0;i<document.myForm.length;i++ )
         {
+            console.log(document.myForm.elements[i])
             if (document.myForm.elements[i].value=="")
             {
                 if(!(remind(i)=="success")){
-                    console.log(i)
                     document.myForm.elements[i].focus();
                     alert(remind(i))
                     return false
@@ -147,11 +147,19 @@
                 return ("胎次未填写")
                 break
             case 9:
-                return ("顺产/剖产未选择")
+
                 break
             case 10:
                 return ("哺乳/非哺乳未选择")
                 break
+        }
+        var eutocia=$('input:radio[name="eutocia"]:checked').val();
+        if(eutocia == null){
+            return ("顺产/剖产未选择")
+        }
+        var feed=$('input:radio[name="feed"]:checked').val();
+        if(feed == null){
+            return ("哺乳/非哺乳未选择")
         }
         return "success"
     }
