@@ -22,7 +22,7 @@ public class AgentDao extends BaseDao {
         String hql="from Agent where id>0";
         String condition="";
         if(agent!=null&&!agent.equals("")) {
-            condition+= " and agent like " + "'%"+agent+"%'";
+            condition+= " and agent = '" +agent+"'";
 
         }
         if(status!=null&&!status.equals("")) {
@@ -40,8 +40,8 @@ public class AgentDao extends BaseDao {
     }
     public Map getAsMap(Long id,float canheRate,float canceRate,Long startDate,Long endDate){
         Agent agent=this.get(Agent.class,id);
-        List<WxOrderinfo>wxOrderinfoList=this.findAll("from WxOrderinfo where uid.openid =? and dateTime>=? and dateTime<=?",WxOrderinfo.class,new Object[]{agent.getOpenid(),startDate,endDate});
-        List<WxOrderinfo>wxOrderinfoList1=this.findAll("from WxOrderinfo where uid.aid =? and dateTime>=? and dateTime<=?",WxOrderinfo.class,new Object[]{agent.getId(),startDate,endDate});
+        List<WxOrderinfo>wxOrderinfoList=this.findAll("from WxOrderinfo where uid.openid =? and dateTime>=? and dateTime<=? and result = 'success'",WxOrderinfo.class,new Object[]{agent.getOpenid(),startDate,endDate});
+        List<WxOrderinfo>wxOrderinfoList1=this.findAll("from WxOrderinfo where uid.aid =? and dateTime>=? and dateTime<=? and result = 'success' ",WxOrderinfo.class,new Object[]{agent.getId(),startDate,endDate});
         wxOrderinfoList.addAll(wxOrderinfoList1);
         int canheNum=0,canceNum=0;
         for(WxOrderinfo wxOrderinfo:wxOrderinfoList){
@@ -93,7 +93,7 @@ public class AgentDao extends BaseDao {
             agent.setUserNum(wxUserList.size());
             int canceNum=0,canheNum=0;
             for(WxUser wxUser:wxUserList){
-                List<WxOrderinfo>wxOrderinfoList=this.findAll("from WxOrderinfo where uid.uid=?",WxOrderinfo.class, wxUser.getUid());
+                List<WxOrderinfo>wxOrderinfoList=this.findAll("from WxOrderinfo where uid.uid=? and result = 'success'",WxOrderinfo.class, wxUser.getUid());
                 for(WxOrderinfo wxOrderinfo:wxOrderinfoList){
                     if(wxOrderinfo.getCanceNum()!=null&&!wxOrderinfo.getCanceNum().equals("")){
                         String[]canceNums=wxOrderinfo.getCanceNum().split(",");
@@ -116,22 +116,20 @@ public class AgentDao extends BaseDao {
         List<Map>mapList1=new ArrayList<Map>();
         List<Agent>agentList =this.findAll("from Agent where recommend=?",new Object[]{fromAgent.getAgent()});
         for(Agent agent:agentList){
-            List<WxOrderinfo>wxOrderinfoList=this.findAll("from WxOrderinfo where uid.openid =? and dateTime>=? and dateTime<=?",WxOrderinfo.class,new Object[]{agent.getOpenid(),startDate,endDate});//获得代理点自己购买量
-            List<WxOrderinfo>wxOrderinfoList1=this.findAll("from WxOrderinfo where uid.aid =? and dateTime>=? and dateTime<=?",WxOrderinfo.class,new Object[]{agent.getId(),startDate,endDate});//获得扫码人的购买量
+            List<WxOrderinfo>wxOrderinfoList=this.findAll("from WxOrderinfo where uid.openid =? and dateTime>=? and dateTime<=? and result = 'success' ",WxOrderinfo.class,new Object[]{agent.getOpenid(),startDate,endDate});//获得代理点自己购买量
+            List<WxOrderinfo>wxOrderinfoList1=this.findAll("from WxOrderinfo where uid.aid =? and dateTime>=? and dateTime<=? and result = 'success'",WxOrderinfo.class,new Object[]{agent.getId(),startDate,endDate});//获得扫码人的购买量
             wxOrderinfoList.addAll(wxOrderinfoList1);
             int canheNum=0,canceNum=0;
-            if(agent.getAgent().equals("唐蕾蓓")) {
-                for (WxOrderinfo wxOrderinfo : wxOrderinfoList) {
-                    if (wxOrderinfo.getCanceNum() == null || wxOrderinfo.getCanheNum() == null)
-                        continue;
-                    if(!wxOrderinfo.getCanceNum().equals("")) {
-                        String[] canceNums = wxOrderinfo.getCanceNum().split(",");
-                        canceNum += canceNums.length;
-                    }
-                    if(!wxOrderinfo.getCanheNum().equals("")) {
-                        String[] canheNums = wxOrderinfo.getCanheNum().split(",");
-                        canheNum += canheNums.length;
-                    }
+            for (WxOrderinfo wxOrderinfo : wxOrderinfoList) {
+                if (wxOrderinfo.getCanceNum() == null || wxOrderinfo.getCanheNum() == null)
+                    continue;
+                if(!wxOrderinfo.getCanceNum().equals("")) {
+                    String[] canceNums = wxOrderinfo.getCanceNum().split(",");
+                    canceNum += canceNums.length;
+                }
+                if(!wxOrderinfo.getCanheNum().equals("")) {
+                    String[] canheNums = wxOrderinfo.getCanheNum().split(",");
+                    canheNum += canheNums.length;
                 }
             }
             Map map=new HashMap();
@@ -177,7 +175,7 @@ public class AgentDao extends BaseDao {
         List<Agent>agentList =this.findAll("from Agent where recommend=?",new Object[]{recommend});
         for(Agent agent:agentList){
 
-            List<WxOrderinfo>wxOrderinfoList=this.findAll("from WxOrderinfo where uid.openid =? and dateTime>=? and dateTime<=?",WxOrderinfo.class,new Object[]{agent.getOpenid(),startDate,endDate});
+            List<WxOrderinfo>wxOrderinfoList=this.findAll("from WxOrderinfo where uid.openid =? and dateTime>=? and dateTime<=? and result = 'success'",WxOrderinfo.class,new Object[]{agent.getOpenid(),startDate,endDate});
             int canheNum=0,canceNum=0;
             for(WxOrderinfo wxOrderinfo:wxOrderinfoList){
                 String[]canceNums=wxOrderinfo.getCanceNum().split(",");

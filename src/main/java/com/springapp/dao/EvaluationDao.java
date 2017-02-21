@@ -61,7 +61,7 @@ public class EvaluationDao extends BaseDao {
         if(name!=null&&!name.equals(""))
             hql+=" and w.nickname like "+"'%"+name+"%'";
         if(agent!=null&&!agent.equals(""))
-            hql+=" and e.uid.agent like "+"'%"+agent+"%'";
+            hql+=" and e.uid.agent = '" +agent + "'";
         if(fromDatetime!=null&&!fromDatetime.equals("")){
             Long timestamp=simpleDateFormat.parse(fromDatetime).getTime();
             hql+=" and timestamp>="+timestamp;
@@ -80,7 +80,7 @@ public class EvaluationDao extends BaseDao {
         if(name!=null&&!name.equals(""))
             hql+=" and w.nickname like "+"'%"+name+"%'";
         if(agent!=null&&!agent.equals(""))
-            hql+=" and e.uid.agent like "+"'%"+agent+"%'";
+            hql+=" and e.uid.agent = "+"'"+agent+"'";
         if(fromDatetime!=null&&!fromDatetime.equals("")){
             Long timestamp=simpleDateFormat.parse(fromDatetime).getTime();
             hql+=" and e.timestamp>="+timestamp;
@@ -99,7 +99,7 @@ public class EvaluationDao extends BaseDao {
         if(name!=null&&!name.equals(""))
             hql+=" and w.nickname like "+"'%"+name+"%'";
         if(agent!=null&&!agent.equals(""))
-            hql+=" and e.uid.agent like "+"'%"+agent+"%'";
+            hql+=" and e.uid.agent = "+"'"+agent+"'";
         if(fromDatetime!=null&&!fromDatetime.equals("")){
             Long timestamp=simpleDateFormat.parse(fromDatetime).getTime();
             hql+=" and timestamp>="+timestamp;
@@ -118,7 +118,7 @@ public class EvaluationDao extends BaseDao {
         if(name!=null&&!name.equals(""))
             hql+=" and w.nickname like "+"'%"+name+"%'";
         if(agent!=null&&!agent.equals(""))
-            hql+=" and e.uid.agent like "+"'%"+agent+"%'";
+            hql+=" and e.uid.agent = "+"'"+agent+"'";
         if(fromDatetime!=null&&!fromDatetime.equals("")){
             Long timestamp=simpleDateFormat.parse(fromDatetime).getTime();
             hql+=" and e.timestamp>="+timestamp;

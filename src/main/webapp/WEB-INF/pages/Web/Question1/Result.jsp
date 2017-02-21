@@ -1,3 +1,10 @@
+<%--
+  Created by IntelliJ IDEA.
+  User: 11369
+  Date: 2016/12/27
+  Time: 10:17
+  To change this template use File | Settings | File Templates.
+--%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html>
@@ -31,22 +38,20 @@
         <div class="header-text">
             <div class="logo2" >
                 <h3 class="text-head">测试结果</h3>
-                <div class="button-section">
-                    <a class="top-button" href="<%=request.getContextPath()%>/Question2/Result?evaluationId=${EvaluationId}">填写详细信息</a>
-                </div>
             </div>
 
         </div>
     </div>
 </div>
 <div class="services"   style="text-align: center">
-    <div id="chart2" style="width:1000px;margin: 0 auto;">
-
+    <div id="container" style="width: 1000px; height: 400px; margin: 0 auto"></div>
+    <div class="button-section">
+        <a class="top-button" href="<%=request.getContextPath()%>/Question2/Result?evaluationId=${EvaluationId}">填写详细信息</a>
     </div>
 </div>
-<script type="text/javascript" src="<%=application.getContextPath()%>/Web/Question1/jQuery.js"></script>
-<script type="text/javascript" src="<%=application.getContextPath()%>/Web/Question1/jqplot.js"></script>
-<script type="text/javascript" src="<%=application.getContextPath()%>/Web/Question1/m_jqplot.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/data.js"></script>
+<script src="https://code.highcharts.com/modules/drilldown.js"></script>
 <script>
     var content = new Array();
     $.ajax({
@@ -57,30 +62,80 @@
         async:false,
         success:function (data) {
             $(data).each(function (index,element) {
-                var ele_array = new Array();
-                ele_array.push(element.bodyCondition,element.score);
-                content.push(ele_array);
+                var ele = new Object();
+                ele.name =element.bodyCondition
+                ele.y = element.score
+                ele.drilldown = null
+                content.push(ele);
             })
             console.log(content)
         }
     })
-    $(document).ready(function() {
-        var line1 = content;
-        $('#chart2').jqplot([line1], {
-            title:'体质偏向',
-            seriesDefaults:{
-                renderer:$.jqplot.BarRenderer,
-                rendererOptions: {
-                    // Set the varyBarColor option to true to use different colors for each bar.
-                    // The default series colors are used.
-                    varyBarColor: true
+    $(function () {
+        // Create the chart
+        Highcharts.chart('container', {
+            chart: {
+                type: 'column'
+            },
+            title: {
+                text: '体质偏向'
+            },
+            xAxis: {
+                type: 'category',
+            },
+            yAxis: {
+                title: {
+                    text: '得分情况'
                 }
             },
-            axes:{
-                xaxis:{
-                    renderer: $.jqplot.CategoryAxisRenderer
+            /* legend: {
+             layout: 'vertical',
+             backgroundColor: '#FFFFFF',
+             floating: true,
+             align: 'left',
+             verticalAlign: 'top',
+             x: 90,
+             y: 45,
+             //labelFormat: '<span style="{color}">{name} (click to hide or show)</span>'
+             },*/
+            plotOptions: {
+                series: {
+                    /*events: {
+                     legendItemClick: function(e) {
+                     var index = this.index;
+
+                     var series = this.chart.series;
+
+                     if (!series[index].visible) {
+
+                     for (var i = 0; i < series.length; i++) {
+
+                     var s = series[i];
+
+                     i === index ? s.show() : s.hide();
+                     }
+                     }
+
+                     return false;
+                     }
+                     },*/
+                    borderWidth: 0,
+                    dataLabels: {
+                        enabled: true,
+                    }
                 }
-            }
+            },
+
+            tooltip: {
+                headerFormat: '<span style="font-size:11px">{series.name}</span><br>',
+                pointFormat: '<span style="color:{point.color}">{point.name}</span>: <b>{point.y}<br/>'
+            },
+
+            series: [{
+                name: '体质情况',
+                colorByPoint: true,
+                data: content,
+            }]
         });
     });
 

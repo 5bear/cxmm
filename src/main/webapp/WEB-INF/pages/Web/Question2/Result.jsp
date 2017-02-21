@@ -38,8 +38,7 @@
         <div class="header-text">
             <div class="logo2">
                 <!--<h1><a href="#">体质评估</a></h1>-->
-                <h3 class="text-head">专家意见</h3>
-                <p class="small-text3">我们提供权威意见、贴心服务我们提供权威意见、贴心服务我们提供权威意见、贴心服务我们提供权威意见、贴心服务我们提供权威意见、贴心服务</p>
+                <h3 class="text-head">填写详细信息</h3>
             </div>
 
         </div>
@@ -108,6 +107,7 @@
             if (document.myForm.elements[i].value=="")
             {
                 if(!(remind(i)=="success")){
+                    console.log(i)
                     document.myForm.elements[i].focus();
                     alert(remind(i))
                     return false

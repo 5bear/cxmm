@@ -365,7 +365,7 @@ public class Test1Controller extends BaseController {
     }
 
     /**
-     * 查询个人订单状态
+     * 查询个人订单状态，寻找未完成订单并检测
      * @param openid
      */
     public void checkWxOrder(String openid){

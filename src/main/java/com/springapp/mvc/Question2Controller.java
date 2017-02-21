@@ -115,7 +115,7 @@ public class Question2Controller extends BaseController {
                          @RequestParam(value = "name") String name,
                          @RequestParam(value = "address") String address,
                          @RequestParam(value = "phone") String phone,
-                         @RequestParam(value = "suggestion") String suggestion,
+                         @RequestParam(value = "suggestion",required = false) String suggestion,
                          @RequestParam(value = "ExpectingDate") String ExpectingDate,
                          @RequestParam(value = "Birthorder") String Birthorder,
                          @RequestParam(value = "height") String height,
@@ -124,7 +124,7 @@ public class Question2Controller extends BaseController {
                          @RequestParam(value = "eutocia") int eutocia,
                          @RequestParam(value = "feed") int feed,
                          @RequestParam(value = "age") String age,
-                         @RequestParam(value = "notes") String notes) {
+                         @RequestParam(value = "notes",required = false) String notes) {
         Evaluation evaluation = evaluationDao.find("from Evaluation where guid=?", Evaluation.class, new Object[]{evaluationId});
         EvaluationStatus evaluationStatus=test1Dao.getEvaluationStatus(2);
         evaluation.setEvaluationStatus(evaluationStatus);

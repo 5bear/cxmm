@@ -24,7 +24,7 @@
   String express=(String)request.getAttribute("express");
   if(express==null)
     express="";
-  String url="Order?name="+name+"&express="+express+"&";
+  String url="clubOrder?name="+name+"&express="+express+"&";
 %>
 <!DOCTYPE html>
 <html lang="en">

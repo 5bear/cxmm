@@ -55,7 +55,7 @@
           <li><a href="#"><i class="fa fa-user"></i> <%=club.getClub()%></a></li>
           <li><a href="#"><i class="fa fa-gear"></i> <%=club.getInvalidDate()%></a></li>
           <li class="divider"></li>
-          <li><a href="/logout?role=club"><i class="fa fa-power-off"></i> 注销</a></li>
+          <li><a href="<%=request.getContextPath()%>/logout?role=club"><i class="fa fa-power-off"></i> 注销</a></li>
         </ul>
       </li>
     </ul>

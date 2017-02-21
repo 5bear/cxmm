@@ -125,6 +125,9 @@
                         <th>
                             状态
                         </th>
+                        <th>
+                            修改推荐人
+                        </th>
                     </tr>
                     </thead>
                     <tbody id="myTbody">

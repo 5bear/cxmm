@@ -38,7 +38,7 @@ public class OrderDao extends BaseDao {
         hql+="order by dateTime desc";
         return this.findAll(hql, WxOrderinfo.class);
     }
-    public List<HsOrder>getHsList(String name,String express){
+    public List<HsOrder>getHsList(Long id, String name,String express){
         String hql="from HsOrder ";
         String condition1 = null,condition2=null;
         int count=0;
@@ -51,14 +51,15 @@ public class OrderDao extends BaseDao {
             count++;
         }
         if(count==0)
-            return this.findAll("from HsOrder order by dateTime desc", HsOrder.class);
+            return this.findAll("from HsOrder where guid in (select guid from Evaluation where club =" + id + ") order by dateTime desc", HsOrder.class);
         if(condition1!=null&&condition2!=null)
             hql+=" where "+condition1+"and"+condition2;
         else if(condition1!=null&&condition2==null)
             hql+=" where"+condition1;
         else
             hql+=" where"+condition2;
-        hql+="order by dateTime desc";
+        hql += " and guid in ( select guid from Evaluation where club =" + id;
+        hql+=")order by dateTime desc";
         return this.findAll(hql, HsOrder.class);
     }
     public List<WxOrderinfo>getByPage(int start,int end,String name,String express){
@@ -84,7 +85,7 @@ public class OrderDao extends BaseDao {
         hql+="order by dateTime desc";
         return this.findByPage(hql,WxOrderinfo.class,start,end);
     }
-    public List<HsOrder>getHsByPage(int start,int end,String name,String express){
+    public List<HsOrder>getHsByPage(int start,int end, Long id, String name,String express){
         String hql="from HsOrder ";
         String condition1 = null,condition2=null;
         int count=0;
@@ -97,14 +98,15 @@ public class OrderDao extends BaseDao {
             count++;
         }
         if(count==0)
-            return this.findByPage("from HsOrder order by dateTime desc", HsOrder.class, start, end);
+            return this.findByPage("from HsOrder where guid in ( select guid from Evaluation where club =" + id + ") order by dateTime desc", HsOrder.class, start, end);
         if(condition1!=null&&condition2!=null)
             hql+=" where "+condition1+"and"+condition2;
         else if(condition1!=null&&condition2==null)
             hql+=" where"+condition1;
         else
             hql+=" where"+condition2;
-        hql+="order by dateTime desc";
+        hql += " and guid in ( select guid from Evaluation where club =" + id;
+        hql+=" ) order by dateTime desc";
         return this.findByPage(hql,HsOrder.class,start,end);
     }
     public List<WxOrderinfo> getByOpenid(String openid) {

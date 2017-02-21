@@ -100,7 +100,10 @@
                                     <select class="form-control" name="state" id="status">
                                         <c:forEach items="${evaluationStatuses}" var="item">
                                             <c:choose>
-                                                <c:when test="${item.id>1}">
+                                                <c:when test="${item.id==4}">
+                                                    <option value='${item.id}'>测评完成</option>
+                                                </c:when>
+                                                <c:when test="${item.id==2||item.id==3}">
                                                     <option value='${item.id}'>${item.name}</option>
                                                 </c:when>
                                             </c:choose>
@@ -141,7 +144,7 @@
                             查看信息
                         </th>
                         <th>
-                            五分钟评测结果
+                            评测结果
                         </th>
                     </tr>
                     </thead>
@@ -153,7 +156,7 @@
                             <td>${num.count}</td>
                             <td>${evaluation.name}</td>
                             <td>${evaluation.time}</td>
-                            <td>${evaluation.evaluationStatus.name}</td>
+                            <td>${evaluation.evaluationStatus.id==4?"测评完成":evaluation.evaluationStatus.name}</td>
                             <td><label data-toggle="modal" data-target="#InfoModal"><a onclick="getUserinfo('${evaluation.expectingDate}','${evaluation.weight}','${evaluation.afterWeight}','${evaluation.height}','${evaluation.age}','${evaluation.birthorder}','${evaluation.eutocia==1?"顺产":"剖腹产"}','${evaluation.feed==1?"哺乳":"非哺乳"}')">查看</a></label></td>
                             <td>
                                 <label data-toggle="modal" data-target="#Check5Modal"><a onclick="getResult('${evaluation.guid}')">查看</a></label>
@@ -231,7 +234,7 @@
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
                         aria-hidden="true">&times;</span></button>
-                <h4 class="modal-title" id="Check5ModalLabel">五分钟评测结果</h4>
+                <h4 class="modal-title" id="Check5ModalLabel">评测结果</h4>
             </div>
             <div class="form-horizontal">
                 <div class="form-group">

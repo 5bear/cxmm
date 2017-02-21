@@ -54,8 +54,11 @@ public class ClubController extends BaseController {
         return modelAndView;
     }
     @RequestMapping(value = "clubOrder",method = RequestMethod.GET)
-    public ModelAndView clubOrder(HttpServletRequest request) {
+    public ModelAndView clubOrder(HttpServletRequest request, HttpSession session) {
         ModelAndView modelAndView = new ModelAndView("Web/Upload/clubOrder");
+        Club club= (Club) session.getAttribute("club");
+        if(club == null)
+            return new ModelAndView("redirect:clubLogin");
         String name=request.getParameter("name");
         String express=request.getParameter("express");
          /*分页，每页十项*/
@@ -65,7 +68,7 @@ public class ClubController extends BaseController {
             pageNum=Integer.parseInt(pn);
         start = (pageNum - 1) * 10;
         end=10;
-        List<HsOrder> hsOrderList = orderDao.getHsList(name, express);
+        List<HsOrder> hsOrderList = orderDao.getHsList(club.getId(), name, express);
         int totalPage;
         if(hsOrderList.size()%10==0)
             totalPage=hsOrderList.size()/10;
@@ -75,7 +78,7 @@ public class ClubController extends BaseController {
         request.setAttribute("express",express);
         request.setAttribute("currentPage",pageNum);
         request.setAttribute("totalPage",totalPage);
-        List<HsOrder>myList=orderDao.getHsByPage(start,end,name,express);
+        List<HsOrder>myList=orderDao.getHsByPage(start, end, club.getId(), name, express);
         modelAndView.addObject("list", myList);
         return modelAndView;
     }
