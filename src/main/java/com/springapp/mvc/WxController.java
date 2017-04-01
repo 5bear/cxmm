@@ -241,45 +241,51 @@ public class WxController extends BaseController {
         //如果用户同意授权并且，用户session不存在，通过OAUTH接口调用获取用户信息
         if (isValidCode && session.getAttribute("openid") == null) {
             JSONObject obj = getAccessToken(APP_ID, APP_SECRET, code);
-            String token = obj.getString("access_token");//    //可能会有NullPointerException
-            String openid = obj.getString("openid");
-            JSONObject user = getUserInfo(token, openid);
-            user.discard("privilege");
-            WxUser wxUser=userDao.getByOpenid(openid);
-            if(wxUser==null){
-                wxUser = (WxUser) JSONObject.toBean(user, WxUser.class);
-                wxUser.setOpenid(openid);
-                wxUser.setAid(Long.parseLong("0"));
-                wxUser.setNickname(EmojiFilter.filterEmoji(wxUser.getNickname()));
-                try {
-                    if(wxUser.getOpenid()!=null&&!wxUser.getOpenid().equals(""))
-                        userDao.save(wxUser);
-                }catch (Exception e){
-                    wxUser=new WxUser();
+            System.out.print(obj);
+            try {
+                String token = obj.getString("access_token");//    //可能会有NullPointerException
+                String openid = obj.getString("openid");
+
+                JSONObject user = getUserInfo(token, openid);
+                user.discard("privilege");
+                WxUser wxUser = userDao.getByOpenid(openid);
+                if (wxUser == null) {
+                    wxUser = (WxUser) JSONObject.toBean(user, WxUser.class);
                     wxUser.setOpenid(openid);
-                    wxUser.setNickname("包含特殊字符");
-                    if(wxUser.getOpenid()!=null&&!wxUser.getOpenid().equals(""))
-                        userDao.save(wxUser);
-                }
-
-            }else{
-                WxUser temp = (WxUser) JSONObject.toBean(user, WxUser.class);
-                wxUser.setOpenid(openid);
-                wxUser.setNickname(EmojiFilter.filterEmoji(temp.getNickname()));
-                try {
-                    if(wxUser.getOpenid()!=null&&!wxUser.getOpenid().equals(""))
-                        userDao.update(wxUser);
-                }catch (Exception e){
-                    if(wxUser.getOpenid()!=null&&!wxUser.getOpenid().equals(""))
+                    wxUser.setAid(Long.parseLong("0"));
+                    wxUser.setNickname(EmojiFilter.filterEmoji(wxUser.getNickname()));
+                    try {
+                        if (wxUser.getOpenid() != null && !wxUser.getOpenid().equals(""))
+                            userDao.save(wxUser);
+                    } catch (Exception e) {
+                        wxUser = new WxUser();
+                        wxUser.setOpenid(openid);
                         wxUser.setNickname("包含特殊字符");
-                    userDao.update(wxUser);
-                }
+                        if (wxUser.getOpenid() != null && !wxUser.getOpenid().equals(""))
+                            userDao.save(wxUser);
+                    }
 
+                } else {
+                    WxUser temp = (WxUser) JSONObject.toBean(user, WxUser.class);
+                    wxUser.setOpenid(openid);
+                    wxUser.setNickname(EmojiFilter.filterEmoji(temp.getNickname()));
+                    try {
+                        if (wxUser.getOpenid() != null && !wxUser.getOpenid().equals(""))
+                            userDao.update(wxUser);
+                    } catch (Exception e) {
+                        if (wxUser.getOpenid() != null && !wxUser.getOpenid().equals(""))
+                            wxUser.setNickname("包含特殊字符");
+                        userDao.update(wxUser);
+                    }
+
+                }
+                session.setAttribute("user", user.toString());
+                session.setAttribute("openid", openid);
+                //return "redirect:https://www.baidu.com/s?wd=" + openid;
+                response.sendRedirect(returnUrl);
+            }catch (Exception e){
+                response.sendRedirect(returnUrl);
             }
-            session.setAttribute("user", user.toString());
-            session.setAttribute("openid", openid);
-            //return "redirect:https://www.baidu.com/s?wd=" + openid;
-            response.sendRedirect(returnUrl);
         }
         /*print(response,  "isValidCode:"+isValidCode+"????"+"openid:"+session.getAttribute("openid"));*/
         //return "redirect:http://www.bing.com/";
@@ -288,7 +294,7 @@ public class WxController extends BaseController {
     private static final String APP_ID = "wx3ced4614cdabe878";
     private static final String OLDAPP_SECRET = "27842e02309c727301349ccbead46c07";
     private static final String OLDDOMAIN = "cx.ecnucpp.com";
-    private static final String APP_SECRET = "66db356d4f9fb03023d5475222dde822";
+    private static final String APP_SECRET = "73e3e073b1a47045b52bbb79c2c0cda4";
     private static final String APP_KEY = "shanghaiyuechanxin20160603104666";
 
     private static final String DOMAIN = "www.yuechanxin.com";

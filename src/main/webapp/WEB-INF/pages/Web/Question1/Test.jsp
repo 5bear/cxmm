@@ -92,8 +92,8 @@
                                 <div class="form-group left-inner-addon">
                                     <br>	${count.count}、${question.question}<br><br>
                                     <div class="opt"><input type="radio" class="q${question.type}a" name="${count.count}" value="A"><label>A.没有&nbsp;</div>
-                                    <div class="opt"><input type="radio" name="${count.count}" value="B" class="q${question.type}b"><label>B.有些&nbsp;</div>
-                                    <div class="opt"><input type="radio" name="${count.count}" value="C" class="q${question.type}c"><label>C.符合&nbsp;</div>
+                                    <div class="opt"><input type="radio" class="q${question.type}b" name="${count.count}" value="B" ><label>B.有些&nbsp;</div>
+                                    <div class="opt"><input type="radio" class="q${question.type}c" name="${count.count}" value="C" ><label>C.符合&nbsp;</div>
                                     <%--<div class="opt"><input type="radio" name="q1" value="D" id="q1d"><label for="q1d">D.大寒&nbsp;</div><br><br>--%>
                                 </div>
                             </c:forEach>

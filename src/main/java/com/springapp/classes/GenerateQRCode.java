@@ -30,7 +30,7 @@ public class GenerateQRCode {
     {
         try
         {
-            String base64Image = getLogoQRCode("https://www.baidu.com/", "跳转到百度的二维码");
+           getLogoQRCode("http://feiyi.ecnucpp.com/Weixin/Wx/question", "feiyi");
         }
         catch (Exception e)
         {
@@ -49,7 +49,7 @@ public class GenerateQRCode {
     {
 //      String filePath = (javax.servlet.http.HttpServletRequest)request.getSession().getServletContext().getRealPath("/") + "resources/images/logoImages/llhlogo.png";
         //filePath是二维码logo的路径，但是实际中我们是放在项目的某个路径下面的，所以路径用上面的，把下面的注释就好
-        String filePath = "C:\\Users\\11369\\Desktop\\cxmm.jpg";  //TODO
+        String filePath = "C:\\Users\\11369\\Desktop\\feiyi.jpg";  //TODO
         try
         {
             GenerateQRCode zp = new GenerateQRCode();

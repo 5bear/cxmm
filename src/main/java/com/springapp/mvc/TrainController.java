@@ -127,7 +127,6 @@ public class TrainController extends BaseController{
     @ResponseBody
     public String getCerti(@RequestParam(value = "name") String name) throws ParseException {
         Train train=trainDao.getTrain(name);
-
         if (train==null)
             return "NotFound";
         if(!train.getStatus().equals("已发证"))

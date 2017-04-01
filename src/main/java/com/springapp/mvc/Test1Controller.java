@@ -45,7 +45,7 @@ public class Test1Controller extends BaseController {
 
 
     private static final String APP_ID = "wx3ced4614cdabe878";
-    private static final String APP_SECRET = "shanghaiyuechanxin20160603104666";
+    private static final String APP_SECRET = "shanghaiyuechanxin20160603104666";//微信支付appkey
     private static final String DOMAIN = "cx.ecnucpp.com";
     private static final String MCH_ID = "1253261801";
     private static final int cancePrice=98;
@@ -270,7 +270,9 @@ public class Test1Controller extends BaseController {
                 wxEvaluation.setUid(wxUser);
                 wxEvaluationDao.update(wxEvaluation);
             }catch (Exception exception){
-                throw new Exception("wxEvaluation:"+wxEvaluation+"\nwxUser"+wxUser);
+                wxEvaluation = new WxEvaluation();
+                wxEvaluation.setUid(wxUser);
+                wxEvaluationDao.save(wxEvaluation);
             }
         }
 
