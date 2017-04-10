@@ -1,8 +1,5 @@
 package com.springapp.dao;
 
-import org.hibernate.Query;
-import org.hibernate.SQLQuery;
-import org.hibernate.engine.transaction.internal.jdbc.JdbcTransaction;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

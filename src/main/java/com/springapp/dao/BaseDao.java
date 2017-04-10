@@ -7,6 +7,7 @@ import org.hibernate.engine.transaction.internal.jdbc.JdbcTransaction;
 import org.hibernate.engine.transaction.spi.LocalStatus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -14,6 +15,7 @@ import java.util.List;
  * Created by ZhanShaoxiong on 2016/3/5.
  */
 @Repository
+@Transactional
 public class BaseDao {
 
     @Autowired

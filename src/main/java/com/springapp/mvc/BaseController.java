@@ -33,6 +33,8 @@ public class BaseController {
     @Autowired
     protected Answer2Dao answer2Dao;
     @Autowired
+    protected BodyconditionDao bodyconditionDao;
+    @Autowired
     protected ProfessorDao professorDao;
     @Autowired
     protected ProfessorStatusDao professorStatusDao;
@@ -50,8 +52,6 @@ public class BaseController {
     protected Test2Dao test2Dao;
     @Autowired
     protected ActivityDao activityDao;
-    @Autowired
-    protected BodyconditionDao bodyconditionDao;
     @Autowired
     protected AdminDao adminDao;
     @Autowired

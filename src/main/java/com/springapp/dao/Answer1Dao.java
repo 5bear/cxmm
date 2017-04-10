@@ -1,6 +1,5 @@
 package com.springapp.dao;
 
-import org.hibernate.Query;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
